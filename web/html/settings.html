@@ -167,44 +167,6 @@
         xudpConcurrency: 16,
         xudpProxyUDP443: "reject"
       },
-      defaultRules: [
-        {
-          type: "field",
-          outboundTag: "direct",
-          domain: [
-            "geosite:category-ir"
-          ]
-        },
-        {
-          type: "field",
-          outboundTag: "direct",
-          ip: [
-            "geoip:private",
-            "geoip:ir"
-          ]
-        },
-      ],
-      directIPsOptions: [
-        { label: 'Private IP', value: 'geoip:private' },
-        { label: '🇮🇷 Iran', value: 'geoip:ir' },
-        { label: '🇨🇳 China', value: 'geoip:cn' },
-        { label: '🇷🇺 Russia', value: 'geoip:ru' },
-        { label: '🇻🇳 Vietnam', value: 'geoip:vn' },
-        { label: '🇪🇸 Spain', value: 'geoip:es' },
-        { label: '🇮🇩 Indonesia', value: 'geoip:id' },
-        { label: '🇺🇦 Ukraine', value: 'geoip:ua' },
-        { label: '🇹🇷 Türkiye', value: 'geoip:tr' },
-        { label: '🇧🇷 Brazil', value: 'geoip:br' },
-      ],
-      diretDomainsOptions: [
-        { label: 'Private DNS', value: 'geosite:private' },
-        { label: '🇮🇷 Iran', value: 'geosite:category-ir' },
-        { label: '🇨🇳 China', value: 'geosite:cn' },
-        { label: '🇷🇺 Russia', value: 'geosite:category-ru' },
-        { label: 'Apple', value: 'geosite:apple' },
-        { label: 'Meta', value: 'geosite:meta' },
-        { label: 'Google', value: 'geosite:google' },
-      ],
       get remarkModel() {
         rm = this.allSetting.remarkModel;
         return rm.length > 1 ? rm.substring(1).split('') : [];
@@ -438,15 +400,6 @@
       },
     },
     computed: {
-      ldapInboundTagList: {
-        get: function () {
-          const csv = this.allSetting.ldapInboundTags || "";
-          return csv.length ? csv.split(',').map(s => s.trim()).filter(Boolean) : [];
-        },
-        set: function (list) {
-          this.allSetting.ldapInboundTags = Array.isArray(list) ? list.join(',') : '';
-        }
-      },
       fragment: {
         get: function () { return this.allSetting?.subJsonFragment != ""; },
         set: function (v) {

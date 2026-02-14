@@ -161,42 +161,5 @@
             </a-collapse>
         </a-list-item>
     </a-collapse-panel>
-    <a-collapse-panel key="5" header='{{ i18n "pages.settings.direct" }}'>
-        <a-setting-list-item paddings="small">
-            <template #title>{{ i18n "pages.settings.direct"}}</template>
-            <template #description>{{ i18n "pages.settings.directDesc"}}</template>
-            <template #control>
-                <a-switch v-model="enableDirect"></a-switch>
-            </template>
-        </a-setting-list-item>
-        <a-list-item v-if="enableDirect" :style="{ padding: '10px 20px' }">
-            <a-collapse>
-                <a-collapse-panel header='{{ i18n "pages.settings.direct"}}'>
-                    <a-setting-list-item paddings="small">
-                        <template #title>{{ i18n "pages.xray.directips" }}</template>
-                        <template #control>
-                            <a-select mode="tags" :style="{ width: '100%' }" v-model="directIPs"
-                                :dropdown-class-name="themeSwitcher.currentTheme">
-                                <a-select-option :value="p.value" :label="p.label" v-for="p in directIPsOptions">
-                                    <span>[[ p.label ]]</span>
-                                </a-select-option>
-                            </a-select>
-                        </template>
-                    </a-setting-list-item>
-                    <a-setting-list-item paddings="small">
-                        <template #title>{{ i18n "pages.xray.directdomains" }}</template>
-                        <template #control>
-                            <a-select mode="tags" :style="{ width: '100%' }" v-model="directDomains"
-                                :dropdown-class-name="themeSwitcher.currentTheme">
-                                <a-select-option :value="p.value" :label="p.label" v-for="p in diretDomainsOptions">
-                                    <span>[[ p.label ]]</span>
-                                </a-select-option>
-                            </a-select>
-                        </template>
-                    </a-setting-list-item>
-                </a-collapse-panel>
-            </a-collapse>
-        </a-list-item>
-    </a-collapse-panel>
 </a-collapse>
 {{end}}

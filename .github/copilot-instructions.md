@@ -115,7 +115,6 @@ Uses `robfig/cron/v3` for periodic tasks:
 - Traffic monitoring: `xray_traffic_job.go`
 - CPU alerts: `check_cpu_usage.go`
 - IP tracking: `check_client_ip_job.go`
-- LDAP sync: `ldap_sync_job.go`
 
 Jobs registered in `web/web.go` during server initialization
 
