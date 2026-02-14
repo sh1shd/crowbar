@@ -56,13 +56,6 @@ The main.go accepts flags for admin tasks:
 - Seeders: Use `HistoryOfSeeders` to prevent re-running migrations
 - Default credentials: admin/admin (hashed with bcrypt)
 
-### Telegram Bot Development
-- Bot instance in `web/service/tgbot.go` (3700+ lines)
-- Uses `telego` library with long polling
-- **Critical Pattern**: Must call `service.StopBot()` before any server restart to prevent 409 bot conflicts
-- Bot handlers use `telegohandler.BotHandler` for routing
-- i18n via embedded `i18nFS` passed to bot startup
-
 ## Code Conventions
 
 ### Service Layer Pattern
