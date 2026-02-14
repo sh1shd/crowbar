@@ -112,69 +112,8 @@ type ServerService struct {
 	hasLastCPUSample   bool
 	hasNativeCPUSample bool
 	emaCPU             float64
-	cpuHistory         []CPUSample
 	cachedCpuSpeedMhz  float64
 	lastCpuInfoAttempt time.Time
-}
-
-// AggregateCpuHistory returns up to maxPoints averaged buckets of size bucketSeconds over recent data.
-func (s *ServerService) AggregateCpuHistory(bucketSeconds int, maxPoints int) []map[string]any {
-	if bucketSeconds <= 0 || maxPoints <= 0 {
-		return nil
-	}
-	cutoff := time.Now().Add(-time.Duration(bucketSeconds*maxPoints) * time.Second).Unix()
-	s.mu.Lock()
-	// find start index (history sorted ascending)
-	hist := s.cpuHistory
-	// binary-ish scan (simple linear from end since size capped ~10800 is fine)
-	startIdx := 0
-	for i := len(hist) - 1; i >= 0; i-- {
-		if hist[i].T < cutoff {
-			startIdx = i + 1
-			break
-		}
-	}
-	if startIdx >= len(hist) {
-		s.mu.Unlock()
-		return []map[string]any{}
-	}
-	slice := hist[startIdx:]
-	// copy for unlock
-	tmp := make([]CPUSample, len(slice))
-	copy(tmp, slice)
-	s.mu.Unlock()
-	if len(tmp) == 0 {
-		return []map[string]any{}
-	}
-	var out []map[string]any
-	var acc []float64
-	bSize := int64(bucketSeconds)
-	curBucket := (tmp[0].T / bSize) * bSize
-	flush := func(ts int64) {
-		if len(acc) == 0 {
-			return
-		}
-		sum := 0.0
-		for _, v := range acc {
-			sum += v
-		}
-		avg := sum / float64(len(acc))
-		out = append(out, map[string]any{"t": ts, "cpu": avg})
-		acc = acc[:0]
-	}
-	for _, p := range tmp {
-		b := (p.T / bSize) * bSize
-		if b != curBucket {
-			flush(curBucket)
-			curBucket = b
-		}
-		acc = append(acc, p.Cpu)
-	}
-	flush(curBucket)
-	if len(out) > maxPoints {
-		out = out[len(out)-maxPoints:]
-	}
-	return out
 }
 
 // CPUSample single CPU utilization sample
@@ -415,21 +354,6 @@ func (s *ServerService) GetStatus(lastStatus *Status) *Status {
 	}
 
 	return status
-}
-
-func (s *ServerService) AppendCpuSample(t time.Time, v float64) {
-	const capacity = 9000 // ~5 hours @ 2s interval
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	p := CPUSample{T: t.Unix(), Cpu: v}
-	if n := len(s.cpuHistory); n > 0 && s.cpuHistory[n-1].T == p.T {
-		s.cpuHistory[n-1] = p
-	} else {
-		s.cpuHistory = append(s.cpuHistory, p)
-	}
-	if len(s.cpuHistory) > capacity {
-		s.cpuHistory = s.cpuHistory[len(s.cpuHistory)-capacity:]
-	}
 }
 
 func (s *ServerService) sampleCPUUtilization() (float64, error) {
