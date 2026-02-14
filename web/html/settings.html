@@ -122,7 +122,6 @@
       inboundOptions: [],
       remarkModels: { i: 'Inbound', e: 'Email', o: 'Other' },
       remarkSeparators: [' ', '-', '_', '@', ':', '~', '|', ',', '.', '/'],
-      datepickerList: [{ name: 'Gregorian (Standard)', value: 'gregorian' }, { name: 'Jalalian (شمسی)', value: 'jalalian' }],
       remarkSample: '',
       defaultFragment: {
         tag: "fragment",
@@ -175,12 +174,6 @@
       set remarkSeparator(value) {
         this.allSetting.remarkModel = value + this.allSetting.remarkModel.substring(1);
         this.changeRemarkSample();
-      },
-      get datepicker() {
-        return this.allSetting.datepicker ? this.allSetting.datepicker : 'gregorian';
-      },
-      set datepicker(value) {
-        this.allSetting.datepicker = value;
       },
       changeRemarkSample() {
         sample = []

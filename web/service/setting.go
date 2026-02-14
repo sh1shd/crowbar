@@ -65,7 +65,6 @@ var defaultValueMap = map[string]string{
 	"subJsonNoises":               "",
 	"subJsonMux":                  "",
 	"subJsonRules":                "",
-	"datepicker":                  "gregorian",
 	"warp":                        "",
 	"externalTrafficInformEnable": "false",
 	"externalTrafficInformURI":    "",
@@ -475,10 +474,6 @@ func (s *SettingService) GetSubJsonRules() (string, error) {
 	return s.getString("subJsonRules")
 }
 
-func (s *SettingService) GetDatepicker() (string, error) {
-	return s.getString("datepicker")
-}
-
 func (s *SettingService) GetWarp() (string, error) {
 	return s.getString("warp")
 }
@@ -577,7 +572,6 @@ func (s *SettingService) GetDefaultSettings(host string) (any, error) {
 		"subURI":        func() (any, error) { return s.GetSubURI() },
 		"subJsonURI":    func() (any, error) { return s.GetSubJsonURI() },
 		"remarkModel":   func() (any, error) { return s.GetRemarkModel() },
-		"datepicker":    func() (any, error) { return s.GetDatepicker() },
 		"ipLimitEnable": func() (any, error) { return s.GetIpLimitEnable() },
 	}
 
