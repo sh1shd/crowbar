@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-	"strings"
 	"syscall"
 	"time"
 
@@ -20,7 +19,7 @@ import (
 
 // GetBinaryName returns the Xray binary filename for the current OS and architecture.
 func GetBinaryName() string {
-	return fmt.Sprintf("xray-%s-%s", runtime.GOOS, runtime.GOARCH)
+	return fmt.Sprintf("xray-linux-%s", runtime.GOARCH)
 }
 
 // GetBinaryPath returns the full path to the Xray binary executable.
@@ -272,15 +271,6 @@ func (p *process) Start() (err error) {
 	go func() {
 		err := cmd.Run()
 		if err != nil {
-			// On Windows, killing the process results in "exit status 1" which isn't an error for us
-			if runtime.GOOS == "windows" {
-				errStr := strings.ToLower(err.Error())
-				if strings.Contains(errStr, "exit status 1") {
-					// Suppress noisy log on graceful stop
-					p.exitErr = err
-					return
-				}
-			}
 			logger.Error("Failure in running xray-core:", err)
 			p.exitErr = err
 		}
@@ -308,11 +298,7 @@ func (p *process) Stop() error {
 		}
 	}
 
-	if runtime.GOOS == "windows" {
-		return p.cmd.Process.Kill()
-	} else {
-		return p.cmd.Process.Signal(syscall.SIGTERM)
-	}
+	return p.cmd.Process.Signal(syscall.SIGTERM)
 }
 
 // writeCrashReport writes a crash report to the binary folder with a timestamped filename.

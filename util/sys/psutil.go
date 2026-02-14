@@ -1,5 +1,5 @@
 // Package sys provides system utilities for monitoring network connections and CPU usage.
-// Platform-specific implementations are provided for Windows, Linux, and macOS.
+// Platform-specific implementations are provided for Linux.
 package sys
 
 import (

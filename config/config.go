@@ -8,7 +8,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
@@ -89,9 +88,6 @@ func GetDBFolderPath() string {
 	if dbFolderPath != "" {
 		return dbFolderPath
 	}
-	if runtime.GOOS == "windows" {
-		return getBaseDir()
-	}
 	return "/etc/x-ui"
 }
 
@@ -105,9 +101,6 @@ func GetLogFolder() string {
 	logFolderPath := os.Getenv("XUI_LOG_FOLDER")
 	if logFolderPath != "" {
 		return logFolderPath
-	}
-	if runtime.GOOS == "windows" {
-		return filepath.Join(".", "log")
 	}
 	return "/var/log/x-ui"
 }
@@ -134,9 +127,6 @@ func copyFile(src, dst string) error {
 }
 
 func init() {
-	if runtime.GOOS != "windows" {
-		return
-	}
 	if os.Getenv("XUI_DB_FOLDER") != "" {
 		return
 	}
