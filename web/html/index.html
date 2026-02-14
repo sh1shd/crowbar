@@ -156,20 +156,10 @@
                 </a-card>
               </a-col>
               <a-col :sm="24" :lg="12">
-                <a-card title='3X-UI' hoverable>
-                  <a rel="noopener" href="https://github.com/MHSanaei/3x-ui/releases" target="_blank">
+                <a-card title='Crowbar' hoverable>
+                  <a rel="noopener" href="https://github.com/sh1shd/crowbar" target="_blank">
                     <a-tag color="green">
                       <span>v{{ .cur_ver }}</span>
-                    </a-tag>
-                  </a>
-                  <a rel="noopener" href="https://t.me/XrayUI" target="_blank">
-                    <a-tag color="green">
-                      <span>@XrayUI</span>
-                    </a-tag>
-                  </a>
-                  <a rel="noopener" href="https://github.com/MHSanaei/3x-ui/wiki" target="_blank">
-                    <a-tag color="purple">
-                      <span>{{ i18n "pages.index.documentation" }}</span>
                     </a-tag>
                   </a>
                 </a-card>
@@ -780,7 +770,7 @@
           if (message.startsWith("XRAY:"))
             message = "<b>XRAY: </b>" + message.substring(5);
           else
-            message = "<b>X-UI: </b>" + message;
+            message = "<b>Crowbar: </b>" + message;
         }
 
         formattedLogs += message ? ' - ' + message : '';
