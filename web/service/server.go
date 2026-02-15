@@ -31,7 +31,6 @@ import (
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/disk"
 	"github.com/shirou/gopsutil/v4/host"
-	"github.com/shirou/gopsutil/v4/load"
 	"github.com/shirou/gopsutil/v4/mem"
 	"github.com/shirou/gopsutil/v4/net"
 )
@@ -52,16 +51,10 @@ type Status struct {
 	T           time.Time `json:"-"`
 	Cpu         float64   `json:"cpu"`
 	CpuCores    int       `json:"cpuCores"`
-	LogicalPro  int       `json:"logicalPro"`
-	CpuSpeedMhz float64   `json:"cpuSpeedMhz"`
 	Mem         struct {
 		Current uint64 `json:"current"`
 		Total   uint64 `json:"total"`
 	} `json:"mem"`
-	Swap struct {
-		Current uint64 `json:"current"`
-		Total   uint64 `json:"total"`
-	} `json:"swap"`
 	Disk struct {
 		Current uint64 `json:"current"`
 		Total   uint64 `json:"total"`
@@ -72,7 +65,6 @@ type Status struct {
 		Version  string       `json:"version"`
 	} `json:"xray"`
 	Uptime   uint64    `json:"uptime"`
-	Loads    []float64 `json:"loads"`
 	TcpCount int       `json:"tcpCount"`
 	UdpCount int       `json:"udpCount"`
 	NetIO    struct {
@@ -88,8 +80,6 @@ type Status struct {
 		IPv6 string `json:"ipv6"`
 	} `json:"publicIP"`
 	AppStats struct {
-		Threads uint32 `json:"threads"`
-		Mem     uint64 `json:"mem"`
 		Uptime  uint64 `json:"uptime"`
 	} `json:"appStats"`
 }
@@ -183,34 +173,6 @@ func (s *ServerService) GetStatus(lastStatus *Status) *Status {
 		logger.Warning("get cpu cores count failed:", err)
 	}
 
-	status.LogicalPro = runtime.NumCPU()
-
-	if status.CpuSpeedMhz = s.cachedCpuSpeedMhz; s.cachedCpuSpeedMhz == 0 && time.Since(s.lastCpuInfoAttempt) > 5*time.Minute {
-		s.lastCpuInfoAttempt = time.Now()
-		done := make(chan struct{})
-		go func() {
-			defer close(done)
-			cpuInfos, err := cpu.Info()
-			if err != nil {
-				logger.Warning("get cpu info failed:", err)
-				return
-			}
-			if len(cpuInfos) > 0 {
-				s.cachedCpuSpeedMhz = cpuInfos[0].Mhz
-				status.CpuSpeedMhz = s.cachedCpuSpeedMhz
-			} else {
-				logger.Warning("could not find cpu info")
-			}
-		}()
-		select {
-		case <-done:
-		case <-time.After(1500 * time.Millisecond):
-			logger.Warning("cpu info query timed out; will retry later")
-		}
-	} else if s.cachedCpuSpeedMhz != 0 {
-		status.CpuSpeedMhz = s.cachedCpuSpeedMhz
-	}
-
 	// Uptime
 	upTime, err := host.Uptime()
 	if err != nil {
@@ -228,14 +190,6 @@ func (s *ServerService) GetStatus(lastStatus *Status) *Status {
 		status.Mem.Total = memInfo.Total
 	}
 
-	swapInfo, err := mem.SwapMemory()
-	if err != nil {
-		logger.Warning("get swap memory failed:", err)
-	} else {
-		status.Swap.Current = swapInfo.Used
-		status.Swap.Total = swapInfo.Total
-	}
-
 	// Disk stats
 	diskInfo, err := disk.Usage("/")
 	if err != nil {
@@ -243,14 +197,6 @@ func (s *ServerService) GetStatus(lastStatus *Status) *Status {
 	} else {
 		status.Disk.Current = diskInfo.Used
 		status.Disk.Total = diskInfo.Total
-	}
-
-	// Load averages
-	avgState, err := load.Avg()
-	if err != nil {
-		logger.Warning("get load avg failed:", err)
-	} else {
-		status.Loads = []float64{avgState.Load1, avgState.Load5, avgState.Load15}
 	}
 
 	// Network stats
@@ -343,10 +289,6 @@ func (s *ServerService) GetStatus(lastStatus *Status) *Status {
 	status.Xray.Version = s.xrayService.GetXrayVersion()
 
 	// Application stats
-	var rtm runtime.MemStats
-	runtime.ReadMemStats(&rtm)
-	status.AppStats.Mem = rtm.Sys
-	status.AppStats.Threads = uint32(runtime.NumGoroutine())
 	if p != nil && p.IsRunning() {
 		status.AppStats.Uptime = p.GetUptime()
 	} else {
