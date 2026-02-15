@@ -3,7 +3,6 @@ package controller
 import (
 	"net/http"
 
-	"github.com/mhsanaei/3x-ui/v2/web/service"
 	"github.com/mhsanaei/3x-ui/v2/web/session"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +13,6 @@ type APIController struct {
 	BaseController
 	inboundController *InboundController
 	serverController  *ServerController
-	Tgbot             service.Tgbot
 }
 
 // NewAPIController creates a new APIController instance and initializes its routes.
@@ -47,12 +45,4 @@ func (a *APIController) initRouter(g *gin.RouterGroup) {
 	// Server API
 	server := api.Group("/server")
 	a.serverController = NewServerController(server)
-
-	// Extra routes
-	api.GET("/backuptotgbot", a.BackuptoTgbot)
-}
-
-// BackuptoTgbot sends a backup of the panel data to Telegram bot admins.
-func (a *APIController) BackuptoTgbot(c *gin.Context) {
-	a.Tgbot.SendBackupToAdmins()
 }

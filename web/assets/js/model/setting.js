@@ -12,17 +12,6 @@ class AllSetting {
         this.expireDiff = 0;
         this.trafficDiff = 0;
         this.remarkModel = "-ieo";
-        this.datepicker = "gregorian";
-        this.tgBotEnable = false;
-        this.tgBotToken = "";
-        this.tgBotProxy = "";
-        this.tgBotAPIServer = "";
-        this.tgBotChatId = "";
-        this.tgRunTime = "@daily";
-        this.tgBotBackup = false;
-        this.tgBotLoginNotify = true;
-        this.tgCpu = 80;
-        this.tgLang = "en-US";
         this.twoFactorEnable = false;
         this.twoFactorToken = "";
         this.xrayTemplateConfig = "";
@@ -54,28 +43,6 @@ class AllSetting {
         this.subJsonRules = "";
 
         this.timeLocation = "Local";
-
-        // LDAP settings
-        this.ldapEnable = false;
-        this.ldapHost = "";
-        this.ldapPort = 389;
-        this.ldapUseTLS = false;
-        this.ldapBindDN = "";
-        this.ldapPassword = "";
-        this.ldapBaseDN = "";
-        this.ldapUserFilter = "(objectClass=person)";
-        this.ldapUserAttr = "mail";
-        this.ldapVlessField = "vless_enabled";
-        this.ldapSyncCron = "@every 1m";
-        this.ldapFlagField = "";
-        this.ldapTruthyValues = "true,1,yes,on";
-        this.ldapInvertFlag = false;
-        this.ldapInboundTags = "";
-        this.ldapAutoCreate = false;
-        this.ldapAutoDelete = false;
-        this.ldapDefaultTotalGB = 0;
-        this.ldapDefaultExpiryDays = 0;
-        this.ldapDefaultLimitIP = 0;
 
         if (data == null) {
             return

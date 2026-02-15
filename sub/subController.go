@@ -130,7 +130,6 @@ func (a *SUBController) subs(c *gin.Context) {
 				"remained":     page.Remained,
 				"expire":       page.Expire,
 				"lastOnline":   page.LastOnline,
-				"datepicker":   page.Datepicker,
 				"downloadByte": page.DownloadByte,
 				"uploadByte":   page.UploadByte,
 				"totalByte":    page.TotalByte,

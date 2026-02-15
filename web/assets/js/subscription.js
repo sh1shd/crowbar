@@ -19,7 +19,6 @@
     downloadByte: parseInt(el.getAttribute('data-downloadbyte') || '0', 10) || 0,
     uploadByte: parseInt(el.getAttribute('data-uploadbyte') || '0', 10) || 0,
     totalByte: parseInt(el.getAttribute('data-totalbyte') || '0', 10) || 0,
-    datepicker: el.getAttribute('data-datepicker') || 'gregorian',
   };
 
   // Normalize lastOnline to milliseconds if it looks like seconds

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
-	"strconv"
 	"time"
 
 	"github.com/mhsanaei/3x-ui/v2/web/global"
@@ -41,7 +40,6 @@ func NewServerController(g *gin.RouterGroup) *ServerController {
 func (a *ServerController) initRouter(g *gin.RouterGroup) {
 
 	g.GET("/status", a.status)
-	g.GET("/cpuHistory/:bucket", a.getCpuHistoryBucket)
 	g.GET("/getXrayVersion", a.getXrayVersion)
 	g.GET("/getConfigJson", a.getConfigJson)
 	g.GET("/getDb", a.getDb)
@@ -67,7 +65,6 @@ func (a *ServerController) refreshStatus() {
 	a.lastStatus = a.serverService.GetStatus(a.lastStatus)
 	// collect cpu history when status is fresh
 	if a.lastStatus != nil {
-		a.serverService.AppendCpuSample(time.Now(), a.lastStatus.Cpu)
 		// Broadcast status update via WebSocket
 		websocket.BroadcastStatus(a.lastStatus)
 	}
@@ -86,30 +83,6 @@ func (a *ServerController) startTask() {
 
 // status returns the current server status information.
 func (a *ServerController) status(c *gin.Context) { jsonObj(c, a.lastStatus, nil) }
-
-// getCpuHistoryBucket retrieves aggregated CPU usage history based on the specified time bucket.
-func (a *ServerController) getCpuHistoryBucket(c *gin.Context) {
-	bucketStr := c.Param("bucket")
-	bucket, err := strconv.Atoi(bucketStr)
-	if err != nil || bucket <= 0 {
-		jsonMsg(c, "invalid bucket", fmt.Errorf("bad bucket"))
-		return
-	}
-	allowed := map[int]bool{
-		2:   true, // Real-time view
-		30:  true, // 30s intervals
-		60:  true, // 1m intervals
-		120: true, // 2m intervals
-		180: true, // 3m intervals
-		300: true, // 5m intervals
-	}
-	if !allowed[bucket] {
-		jsonMsg(c, "invalid bucket", fmt.Errorf("unsupported bucket"))
-		return
-	}
-	points := a.serverService.AggregateCpuHistory(bucket, 60)
-	jsonObj(c, points, nil)
-}
 
 // getXrayVersion retrieves available Xray versions, with caching for 1 minute.
 func (a *ServerController) getXrayVersion(c *gin.Context) {

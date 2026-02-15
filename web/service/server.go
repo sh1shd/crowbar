@@ -112,69 +112,8 @@ type ServerService struct {
 	hasLastCPUSample   bool
 	hasNativeCPUSample bool
 	emaCPU             float64
-	cpuHistory         []CPUSample
 	cachedCpuSpeedMhz  float64
 	lastCpuInfoAttempt time.Time
-}
-
-// AggregateCpuHistory returns up to maxPoints averaged buckets of size bucketSeconds over recent data.
-func (s *ServerService) AggregateCpuHistory(bucketSeconds int, maxPoints int) []map[string]any {
-	if bucketSeconds <= 0 || maxPoints <= 0 {
-		return nil
-	}
-	cutoff := time.Now().Add(-time.Duration(bucketSeconds*maxPoints) * time.Second).Unix()
-	s.mu.Lock()
-	// find start index (history sorted ascending)
-	hist := s.cpuHistory
-	// binary-ish scan (simple linear from end since size capped ~10800 is fine)
-	startIdx := 0
-	for i := len(hist) - 1; i >= 0; i-- {
-		if hist[i].T < cutoff {
-			startIdx = i + 1
-			break
-		}
-	}
-	if startIdx >= len(hist) {
-		s.mu.Unlock()
-		return []map[string]any{}
-	}
-	slice := hist[startIdx:]
-	// copy for unlock
-	tmp := make([]CPUSample, len(slice))
-	copy(tmp, slice)
-	s.mu.Unlock()
-	if len(tmp) == 0 {
-		return []map[string]any{}
-	}
-	var out []map[string]any
-	var acc []float64
-	bSize := int64(bucketSeconds)
-	curBucket := (tmp[0].T / bSize) * bSize
-	flush := func(ts int64) {
-		if len(acc) == 0 {
-			return
-		}
-		sum := 0.0
-		for _, v := range acc {
-			sum += v
-		}
-		avg := sum / float64(len(acc))
-		out = append(out, map[string]any{"t": ts, "cpu": avg})
-		acc = acc[:0]
-	}
-	for _, p := range tmp {
-		b := (p.T / bSize) * bSize
-		if b != curBucket {
-			flush(curBucket)
-			curBucket = b
-		}
-		acc = append(acc, p.Cpu)
-	}
-	flush(curBucket)
-	if len(out) > maxPoints {
-		out = out[len(out)-maxPoints:]
-	}
-	return out
 }
 
 // CPUSample single CPU utilization sample
@@ -417,23 +356,8 @@ func (s *ServerService) GetStatus(lastStatus *Status) *Status {
 	return status
 }
 
-func (s *ServerService) AppendCpuSample(t time.Time, v float64) {
-	const capacity = 9000 // ~5 hours @ 2s interval
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	p := CPUSample{T: t.Unix(), Cpu: v}
-	if n := len(s.cpuHistory); n > 0 && s.cpuHistory[n-1].T == p.T {
-		s.cpuHistory[n-1] = p
-	} else {
-		s.cpuHistory = append(s.cpuHistory, p)
-	}
-	if len(s.cpuHistory) > capacity {
-		s.cpuHistory = s.cpuHistory[len(s.cpuHistory)-capacity:]
-	}
-}
-
 func (s *ServerService) sampleCPUUtilization() (float64, error) {
-	// Try native platform-specific CPU implementation first (Windows, Linux, macOS)
+	// Try native platform-specific CPU implementation first
 	if pct, err := sys.CPUPercentRaw(); err == nil {
 		s.mu.Lock()
 		// First call to native method returns 0 (initializes baseline)
@@ -593,15 +517,7 @@ func (s *ServerService) RestartXrayService() error {
 }
 
 func (s *ServerService) downloadXRay(version string) (string, error) {
-	osName := runtime.GOOS
 	arch := runtime.GOARCH
-
-	switch osName {
-	case "darwin":
-		osName = "macos"
-	case "windows":
-		osName = "windows"
-	}
 
 	switch arch {
 	case "amd64":
@@ -620,7 +536,7 @@ func (s *ServerService) downloadXRay(version string) (string, error) {
 		arch = "s390x"
 	}
 
-	fileName := fmt.Sprintf("Xray-%s-%s.zip", osName, arch)
+	fileName := fmt.Sprintf("Xray-linux-%s.zip", arch)
 	url := fmt.Sprintf("https://github.com/XTLS/Xray-core/releases/download/%s/%s", version, fileName)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -690,12 +606,7 @@ func (s *ServerService) UpdateXray(version string) error {
 	}
 
 	// 4. Extract correct binary
-	if runtime.GOOS == "windows" {
-		targetBinary := filepath.Join("bin", "xray-windows-amd64.exe")
-		err = copyZipFile("xray.exe", targetBinary)
-	} else {
-		err = copyZipFile("xray", xray.GetBinaryPath())
-	}
+	err = copyZipFile("xray", xray.GetBinaryPath())
 	if err != nil {
 		return err
 	}
@@ -714,11 +625,6 @@ func (s *ServerService) GetLogs(count string, level string, syslog string) []str
 	var lines []string
 
 	if syslog == "true" {
-		// Check if running on Windows - journalctl is not available
-		if runtime.GOOS == "windows" {
-			return []string{"Syslog is not supported on Windows. Please use application logs instead by unchecking the 'Syslog' option."}
-		}
-
 		// Validate and sanitize count parameter
 		countInt, err := strconv.Atoi(count)
 		if err != nil || countInt < 1 || countInt > 10000 {
@@ -1061,12 +967,8 @@ func (s *ServerService) UpdateGeofile(fileName string) error {
 		FileName string
 	}
 	geofileAllowlist := map[string]geofileEntry{
-		"geoip.dat":      {"https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat", "geoip.dat"},
-		"geosite.dat":    {"https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat", "geosite.dat"},
-		"geoip_IR.dat":   {"https://github.com/chocolate4u/Iran-v2ray-rules/releases/latest/download/geoip.dat", "geoip_IR.dat"},
-		"geosite_IR.dat": {"https://github.com/chocolate4u/Iran-v2ray-rules/releases/latest/download/geosite.dat", "geosite_IR.dat"},
-		"geoip_RU.dat":   {"https://github.com/runetfreedom/russia-v2ray-rules-dat/releases/latest/download/geoip.dat", "geoip_RU.dat"},
-		"geosite_RU.dat": {"https://github.com/runetfreedom/russia-v2ray-rules-dat/releases/latest/download/geosite.dat", "geosite_RU.dat"},
+		"geoip.dat":      {"https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geoip.dat", "geoip.dat"},
+		"geosite.dat":    {"https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat", "geosite.dat"},
 	}
 
 	// Strict allowlist check to avoid writing uncontrolled files

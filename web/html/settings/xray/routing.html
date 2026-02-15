@@ -1,6 +1,9 @@
 {{define "settings/xray/routing"}}
 <a-space direction="vertical" size="middle">
-    <a-button type="primary" icon="plus" @click="addRule">{{ i18n "pages.xray.rules.add" }}</a-button>
+    <a-space direction="horizontal" size="small">
+        <a-button type="primary" icon="plus" @click="addRule">{{ i18n "pages.xray.rules.add" }}</a-button>
+        <a-button icon="cloud" @click="showWarp()">WARP</a-button>
+    </a-space>
     <a-table-sortable :columns="isMobile ? rulesMobileColumns : rulesColumns" bordered :row-key="r => r.key"
         :data-source="routingRuleData" :scroll="isMobile ? {} : { x: 1000 }" :pagination="false" :indent-size="0"
         v-on:onSort="replaceRule">
