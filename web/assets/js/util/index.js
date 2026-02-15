@@ -739,7 +739,7 @@ class LanguageManager {
                 lang = window.navigator.language || window.navigator.userLanguage;
 
                 const simularLangs = [
-                    ["ru", this.supportedLanguages[6].value],
+                    ["ru", this.supportedLanguages[1].value],
                 ]
 
                 simularLangs.forEach((pair) => {
