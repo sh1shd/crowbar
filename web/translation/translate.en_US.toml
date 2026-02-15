@@ -112,12 +112,8 @@
 [pages.index]
 "title" = "Overview"
 "cpu" = "CPU"
-"logicalProcessors" = "Logical Processors"
-"frequency" = "Frequency"
-"swap" = "Swap"
 "storage" = "Storage"
 "memory" = "RAM"
-"threads" = "Threads"
 "xrayStatus" = "Xray"
 "stopXray" = "Stop"
 "restartXray" = "Restart"

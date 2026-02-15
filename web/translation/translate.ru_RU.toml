@@ -112,12 +112,8 @@
 [pages.index]
 "title" = "Дашборд"
 "cpu" = "ЦП"
-"logicalProcessors" = "Логические процессоры"
-"frequency" = "Частота"
-"swap" = "Файл подкачки"
 "storage" = "Диск"
 "memory" = "ОЗУ"
-"threads" = "Потоки"
 "xrayStatus" = "Xray"
 "stopXray" = "Остановить"
 "restartXray" = "Перезапустить"
