@@ -9,9 +9,12 @@ RUN apk --no-cache --update add \
   build-base \
   gcc \
   curl \
-  unzip
+  unzip \
+  git
 
 COPY . .
+
+RUN go mod download
 
 ENV CGO_ENABLED=1
 ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
