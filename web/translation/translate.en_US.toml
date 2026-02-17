@@ -400,6 +400,18 @@
 "information" = "Information"
 "language" = "Language"
 
+[pages.settings.customHeaders]
+"headerName" = "Header Name"
+"headerValue" = "Header Value"
+"headerOperation" = "Operation"
+"addHeaderTitle" = "Add custom header"
+"editHeaderTitle" = "Edit custom header"
+"errorEmptyHeaderName" = "Header name cannot be empty"
+"errorEmptyHeaderValue" = "Header value cannot be empty"
+"subscriptionHeaders" = "Subscription Headers"
+"subscriptionHeadersDesc" = "Custom HTTP headers for subscription responses"
+"addHeader" = "Add header"
+
 [pages.xray]
 "title" = "Xray Configs"
 "save" = "Save"

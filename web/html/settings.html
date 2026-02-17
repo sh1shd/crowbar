@@ -99,6 +99,7 @@
 {{template "component/aThemeSwitch" .}}
 {{template "component/aSettingListItem" .}}
 {{template "modals/twoFactorModal"}}
+{{template "modals/customHeadersModal"}}
 <script>
   const app = new Vue({
     delimiters: ['[[', ']]'],
@@ -159,6 +160,26 @@
         xudpConcurrency: 16,
         xudpProxyUDP443: "reject"
       },
+      showHeaderModal: false,
+      customHeaders: [],
+      headerColumns: [
+        {
+          title: '{{ i18n "pages.settings.customHeaders.headerName" }}',
+          dataIndex: 'name',
+          key: 'name',
+          width: '50%'
+        },
+        {
+          title: '{{ i18n "pages.settings.customHeaders.headerValue" }}',
+          dataIndex: 'value',
+          key: 'value',
+          width: '50%'
+        },
+        {
+          key: 'operation',
+          scopedSlots: { customRender: 'operation' },
+        }
+      ],
       get remarkModel() {
         rm = this.allSetting.remarkModel;
         return rm.length > 1 ? rm.substring(1).split('') : [];
@@ -221,7 +242,15 @@
           this.oldAllSetting = new AllSetting(msg.obj);
           this.allSetting = new AllSetting(msg.obj);
           app.changeRemarkSample();
+          this.loadCustomHeaders();
           this.saveBtnDisable = true;
+        }
+      },
+      loadCustomHeaders() {
+        try {
+          this.customHeaders = JSON.parse(this.allSetting.subCustomHeaders || '[]');
+        } catch (e) {
+          this.customHeaders = [];
         }
       },
       async loadInboundTags() {
@@ -383,6 +412,37 @@
         const updatedNoises = [...this.noisesArray];
         updatedNoises[index] = { ...updatedNoises[index], applyTo: value };
         this.noisesArray = updatedNoises;
+      },
+      editHeader(index) {
+        headerModal.show('{{ i18n "pages.settings.customHeaders.editHeaderTitle" }}', index);
+      },
+      deleteHeader(index) {
+        this.customHeaders.splice(index, 1);
+        this.allSetting.subCustomHeaders = JSON.stringify(this.customHeaders);
+      },
+      showAddHeaderModal() {
+        headerModal.show('{{ i18n "pages.settings.customHeaders.addHeaderTitle" }}', -1);
+      },
+      saveHeader() {
+        if (!headerModal.form.headerName.trim()) {
+          this.$message.error('{{ i18n "pages.settings.customHeaders.errorEmptyHeaderName" }}');
+          return;
+        }
+        if (!headerModal.form.headerValue.trim()) {
+          this.$message.error('{{ i18n "pages.settings.customHeaders.errorEmptyHeaderValue" }}');
+          return;
+        }
+        if (headerModal.editingIndex >= 0) {
+          this.customHeaders[headerModal.editingIndex].name = headerModal.form.headerName;
+          this.customHeaders[headerModal.editingIndex].value = headerModal.form.headerValue;
+        } else {
+          this.customHeaders.push({
+            name: headerModal.form.headerName,
+            value: headerModal.form.headerValue
+          });
+        }
+        this.allSetting.subCustomHeaders = JSON.stringify(this.customHeaders);
+        headerModal.close();
       },
     },
     computed: {

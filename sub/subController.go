@@ -2,8 +2,8 @@ package sub
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/mhsanaei/3x-ui/v2/config"
@@ -13,17 +13,13 @@ import (
 
 // SUBController handles HTTP requests for subscription links and JSON configurations.
 type SUBController struct {
-	subTitle         string
-	subSupportUrl    string
-	subProfileUrl    string
-	subAnnounce      string
-	subEnableRouting bool
-	subRoutingRules  string
-	subPath          string
-	subJsonPath      string
-	jsonEnabled      bool
-	subEncrypt       bool
-	updateInterval   string
+	subTitle        string
+	subCustomHeaders string
+	subPath         string
+	subJsonPath     string
+	jsonEnabled     bool
+	subEncrypt      bool
+	updateInterval  string
 
 	subService     *SubService
 	subJsonService *SubJsonService
@@ -44,20 +40,12 @@ func NewSUBController(
 	jsonMux string,
 	jsonRules string,
 	subTitle string,
-	subSupportUrl string,
-	subProfileUrl string,
-	subAnnounce string,
-	subEnableRouting bool,
-	subRoutingRules string,
+	subCustomHeaders string,
 ) *SUBController {
 	sub := NewSubService(showInfo, rModel)
 	a := &SUBController{
 		subTitle:         subTitle,
-		subSupportUrl:    subSupportUrl,
-		subProfileUrl:    subProfileUrl,
-		subAnnounce:      subAnnounce,
-		subEnableRouting: subEnableRouting,
-		subRoutingRules:  subRoutingRules,
+		subCustomHeaders: subCustomHeaders,
 		subPath:          subPath,
 		subJsonPath:      jsonPath,
 		jsonEnabled:      jsonEnabled,
@@ -142,11 +130,7 @@ func (a *SUBController) subs(c *gin.Context) {
 
 		// Add headers
 		header := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d", traffic.Up, traffic.Down, traffic.Total, traffic.ExpiryTime/1000)
-		profileUrl := a.subProfileUrl  
-		if profileUrl == "" {
-			profileUrl = fmt.Sprintf("%s://%s%s", scheme, hostWithPort, c.Request.RequestURI)
-		}
-		a.ApplyCommonHeaders(c, header, a.updateInterval, a.subTitle, a.subSupportUrl, profileUrl, a.subAnnounce, a.subEnableRouting, a.subRoutingRules)  
+		a.ApplyCommonHeaders(c, header, a.updateInterval, a.subTitle, a.subCustomHeaders)  
 
 		if a.subEncrypt {
 			c.String(200, base64.StdEncoding.EncodeToString([]byte(result)))
@@ -159,54 +143,45 @@ func (a *SUBController) subs(c *gin.Context) {
 // subJsons handles HTTP requests for JSON subscription configurations.
 func (a *SUBController) subJsons(c *gin.Context) {
 	subId := c.Param("subid")
-	scheme, host, hostWithPort, _ := a.subService.ResolveRequest(c)
+	_, host, _, _ := a.subService.ResolveRequest(c)
 	jsonSub, header, err := a.subJsonService.GetJson(subId, host)
 	if err != nil || len(jsonSub) == 0 {
 		c.String(400, "Error!")
 	} else {
 		// Add headers
-		profileUrl := a.subProfileUrl
-		if profileUrl == "" {
-			profileUrl = fmt.Sprintf("%s://%s%s", scheme, hostWithPort, c.Request.RequestURI)
-		}
-		a.ApplyCommonHeaders(c, header, a.updateInterval, a.subTitle, a.subSupportUrl, profileUrl, a.subAnnounce, a.subEnableRouting, a.subRoutingRules)
+		a.ApplyCommonHeaders(c, header, a.updateInterval, a.subTitle, a.subCustomHeaders)
 
 		c.String(200, jsonSub)
 	}
 }
 
-// ApplyCommonHeaders sets common HTTP headers for subscription responses including user info, update interval, and profile title.
+// ApplyCommonHeaders sets common HTTP headers for subscription responses including user info, update interval, and custom headers.
 func (a *SUBController) ApplyCommonHeaders(
 	c *gin.Context,
 	header,
 	updateInterval,
 	profileTitle string,
-	profileSupportUrl string,
-	profileUrl string,
-	profileAnnounce string,
-	profileEnableRouting bool,
-	profileRoutingRules string,
+	customHeadersJSON string,
 ) {
 	c.Writer.Header().Set("Subscription-Userinfo", header)
 	c.Writer.Header().Set("Profile-Update-Interval", updateInterval)
 
-	//Basics
+	// Set Profile-Title header
 	if profileTitle != "" {
 		c.Writer.Header().Set("Profile-Title", "base64:"+base64.StdEncoding.EncodeToString([]byte(profileTitle)))
 	}
-	if profileSupportUrl != "" {
-		c.Writer.Header().Set("Support-Url", profileSupportUrl)
-	}
-	if profileUrl != "" {
-		c.Writer.Header().Set("Profile-Web-Page-Url", profileUrl)
-	}
-	if profileAnnounce != "" {
-		c.Writer.Header().Set("Announce", "base64:"+base64.StdEncoding.EncodeToString([]byte(profileAnnounce)))
-	}
 
-	//Advanced (Happ)
-	c.Writer.Header().Set("Routing-Enable", strconv.FormatBool(profileEnableRouting))
-	if profileRoutingRules != "" {
-		c.Writer.Header().Set("Routing", profileRoutingRules)
+	// Parse and apply custom headers
+	var customHeaders []map[string]string
+	if customHeadersJSON != "" {
+		if err := json.Unmarshal([]byte(customHeadersJSON), &customHeaders); err == nil {
+			for _, hdr := range customHeaders {
+				if name := hdr["name"]; name != "" {
+					value := hdr["value"]
+
+					c.Writer.Header().Set(name, value)
+				}
+			}
+		}
 	}
 }
