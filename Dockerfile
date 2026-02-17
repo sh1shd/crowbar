@@ -1,7 +1,7 @@
 # ========================================================
 # Stage: Builder
 # ========================================================
-FROM golang:1.26-alpine AS builder
+FROM golang:1.25-alpine AS builder
 WORKDIR /app
 ARG TARGETARCH
 
@@ -9,12 +9,9 @@ RUN apk --no-cache --update add \
   build-base \
   gcc \
   curl \
-  unzip \
-  git
+  unzip
 
 COPY . .
-
-RUN go mod download
 
 ENV CGO_ENABLED=1
 ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
