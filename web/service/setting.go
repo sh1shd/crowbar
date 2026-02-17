@@ -44,11 +44,7 @@ var defaultValueMap = map[string]string{
 	"subEnable":                   "true",
 	"subJsonEnable":               "false",
 	"subTitle":                    "",
-	"subSupportUrl":               "",
-	"subProfileUrl":               "",
-	"subAnnounce":                 "",
-	"subEnableRouting":            "true",
-	"subRoutingRules":             "",
+	"subCustomHeaders":            "[]",
 	"subListen":                   "",
 	"subPort":                     "2096",
 	"subPath":                     "/sub/",
@@ -378,24 +374,8 @@ func (s *SettingService) GetSubTitle() (string, error) {
 	return s.getString("subTitle")
 }
 
-func (s *SettingService) GetSubSupportUrl() (string, error) {
-	return s.getString("subSupportUrl")
-}
-
-func (s *SettingService) GetSubProfileUrl() (string, error) {
-	return s.getString("subProfileUrl")
-}
-
-func (s *SettingService) GetSubAnnounce() (string, error) {
-	return s.getString("subAnnounce")
-}
-
-func (s *SettingService) GetSubEnableRouting() (bool, error) {
-	return s.getBool("subEnableRouting")
-}
-
-func (s *SettingService) GetSubRoutingRules() (string, error) {
-	return s.getString("subRoutingRules")
+func (s *SettingService) GetSubCustomHeaders() (string, error) {
+	return s.getString("subCustomHeaders")
 }
 
 func (s *SettingService) GetSubListen() (string, error) {

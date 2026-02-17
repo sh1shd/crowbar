@@ -400,6 +400,18 @@
 "information" = "Информация"
 "language" = "Язык интерфейса"
 
+[pages.settings.customHeaders]
+"headerName" = "Заголовок"
+"headerValue" = "Значение"
+"headerOperation" = "Действия"
+"addHeaderTitle" = "Добавить новый заголовок"
+"editHeaderTitle" = "Редактировать заголовок"
+"errorEmptyHeaderName" = "Название заголовка не может быть пустым"
+"errorEmptyHeaderValue" = "Значение заголовка не может быть пустым"
+"subscriptionHeaders" = "Дополнительные заголовки"
+"subscriptionHeadersDesc" = "Дополнительные HTTP-заголовки для сервера подписок"
+"addHeader" = "Добавить"
+
 [pages.xray]
 "title" = "Настройки Xray"
 "save" = "Сохранить"

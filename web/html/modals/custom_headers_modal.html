@@ -1,0 +1,62 @@
+{{define "modals/customHeadersModal"}}
+<a-modal id="custom-headers-modal" v-model="headerModal.visible" :title="headerModal.title" :closable="true"
+    :class="themeSwitcher.currentTheme" ok-text='{{ i18n "pages.xray.save" }}' cancel-text='{{ i18n "cancel" }}'
+    @ok="app.saveHeader">
+    <a-form>
+        <a-form-item label='{{ i18n "pages.settings.customHeaders.headerName" }}'>
+            <a-input v-model="headerModal.form.headerName" placeholder="Profile-Title"></a-input>
+        </a-form-item>
+        <a-form-item label='{{ i18n "pages.settings.customHeaders.headerValue" }}'>
+            <a-textarea v-model="headerModal.form.headerValue" placeholder="..." :rows="4"></a-textarea>
+        </a-form-item>
+    </a-form>
+</a-modal>
+
+<style>
+#custom-headers-modal .ant-modal-body {
+    padding: 16px 24px !important;
+    padding-top: 8px !important;
+}
+</style>
+
+<script>
+    const headerModal = {
+        visible: false,
+        title: 'Add Header',
+        editingIndex: -1,
+        form: {
+            headerName: '',
+            headerValue: ''
+        },
+        show: function (title = 'Add Header', index = -1) {
+            this.title = title;
+            this.editingIndex = index;
+            if (index >= 0) {
+                const headers = JSON.parse(app.allSetting.subCustomHeaders || '[]');
+                if (headers[index]) {
+                    this.form.headerName = headers[index].name;
+                    this.form.headerValue = headers[index].value;
+                }
+            } else {
+                this.form.headerName = '';
+                this.form.headerValue = '';
+            }
+            this.visible = true;
+        },
+        close: function () {
+            this.visible = false;
+            this.form.headerName = '';
+            this.form.headerValue = '';
+            this.editingIndex = -1;
+        }
+    };
+
+    const customHeadersModalApp = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#custom-headers-modal',
+        data: {
+            headerModal
+        },
+    });
+</script>
+{{end}}
