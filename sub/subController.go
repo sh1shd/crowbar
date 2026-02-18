@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"strings"
 
 	"github.com/mhsanaei/3x-ui/v2/config"
@@ -15,6 +16,7 @@ import (
 type SUBController struct {
 	subTitle        string
 	subCustomHeaders string
+	subCustomHtml   string
 	subPath         string
 	subJsonPath     string
 	jsonEnabled     bool
@@ -41,11 +43,13 @@ func NewSUBController(
 	jsonRules string,
 	subTitle string,
 	subCustomHeaders string,
+	subCustomHtml string,
 ) *SUBController {
 	sub := NewSubService(showInfo, rModel)
 	a := &SUBController{
 		subTitle:         subTitle,
 		subCustomHeaders: subCustomHeaders,
+		subCustomHtml:    subCustomHtml,
 		subPath:          subPath,
 		subJsonPath:      jsonPath,
 		jsonEnabled:      jsonEnabled,
@@ -105,27 +109,45 @@ func (a *SUBController) subs(c *gin.Context) {
 				basePathStr = strings.TrimRight(basePathStr, "/") + "/" + subId + "/"
 			}
 			page := a.subService.BuildPageData(subId, hostHeader, traffic, lastOnline, subs, subURL, subJsonURL, basePathStr)
-			c.HTML(200, "subpage.html", gin.H{
-				"title":        "subscription.title",
-				"cur_ver":      config.GetVersion(),
-				"host":         page.Host,
-				"base_path":    page.BasePath,
-				"sId":          page.SId,
-				"download":     page.Download,
-				"upload":       page.Upload,
-				"total":        page.Total,
-				"used":         page.Used,
-				"remained":     page.Remained,
-				"expire":       page.Expire,
-				"lastOnline":   page.LastOnline,
-				"downloadByte": page.DownloadByte,
-				"uploadByte":   page.UploadByte,
-				"totalByte":    page.TotalByte,
-				"subUrl":       page.SubUrl,
-				"subJsonUrl":   page.SubJsonUrl,
-				"result":       page.Result,
-			})
-			return
+
+			// If custom HTML provided in settings, parse and execute it as a template
+			if a.subCustomHtml != "" {
+				tpl, err := template.New("sub_custom").Parse(a.subCustomHtml)
+				if err == nil {
+					_ = tpl.Execute(c.Writer, gin.H{
+						"title":        "subscription.title",
+						"cur_ver":      config.GetVersion(),
+						"host":         page.Host,
+						"base_path":    page.BasePath,
+						"sId":          page.SId,
+						"download":     page.Download,
+						"upload":       page.Upload,
+						"total":        page.Total,
+						"used":         page.Used,
+						"remained":     page.Remained,
+						"expire":       page.Expire,
+						"lastOnline":   page.LastOnline,
+						"downloadByte": page.DownloadByte,
+						"uploadByte":   page.UploadByte,
+						"totalByte":    page.TotalByte,
+						"subUrl":       page.SubUrl,
+						"subJsonUrl":   page.SubJsonUrl,
+						"result":       page.Result,
+					})
+					return
+				}
+			} else {
+				// Fallback: minimal HTML output if custom template not available/failed
+				c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+				fmt.Fprintf(c.Writer, "<html><head><title>Subscription %s</title></head><body>", page.SId)
+				fmt.Fprintf(c.Writer, "<h1>Subscription %s</h1>", page.SId)
+				fmt.Fprintf(c.Writer, "<p>Download: %s, Upload: %s, Used: %s, Total: %s</p>", page.Download, page.Upload, page.Used, page.Total)
+				if page.SubUrl != "" {
+					fmt.Fprintf(c.Writer, "<p>URL: <a href=\"%s\">%s</a></p>", page.SubUrl, page.SubUrl)
+				}
+				fmt.Fprint(c.Writer, "</body></html>")
+				return	
+			}
 		}
 
 		// Add headers

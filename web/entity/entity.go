@@ -45,6 +45,7 @@ type AllSetting struct {
 	SubJsonEnable               bool   `json:"subJsonEnable" form:"subJsonEnable"`                             // Enable JSON subscription endpoint
 	SubTitle                    string `json:"subTitle" form:"subTitle"`                                       // Subscription title
 	SubCustomHeaders            string `json:"subCustomHeaders" form:"subCustomHeaders"`                       // Custom HTTP headers for subscription responses (JSON)
+	SubCustomHtml               string `json:"subCustomHtml" form:"subCustomHtml"`                         // Custom HTML content returned for subscription pages
 	SubListen                   string `json:"subListen" form:"subListen"`                                     // Subscription server listen IP
 	SubPort                     int    `json:"subPort" form:"subPort"`                                         // Subscription server port
 	SubPath                     string `json:"subPath" form:"subPath"`                                         // Base path for subscription URLs

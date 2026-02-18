@@ -19,6 +19,7 @@ class AllSetting {
         this.subJsonEnable = false;
         this.subTitle = "";
         this.subCustomHeaders = "";
+        this.subCustomHtml = "";
         this.subListen = "";
         this.subPort = 2096;
         this.subPath = "/sub/";
