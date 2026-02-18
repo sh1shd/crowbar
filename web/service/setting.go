@@ -45,6 +45,7 @@ var defaultValueMap = map[string]string{
 	"subJsonEnable":               "false",
 	"subTitle":                    "",
 	"subCustomHeaders":            "[]",
+	"subCustomHtml":               "",
 	"subListen":                   "",
 	"subPort":                     "2096",
 	"subPath":                     "/sub/",
@@ -376,6 +377,14 @@ func (s *SettingService) GetSubTitle() (string, error) {
 
 func (s *SettingService) GetSubCustomHeaders() (string, error) {
 	return s.getString("subCustomHeaders")
+}
+
+func (s *SettingService) GetSubCustomHtml() (string, error) {
+	return s.getString("subCustomHtml")
+}
+
+func (s *SettingService) SetSubCustomHtml(html string) error {
+	return s.setString("subCustomHtml", html)
 }
 
 func (s *SettingService) GetSubListen() (string, error) {

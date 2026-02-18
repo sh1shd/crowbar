@@ -399,6 +399,9 @@
 "intervals" = "Интервалы"
 "information" = "Информация"
 "language" = "Язык интерфейса"
+"customPages" = "Настраиваемые страницы"
+"customSubscriptionHtml" = "HTML-страница подписки"
+"customSubscriptionHtmlDesc" = "HTML-страница, которая будет отправляться пользователю при запросе адреса подписки"
 
 [pages.settings.customHeaders]
 "headerName" = "Заголовок"

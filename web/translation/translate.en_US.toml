@@ -399,6 +399,9 @@
 "intervals" = "Intervals"
 "information" = "Information"
 "language" = "Language"
+"customPages" = "Custom pages"
+"customSubscriptionHtml" = "Subscription HTML page"
+"customSubscriptionHtmlDesc" = "The HTML page that will be sent to the user when requesting a subscription address."
 
 [pages.settings.customHeaders]
 "headerName" = "Header Name"

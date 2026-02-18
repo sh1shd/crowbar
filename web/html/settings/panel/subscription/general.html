@@ -121,7 +121,16 @@
             </template>
         </a-setting-list-item>
     </a-collapse-panel>
-    <a-collapse-panel key="4" header='{{ i18n "pages.settings.intervals"}}'>
+    <a-collapse-panel key="4" header='{{ i18n "pages.settings.customPages" }}'>
+        <a-setting-list-item paddings="small">
+            <template #title>{{ i18n "pages.settings.customSubscriptionHtml" }}</template>
+            <template #description>{{ i18n "pages.settings.customSubscriptionHtmlDesc" }}</template>
+            <template #control>
+                <a-textarea v-model="allSetting.subCustomHtml" :rows="5"></a-textarea>
+            </template>
+        </a-setting-list-item>
+    </a-collapse-panel>
+    <a-collapse-panel key="5" header='{{ i18n "pages.settings.intervals"}}'>
         <a-setting-list-item paddings="small">
             <template #title>{{ i18n "pages.settings.subUpdates"}}</template>
             <template #description>{{ i18n "pages.settings.subUpdatesDesc"}}</template>

@@ -5,19 +5,14 @@ package sub
 import (
 	"context"
 	"crypto/tls"
-	"html/template"
 	"io"
-	"io/fs"
 	"net"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/mhsanaei/3x-ui/v2/logger"
 	"github.com/mhsanaei/3x-ui/v2/util/common"
-	webpkg "github.com/mhsanaei/3x-ui/v2/web"
 	"github.com/mhsanaei/3x-ui/v2/web/locale"
 	"github.com/mhsanaei/3x-ui/v2/web/middleware"
 	"github.com/mhsanaei/3x-ui/v2/web/network"
@@ -25,21 +20,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-// setEmbeddedTemplates parses and sets embedded templates on the engine
-func setEmbeddedTemplates(engine *gin.Engine) error {
-	t, err := template.New("").Funcs(engine.FuncMap).ParseFS(
-		webpkg.EmbeddedHTML(),
-		"html/common/page.html",
-		"html/component/aThemeSwitch.html",
-		"html/settings/panel/subscription/subpage.html",
-	)
-	if err != nil {
-		return err
-	}
-	engine.SetHTMLTemplate(t)
-	return nil
-}
 
 // Server represents the subscription server that serves subscription links and JSON configurations.
 type Server struct {
@@ -158,6 +138,11 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 		SubCustomHeaders = "[]"
 	}
 
+	SubCustomHtml, err := s.settingService.GetSubCustomHtml()
+	if err != nil {
+		SubCustomHtml = ""
+	}
+
 	// set per-request localizer from headers/cookies
 	engine.Use(locale.LocalizerMiddleware())
 
@@ -167,102 +152,13 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	}
 	engine.SetFuncMap(map[string]any{"i18n": i18nWebFunc})
 
-	// Templates: prefer embedded; fallback to disk if necessary
-	if err := setEmbeddedTemplates(engine); err != nil {
-		logger.Warning("sub: failed to parse embedded templates:", err)
-		if files, derr := s.getHtmlFiles(); derr == nil {
-			engine.LoadHTMLFiles(files...)
-		} else {
-			logger.Error("sub: no templates available (embedded parse and disk load failed)", err, derr)
-		}
-	}
-
-	// Assets: use disk if present, fallback to embedded
-	// Serve under both root (/assets) and under the subscription path prefix (LinksPath + "assets")
-	// so reverse proxies with a URI prefix can load assets correctly.
-	// Determine LinksPath earlier to compute prefixed assets mount.
-	// Note: LinksPath always starts and ends with "/" (validated in settings).
-	var linksPathForAssets string
-	if LinksPath == "/" {
-		linksPathForAssets = "/assets"
-	} else {
-		// ensure single slash join
-		linksPathForAssets = strings.TrimRight(LinksPath, "/") + "/assets"
-	}
-
-	// Mount assets in multiple paths to handle different URL patterns
-	var assetsFS http.FileSystem
-	if _, err := os.Stat("web/assets"); err == nil {
-		assetsFS = http.FS(os.DirFS("web/assets"))
-	} else {
-		if subFS, err := fs.Sub(webpkg.EmbeddedAssets(), "assets"); err == nil {
-			assetsFS = http.FS(subFS)
-		} else {
-			logger.Error("sub: failed to mount embedded assets:", err)
-		}
-	}
-
-	if assetsFS != nil {
-		engine.StaticFS("/assets", assetsFS)
-		if linksPathForAssets != "/assets" {
-			engine.StaticFS(linksPathForAssets, assetsFS)
-		}
-
-		// Add middleware to handle dynamic asset paths with subid
-		if LinksPath != "/" {
-			engine.Use(func(c *gin.Context) {
-				path := c.Request.URL.Path
-				// Check if this is an asset request with subid pattern: /sub/path/{subid}/assets/...
-				pathPrefix := strings.TrimRight(LinksPath, "/") + "/"
-				if strings.HasPrefix(path, pathPrefix) && strings.Contains(path, "/assets/") {
-					// Extract the asset path after /assets/
-					assetsIndex := strings.Index(path, "/assets/")
-					if assetsIndex != -1 {
-						assetPath := path[assetsIndex+8:] // +8 to skip "/assets/"
-						if assetPath != "" {
-							// Serve the asset file
-							c.FileFromFS(assetPath, assetsFS)
-							c.Abort()
-							return
-						}
-					}
-				}
-				c.Next()
-			})
-		}
-	}
-
 	g := engine.Group("/")
 
 	s.sub = NewSUBController(
 		g, LinksPath, JsonPath, subJsonEnable, Encrypt, ShowInfo, RemarkModel, SubUpdates,
-		SubJsonFragment, SubJsonNoises, SubJsonMux, SubJsonRules, SubTitle, SubCustomHeaders)
+		SubJsonFragment, SubJsonNoises, SubJsonMux, SubJsonRules, SubTitle, SubCustomHeaders, SubCustomHtml)
 
 	return engine, nil
-}
-
-// getHtmlFiles loads templates from local folder (used in debug mode)
-func (s *Server) getHtmlFiles() ([]string, error) {
-	dir, _ := os.Getwd()
-	files := []string{}
-	// common layout
-	common := filepath.Join(dir, "web", "html", "common", "page.html")
-	if _, err := os.Stat(common); err == nil {
-		files = append(files, common)
-	}
-	// components used
-	theme := filepath.Join(dir, "web", "html", "component", "aThemeSwitch.html")
-	if _, err := os.Stat(theme); err == nil {
-		files = append(files, theme)
-	}
-	// page itself
-	page := filepath.Join(dir, "web", "html", "subpage.html")
-	if _, err := os.Stat(page); err == nil {
-		files = append(files, page)
-	} else {
-		return nil, err
-	}
-	return files, nil
 }
 
 // Start initializes and starts the subscription server with configured settings.
