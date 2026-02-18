@@ -464,18 +464,10 @@ func (s *ServerService) downloadXRay(version string) (string, error) {
 	switch arch {
 	case "amd64":
 		arch = "64"
-	case "arm64":
+	case "arm64", "armv8", "aarch64":
 		arch = "arm64-v8a"
-	case "armv7":
-		arch = "arm32-v7a"
-	case "armv6":
-		arch = "arm32-v6"
-	case "armv5":
-		arch = "arm32-v5"
-	case "386":
-		arch = "32"
-	case "s390x":
-		arch = "s390x"
+	default:
+		arch = "64"
 	}
 
 	fileName := fmt.Sprintf("Xray-linux-%s.zip", arch)
