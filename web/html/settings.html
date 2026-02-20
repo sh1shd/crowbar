@@ -93,7 +93,7 @@
 </a-layout>
 {{template "page/body_scripts" .}}
 <script src="{{ .base_path }}assets/qrcode/qrious2.min.js?{{ .cur_ver }}"></script>
-<script src="{{ .base_path }}assets/otpauth/otpauth.umd.min.js?{{ .cur_ver }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/otpauth@9.5.0/dist/otpauth.esm.min.js"></script>
 <script src="{{ .base_path }}assets/js/model/setting.js?{{ .cur_ver }}"></script>
 {{template "component/aSidebar" .}}
 {{template "component/aThemeSwitch" .}}

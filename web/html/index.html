@@ -402,8 +402,9 @@
 
     get color() {
       const percent = this.percent;
+      const style = window.getComputedStyle(document.body);
       if (percent < 80) {
-        return '#008771'; // Green
+        return style.getPropertyValue('--color-primary'); // Accent
       } else if (percent < 90) {
         return "#f37b24"; // Orange
       } else {
