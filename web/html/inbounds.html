@@ -198,11 +198,6 @@
                             <a-icon type="edit"></a-icon>
                             {{ i18n "edit" }}
                           </a-menu-item>
-                          <a-menu-item key="qrcode"
-                            v-if="(dbInbound.isSS && !dbInbound.toInbound().isSSMultiUser) || dbInbound.isWireguard">
-                            <a-icon type="qrcode"></a-icon>
-                            {{ i18n "qrCode" }}
-                          </a-menu-item>
                           <template v-if="dbInbound.isMultiUser()">
                             <a-menu-item key="addClient">
                               <a-icon type="user-add"></a-icon>
@@ -592,7 +587,6 @@
   </a-layout>
 </a-layout>
 {{template "page/body_scripts" .}}
-<script src="{{ .base_path }}assets/qrcode/qrious2.min.js?{{ .cur_ver }}"></script>
 <script src="{{ .base_path }}assets/uri/URI.min.js?{{ .cur_ver }}"></script>
 <script src="{{ .base_path }}assets/js/model/reality_targets.js?{{ .cur_ver }}"></script>
 <script src="{{ .base_path }}assets/js/model/inbound.js?{{ .cur_ver }}"></script>
@@ -602,7 +596,6 @@
 {{template "component/aCustomStatistic" .}}
 {{template "modals/inboundModal"}}
 {{template "modals/promptModal"}}
-{{template "modals/qrcodeModal"}}
 {{template "modals/textModal"}}
 {{template "modals/inboundInfoModal"}}
 {{template "modals/clientsModal"}}
@@ -685,7 +678,7 @@
   }];
 
   const innerColumns = [
-    { title: '{{ i18n "pages.inbounds.operate" }}', width: 70, scopedSlots: { customRender: 'actions' } },
+    { title: '{{ i18n "pages.inbounds.operate" }}', width: 35, scopedSlots: { customRender: 'actions' } },
     { title: '{{ i18n "pages.inbounds.enable" }}', width: 30, scopedSlots: { customRender: 'enable' } },
     { title: '{{ i18n "online" }}', width: 32, scopedSlots: { customRender: 'online' } },
     { title: '{{ i18n "pages.inbounds.client" }}', width: 80, scopedSlots: { customRender: 'client' } },
@@ -945,9 +938,6 @@
       },
       clickAction(action, dbInbound) {
         switch (action.key) {
-          case "qrcode":
-            this.showQrcode(dbInbound.id);
-            break;
           case "showInfo":
             this.showInfo(dbInbound.id);
             break;
@@ -1263,11 +1253,6 @@
           }
         }
         return newDbInbound;
-      },
-      showQrcode(dbInboundId, client) {
-        dbInbound = this.dbInbounds.find(row => row.id === dbInboundId);
-        newDbInbound = this.checkFallback(dbInbound);
-        qrModal.show('{{ i18n "qrCode"}}', newDbInbound, client);
       },
       showInfo(dbInboundId, client) {
         dbInbound = this.dbInbounds.find(row => row.id === dbInboundId);
