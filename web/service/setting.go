@@ -62,7 +62,6 @@ var defaultValueMap = map[string]string{
 	"subJsonNoises":               "",
 	"subJsonMux":                  "",
 	"subJsonRules":                "",
-	"warp":                        "",
 	"externalTrafficInformEnable": "false",
 	"externalTrafficInformURI":    "",
 	"xrayOutboundTestUrl":         "https://www.google.com/generate_204",
@@ -461,14 +460,6 @@ func (s *SettingService) GetSubJsonMux() (string, error) {
 
 func (s *SettingService) GetSubJsonRules() (string, error) {
 	return s.getString("subJsonRules")
-}
-
-func (s *SettingService) GetWarp() (string, error) {
-	return s.getString("warp")
-}
-
-func (s *SettingService) SetWarp(data string) error {
-	return s.setString("warp", data)
 }
 
 func (s *SettingService) GetExternalTrafficInformEnable() (bool, error) {

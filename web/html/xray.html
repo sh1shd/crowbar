@@ -165,7 +165,6 @@
 {{template "modals/dnsModal"}}
 {{template "modals/dnsPresetsModal"}}
 {{template "modals/fakednsModal"}}
-{{template "modals/warpModal"}}
 <script>
   const rulesColumns = [
     { title: "#", align: 'center', width: 15, scopedSlots: { customRender: 'action' } },
@@ -996,9 +995,6 @@
         rules = this.templateSettings.routing.rules;
         rules.splice(index, 1);
         this.routingRuleSettings = JSON.stringify(rules);
-      },
-      showWarp() {
-        warpModal.show();
       }
     },
     async mounted() {
@@ -1331,14 +1327,6 @@
           this.syncRulesWithOutbound("IPv4", this.ipv4Settings);
         }
       },
-      warpDomains: {
-        get: function () {
-          return this.templateRuleGetter({ outboundTag: "warp", property: "domain" });
-        },
-        set: function (newValue) {
-          this.templateRuleSetter({ outboundTag: "warp", property: "domain", data: newValue });
-        }
-      },
       torrentSettings: {
         get: function () {
           return ArrayUtils.doAllItemsExist(this.settingsData.protocols.bittorrent, this.blockedProtocols);
@@ -1349,11 +1337,6 @@
           } else {
             this.blockedProtocols = this.blockedProtocols.filter(data => !this.settingsData.protocols.bittorrent.includes(data));
           }
-        },
-      },
-      WarpExist: {
-        get: function () {
-          return this.templateSettings ? this.templateSettings.outbounds.findIndex((o) => o.tag == "warp") >= 0 : false;
         },
       },
       enableDNS: {
