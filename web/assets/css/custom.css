@@ -317,6 +317,7 @@ style attribute {
 .ant-card,
 .ant-tabs,
 .ant-backup-list,
+.ant-version-list,
 .ant-tag {
     border-radius: var(--border-radius-large)
 }
@@ -329,7 +330,8 @@ style attribute {
 .ant-collapse,
 .ant-radio-group,
 .ant-alert,
-.ant-select-dropdown {
+.ant-select-dropdown,
+.ant-tooltip-inner {
     border-radius: var(--border-radius)
 }
 
@@ -355,6 +357,14 @@ style attribute {
 .ant-btn-group>.ant-btn:last-child:not(:first-child),.ant-btn-group>span:last-child:not(:first-child)>.ant-btn {
     border-top-right-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius)
+}
+
+.ant-table-thead>tr:first-child>th:first-child {
+    border-top-left-radius: var(--border-radius);
+}
+
+.ant-table-thead>tr:first-child>th:last-child {
+    border-top-right-radius: var(--border-radius)
 }
 
 .ant-popover-inner,
@@ -765,6 +775,10 @@ style attribute {
 .dark .ant-tabs {
     background-color: var(--dark-color-surface-100);
     color: var(--dark-color-text-primary)
+}
+
+.dark .ant-table-small {
+    border-color: var(--dark-color-surface-300);
 }
 
 .dark .ant-card-hoverable:hover,
@@ -1771,8 +1785,11 @@ li.ant-calendar-time-picker-select-option-selected {
 }
 
 @media (min-width:769px) {
-    .index-page .ant-layout-content {
-        margin: 24px 16px
+    .settings-page .ant-layout-content,
+    .inbounds-page .ant-layout-content,
+    .index-page .ant-layout-content,
+    .xray-page .ant-layout-content {
+        margin: 20px
     }
 }
 
@@ -2025,12 +2042,6 @@ li.ant-calendar-time-picker-select-option-selected {
     border-bottom-right-radius: 6px
 }
 
-@media (min-width:769px) {
-    .inbounds-page .ant-layout-content {
-        margin: 24px 16px
-    }
-}
-
 @media (max-width:768px) {
     .inbounds-page .ant-card-body {
         padding: .5rem
@@ -2180,12 +2191,6 @@ li.ant-calendar-time-picker-select-option-selected {
     margin: 4px 0
 }
 
-@media (min-width:769px) {
-    .settings-page .ant-layout-content {
-        margin: 24px 16px
-    }
-}
-
 @media (max-width:768px) {
     .settings-page .ant-tabs-nav .ant-tabs-tab {
         margin: 0;
@@ -2245,12 +2250,6 @@ li.ant-calendar-time-picker-select-option-selected {
 
 .settings-page .ant-collapse-content-box .ant-alert {
     margin-block-end: 12px
-}
-
-@media (min-width:769px) {
-    .xray-page .ant-layout-content {
-        margin: 24px 16px
-    }
 }
 
 @media (max-width:768px) {
