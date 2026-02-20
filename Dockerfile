@@ -1,22 +1,31 @@
 # ========================================================
 # Stage: Builder
 # ========================================================
+# syntax=docker/dockerfile:1.4
+
 FROM golang:1.25-alpine AS builder
 WORKDIR /app
 ARG TARGETARCH
 
+# Download deps first to leverage Docker layer cache / BuildKit cache
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    go env -w GOPROXY=https://proxy.golang.org && \
+    go mod download
+
+COPY . .
+
+ENV CGO_ENABLED=1
+ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
 RUN apk --no-cache --update add \
   build-base \
   gcc \
   curl \
   unzip
 
-COPY . .
-
-ENV CGO_ENABLED=1
-ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
 RUN go build -ldflags "-w -s" -o build/x-ui main.go
-RUN ./DockerInit.sh "$TARGETARCH"
+RUN --mount=type=cache,target=/cache/xray ./DockerInit.sh "$TARGETARCH"
 
 # ========================================================
 # Stage: Final Image of 3x-ui
