@@ -1,11 +1,8 @@
 {{ template "page/head_start" .}}
 <link rel="stylesheet"
-  href="{{ .base_path }}assets/codemirror/codemirror.min.css?{{ .cur_ver }}">
-<link rel="stylesheet"
-  href="{{ .base_path }}assets/codemirror/fold/foldgutter.css">
-<link rel="stylesheet"
-  href="{{ .base_path }}assets/codemirror/xq.min.css?{{ .cur_ver }}">
-<link rel="stylesheet" href="{{ .base_path }}assets/codemirror/lint/lint.css">
+  href="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/lib/codemirror.min.css">
+<link rel="stylesheet" 
+  href="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/theme/monokai.css">
 {{ template "page/head_end" .}}
 
 {{ template "page/body_start" .}}
@@ -142,18 +139,9 @@
 <script
   src="{{ .base_path }}assets/js/model/outbound.js?{{ .cur_ver }}"></script>
 <script
-  src="{{ .base_path }}assets/codemirror/codemirror.min.js?{{ .cur_ver }}"></script>
-<script src="{{ .base_path }}assets/codemirror/javascript.js"></script>
-<script src="{{ .base_path }}assets/codemirror/jshint.js"></script>
-<script src="{{ .base_path }}assets/codemirror/jsonlint.js"></script>
-<script src="{{ .base_path }}assets/codemirror/lint/lint.js"></script>
-<script
-  src="{{ .base_path }}assets/codemirror/lint/javascript-lint.js"></script>
-<script
-  src="{{ .base_path }}assets/codemirror/hint/javascript-hint.js"></script>
-<script src="{{ .base_path }}assets/codemirror/fold/foldcode.js"></script>
-<script src="{{ .base_path }}assets/codemirror/fold/foldgutter.js"></script>
-<script src="{{ .base_path }}assets/codemirror/fold/brace-fold.js"></script>
+  src="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/lib/codemirror.min.js"></script>
+<script 
+  src="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/mode/javascript/javascript.js"></script>
 {{template "component/aSidebar" .}}
 {{template "component/aThemeSwitch" .}}
 {{template "component/aTableSortable" .}}
@@ -267,23 +255,10 @@
       cmOptions: {
         lineNumbers: true,
         mode: "application/json",
-        lint: true,
-        styleActiveLine: true,
+        theme: 'monokai',
         matchBrackets: true,
-        theme: "xq",
         autoCloseTags: true,
         lineWrapping: true,
-        indentUnit: 2,
-        indentWithTabs: true,
-        smartIndent: true,
-        tabSize: 2,
-        lineWiseCopyCut: false,
-        foldGutter: true,
-        gutters: [
-          "CodeMirror-lint-markers",
-          "CodeMirror-linenumbers",
-          "CodeMirror-foldgutter",
-        ],
       },
       ipv4Settings: {
         tag: "IPv4",

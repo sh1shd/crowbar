@@ -68,7 +68,7 @@ html[data-theme-animations='off'] {
     .ant-progress-success-bg,
     .ant-radio-button-wrapper:not(:first-child):before,
     .ant-radio-button-wrapper,
-    .cm-s-xq.CodeMirror {
+    .cm-s-monokai.CodeMirror {
         transition: border 0s, background 0s !important
     }
 
@@ -331,7 +331,8 @@ style attribute {
 .ant-radio-group,
 .ant-alert,
 .ant-select-dropdown,
-.ant-tooltip-inner {
+.ant-tooltip-inner,
+.ant-menu-submenu.ant-menu-submenu-popup {
     border-radius: var(--border-radius)
 }
 
@@ -1392,14 +1393,12 @@ li.ant-select-dropdown-menu-item:empty:after {
 }
 
 .qr-cv {
-    width: 100%;
-    height: 100%
+    border-radius: var(--border-radius);
 }
 
 .dark .qr-cv {
     background-color: #fff;
     padding: 1px;
-    border-radius: 0.25rem
 }
 
 .qr-bg {
@@ -1407,8 +1406,7 @@ li.ant-select-dropdown-menu-item:empty:after {
     display: flex;
     justify-content: center;
     align-content: center;
-    padding: .8rem;
-    border-radius: 1rem;
+    border-radius: var(--border-radius);
     border: solid 1px #e8e8e8;
     height: 220px;
     width: 220px;
@@ -2306,6 +2304,15 @@ li.ant-calendar-time-picker-select-option-selected {
 
 .dark .ant-dropdown-menu .ant-dropdown-menu-item:hover {
     background-color: var(--dark-color-surface-600)
+}
+
+.cm-s-monokai.CodeMirror {
+    border-radius: var(--border-radius) !important;
+    border: 1px solid #d9d9d9 !important;
+}
+
+.dark .cm-s-monokai.CodeMirror {
+    border: 1px solid var(--dark-color-surface-400) !important;
 }
 
 .mb-10 {
