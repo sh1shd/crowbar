@@ -1,0 +1,84 @@
+{{define "component/crowbarHeader/content"}}
+<template>
+    <div class="ant-crowbar-header">
+        <div class="ant-crowbar-header-container">
+            <div class="ant-crowbar-header-logo">
+                <span>Crowbar</span>
+            </div>
+            <div class="ant-crowbar-header-leftTabs">
+                <div class="ant-crowbar-header-tab" v-for="tab in leftTabs" :key="tab.icon" :data-active="activeLeftTab === tab.key" @click="openLink(tab.key)">
+                    <a-icon class="ant-crowbar-header-tab-icon" :type="tab.icon"></a-icon>
+                    <span class="ant-crowbar-header-tab-title" v-text="tab.title"></span>
+                </div>
+            </div>
+            <div class="ant-crowbar-header-rightTabs">
+                <div class="ant-crowbar-header-tab" v-for="tab in rightTabs" :key="tab.icon" @click="openLink(tab.key)" v-if="tab.type === 'link'">
+                    <a-icon class="ant-crowbar-header-tab-icon" :type="tab.icon"></a-icon>
+                </div>
+                <a-popover :overlay-class-name="themeSwitcher.currentTheme" title='{{ i18n "menu.settings" }}'
+                  placement="bottomRight" trigger="click" v-else-if="tab.type === 'theme'">
+                    <template #content>
+                        <a-theme-switch></a-theme-switch>
+                    </template>
+                    <div class="ant-crowbar-header-tab">
+                        <a-icon class="ant-crowbar-header-tab-icon" type="bg-colors"></a-icon>
+                    </div>
+                </a-popover>
+            </div>
+        </div>
+    </div>
+</template>
+{{end}}
+
+{{define "component/aCrowbarHeader"}}
+<script>
+    Vue.component('a-crowbar-header', {
+        data() {
+            return {
+                leftTabs: [
+                    {
+                        key: '{{ .base_path }}panel/',
+                        icon: 'home',
+                        title: '{{ i18n "menu.dashboard"}}'
+                    },
+                    {
+                        key: '{{ .base_path }}panel/inbounds',
+                        icon: 'user',
+                        title: '{{ i18n "menu.inbounds"}}'
+                    },
+                    {
+                        key: '{{ .base_path }}panel/settings',
+                        icon: 'setting',
+                        title: '{{ i18n "menu.settings"}}'
+                    },
+                    {
+                        key: '{{ .base_path }}panel/xray',
+                        icon: 'tool',
+                        title: '{{ i18n "menu.xray"}}'
+                    }
+                ],
+                rightTabs: [
+                    {
+                        type: "theme"
+                    },
+                    {
+                        type: "link",
+                        key: '{{ .base_path }}logout/',
+                        icon: 'logout',
+                        title: '{{ i18n "menu.logout"}}'
+                    }
+                ],
+                activeLeftTab: '{{ .request_uri }}'
+            }
+        },
+        methods: {
+            openLink(key) {
+                return key.startsWith('http') ? 
+                    window.open(key) : 
+                    location.href = key
+            },
+        },
+        template: `{{template "component/crowbarHeader/content"}}`,
+    });
+</script>
+{{end}}

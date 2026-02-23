@@ -3,7 +3,7 @@
 
 {{ template "page/body_start" .}}
 <a-layout id="app" v-cloak :class="themeSwitcher.currentTheme + ' index-page'">
-  <a-sidebar></a-sidebar>
+  <a-crowbar-header></a-crowbar-header>
   <a-layout id="content-layout">
     <a-layout-content>
       <a-spin :spinning="loadingStates.spinning" :delay="200" :tip="loadingTip">
@@ -19,7 +19,7 @@
                 <a-spin tip='{{ i18n "loading" }}'></a-spin>
               </a-card>
             </a-row>
-            <a-row :gutter="[isMobile ? 8 : 16, isMobile ? 0 : 12]" v-else>
+            <a-row :gutter="[isMobile ? 12 : 16, isMobile ? 12 : 16]" v-else>
               <a-col>
                 <a-card hoverable>
                   <a-row>
@@ -381,7 +381,7 @@
   </a-modal>
 </a-layout>
 {{template "page/body_scripts" .}}
-{{template "component/aSidebar" .}}
+{{template "component/aCrowbarHeader" .}}
 {{template "component/aThemeSwitch" .}}
 {{template "component/aCustomStatistic" .}}
 {{template "modals/textModal"}}

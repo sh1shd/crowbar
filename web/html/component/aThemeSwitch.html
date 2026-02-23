@@ -1,23 +1,5 @@
 {{define "component/themeSwitchTemplate"}}
 <template>
-  <a-menu :theme="themeSwitcher.currentTheme" mode="inline" selected-keys="">
-    <a-sub-menu>
-      <span slot="title">
-        <a-icon type="bulb" :theme="themeSwitcher.isDarkTheme ? 'filled' : 'outlined'"></a-icon>
-        <span>{{ i18n "menu.theme" }}</span>
-      </span>
-      <a-menu-item id="change-theme" class="ant-menu-theme-switch" @mousedown="themeSwitcher.animationsOff()">
-        <span>{{ i18n "menu.dark" }}</span>
-        <a-switch :style="{ marginLeft: '2px' }" size="small" :default-checked="themeSwitcher.isDarkTheme"
-          @change="themeSwitcher.toggleTheme()"></a-switch>
-      </a-menu-item>
-    </a-sub-menu>
-  </a-menu>
-</template>
-{{end}}
-
-{{define "component/themeSwitchTemplateLogin"}}
-<template>
   <a-space @mousedown="themeSwitcher.animationsOff()" id="change-theme" direction="vertical" :size="10" :style="{ width: '100%' }">
     <a-space direction="horizontal" size="small">
       <a-switch size="small" :default-checked="themeSwitcher.isDarkTheme" @change="themeSwitcher.toggleTheme()"></a-switch>
@@ -57,20 +39,9 @@
     };
   }
   const themeSwitcher = createThemeSwitcher();
+
   Vue.component('a-theme-switch', {
     template: `{{template "component/themeSwitchTemplate"}}`,
-    data: () => ({
-      themeSwitcher
-    }),
-    mounted() {
-      this.$message.config({
-        getContainer: () => document.getElementById('message')
-      });
-      document.getElementById('message').className = themeSwitcher.currentTheme;
-    }
-  });
-  Vue.component('a-theme-switch-login', {
-    template: `{{template "component/themeSwitchTemplateLogin"}}`,
     data: () => ({
       themeSwitcher
     }),

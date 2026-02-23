@@ -3,7 +3,7 @@
 
 {{ template "page/body_start" .}}
 <a-layout id="app" v-cloak :class="themeSwitcher.currentTheme + ' inbounds-page'">
-  <a-sidebar></a-sidebar>
+  <a-crowbar-header></a-crowbar-header>
   <a-layout id="content-layout">
     <a-layout-content>
       <a-spin :spinning="loadingStates.spinning" :delay="500" tip='{{ i18n "loading"}}'>
@@ -19,7 +19,7 @@
               <a-spin tip='{{ i18n "loading" }}'></a-spin>
             </a-card>
           </a-row>
-          <a-row :gutter="[isMobile ? 8 : 16, isMobile ? 0 : 12]" v-else>
+          <a-row :gutter="[isMobile ? 12 : 16, isMobile ? 12 : 16]" v-else>
             <a-col>
               <a-card size="small" :style="{ padding: '16px' }" hoverable>
                 <a-row>
@@ -575,7 +575,7 @@
 <script src="{{ .base_path }}assets/js/model/reality_targets.js?{{ .cur_ver }}"></script>
 <script src="{{ .base_path }}assets/js/model/inbound.js?{{ .cur_ver }}"></script>
 <script src="{{ .base_path }}assets/js/model/dbinbound.js?{{ .cur_ver }}"></script>
-{{template "component/aSidebar" .}}
+{{template "component/aCrowbarHeader" .}}
 {{template "component/aThemeSwitch" .}}
 {{template "component/aCustomStatistic" .}}
 {{template "modals/inboundModal"}}
