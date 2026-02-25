@@ -1505,13 +1505,6 @@ li.ant-select-dropdown-menu-item:empty:after {
     margin-inline: 0
 }
 
-@media (min-width:769px) {
-    .qr-modal {
-        flex-direction: row;
-        max-width: 680px
-    }
-}
-
 .tr-marquee {
     justify-content: flex-start
 }
@@ -2141,35 +2134,6 @@ li.ant-calendar-time-picker-select-option-selected {
 
 .inbounds-page .ant-table-expanded-row .ant-table-thead>tr>th {
     padding: 12px 2px
-}
-
-.idx-cpu-history-svg {
-    display: block;
-    overflow: unset !important
-}
-
-.dark .idx-cpu-history-svg .cpu-grid-line {
-    stroke: rgb(255 255 255 / .08)
-}
-
-.dark .idx-cpu-history-svg .cpu-grid-h-line {
-    stroke: rgb(255 255 255 / .25)
-}
-
-.dark .idx-cpu-history-svg .cpu-grid-y-text,
-.dark .idx-cpu-history-svg .cpu-grid-x-text {
-    fill: rgb(200 200 200 / .8)
-}
-
-.idx-cpu-history-svg .cpu-grid-text {
-    stroke-width: 3;
-    paint-order: stroke;
-    stroke: rgb(0 0 0 / .05)
-}
-
-.dark .idx-cpu-history-svg .cpu-grid-text {
-    fill: #fff;
-    stroke: rgb(0 0 0 / .35)
 }
 
 .inbounds-page~div #inbound-modal form textarea.ant-input {
