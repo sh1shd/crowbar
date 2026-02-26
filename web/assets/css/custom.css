@@ -321,7 +321,8 @@ style attribute {
 .ant-select-dropdown,
 .ant-tooltip-inner,
 .ant-menu-submenu.ant-menu-submenu-popup,
-.ant-message-notice-content {
+.ant-message-notice-content,
+.ant-btn-icon-only.ant-btn-sm {
     border-radius: var(--border-radius)
 }
 
