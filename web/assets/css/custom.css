@@ -1,5 +1,5 @@
 :root {
-    --border-radius: 10px;
+    --border-radius: 5px;
     --border-radius-large: calc(var(--border-radius) * 1.5);
     --color-primary: rgb(64, 169, 255);
     --color-primary-100: rgb(64, 169, 255, .6);
