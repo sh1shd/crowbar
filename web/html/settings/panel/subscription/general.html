@@ -86,7 +86,14 @@
                 <a-button type="primary" icon="plus" @click="showAddHeaderModal()">{{ i18n "pages.settings.customHeaders.addHeader" }}</a-button>
             </template>
         </a-setting-list-item>
-        <a-table v-if="customHeaders.length > 0" :columns="headerColumns" :data-source="customHeaders" :pagination="false" size="small" :style="{ padding: '5px 20px !important'}">
+        <a-table 
+            :columns="headerColumns" 
+            :data-source="customHeaders" 
+            :pagination="false" 
+            size="small" 
+            :style="{ padding: '5px 20px !important'}"
+            :locale='{ filterConfirm: `{{ i18n "confirm" }}`, filterReset: `{{ i18n "reset" }}`, emptyText: `{{ i18n "noData" }}` }'
+        >
             <template #operation="text, record, index">
                 <a-space direction="horizontal" size="small">
                     <a-tooltip :overlay-class-name="themeSwitcher.currentTheme">
