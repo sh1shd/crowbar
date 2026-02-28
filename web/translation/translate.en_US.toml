@@ -71,6 +71,8 @@
 "emptyBalancersDesc" = "No added balancers."
 "emptyReverseDesc" = "No added reverse proxies."
 "somethingWentWrong" = "Something went wrong"
+"sniffing" = "Sniffing"
+"limitations" = "Limitations"
 
 [subscription]
 "title" = "Subscription info"
@@ -248,7 +250,6 @@
 "submitAdd" = "Add Client"
 "submitEdit" = "Save Changes"
 "clientCount" = "Number of Clients"
-"bulk" = "Add Bulk"
 "method" = "Method"
 "first" = "First"
 "last" = "Last"

@@ -71,6 +71,8 @@
 "emptyBalancersDesc" = "Нет добавленных балансировщиков."
 "emptyReverseDesc" = "Нет добавленных реверс-прокси."
 "somethingWentWrong" = "Что-то пошло не так"
+"sniffing" = "Сниффинг"
+"limitations" = "Ограничения"
 
 [subscription]
 "title" = "Информация о подписке"
@@ -248,7 +250,6 @@
 "submitAdd" = "Добавить"
 "submitEdit" = "Сохранить изменения"
 "clientCount" = "Количество клиентов"
-"bulk" = "Добавить несколько"
 "method" = "Метод"
 "first" = "Первый"
 "last" = "Последний"

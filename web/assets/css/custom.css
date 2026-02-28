@@ -646,14 +646,9 @@ style attribute {
 
 .ant-tag {
     margin-right: 0;
-    margin-inline: 2px;
     display: inline-flex;
     align-items: center;
     justify-content: space-evenly
-}
-
-.ant-tag:not(.qr-tag) {
-    column-gap: 4px
 }
 
 #inbound-info-modal .ant-tag {
@@ -2137,6 +2132,33 @@ li.ant-calendar-time-picker-select-option-selected {
 
 .inbounds-page~div #inbound-modal form textarea.ant-input {
     margin: 4px 0
+}
+
+#inbound-modal .ant-modal-body,
+#client-modal .ant-modal-body {
+    padding: 0;
+}
+
+#inbound-modal .ant-tabs.ant-tabs-top,
+#client-modal .ant-tabs.ant-tabs-top {
+    padding: 0px !important;
+    background: transparent;
+}
+
+#inbound-modal .ant-modal-header,
+#client-modal .ant-modal-header {
+    border-bottom: none;
+}
+
+#inbound-modal .ant-tabs-bar.ant-tabs-top-bar,
+#client-modal .ant-tabs-bar.ant-tabs-top-bar  {
+    padding: 0 20px;
+    margin: 0;
+}
+
+#inbound-modal .ant-tabs-tabpane.ant-tabs-tabpane-active,
+#client-modal .ant-tabs-tabpane.ant-tabs-tabpane-active {
+    padding: 16px;
 }
 
 @media (max-width:768px) {

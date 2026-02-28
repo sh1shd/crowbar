@@ -203,10 +203,6 @@
                               <a-icon type="user-add"></a-icon>
                               {{ i18n "pages.client.add"}}
                             </a-menu-item>
-                            <a-menu-item key="addBulkClient">
-                              <a-icon type="usergroup-add"></a-icon>
-                              {{ i18n "pages.client.bulk"}}
-                            </a-menu-item>
                             <a-menu-item key="resetClients">
                               <a-icon type="file-done"></a-icon>
                               {{ i18n "pages.inbounds.resetInboundClientTraffics"}}
@@ -280,9 +276,7 @@
                               </a-tooltip>
                             </div>
                           </template>
-                          <a-tag :style="{ margin: '0', padding: '0 2px' }"
-                            v-if="clientCount[dbInbound.id].deactive.length">[[
-                            clientCount[dbInbound.id].deactive.length ]]</a-tag>
+                          <a-tag v-if="clientCount[dbInbound.id].deactive.length">[[ clientCount[dbInbound.id].deactive.length ]]</a-tag>
                         </a-popover>
                         <a-popover title='{{ i18n "depleted" }}' :overlay-class-name="themeSwitcher.currentTheme">
                           <template slot="content">
@@ -298,9 +292,7 @@
                               </a-tooltip>
                             </div>
                           </template>
-                          <a-tag :style="{ margin: '0', padding: '0 2px' }" color="red"
-                            v-if="clientCount[dbInbound.id].depleted.length">[[
-                            clientCount[dbInbound.id].depleted.length ]]</a-tag>
+                          <a-tag color="red" v-if="clientCount[dbInbound.id].depleted.length">[[ clientCount[dbInbound.id].depleted.length ]]</a-tag>
                         </a-popover>
                         <a-popover title='{{ i18n "depletingSoon" }}' :overlay-class-name="themeSwitcher.currentTheme">
                           <template slot="content">
@@ -316,9 +308,7 @@
                               </a-tooltip>
                             </div>
                           </template>
-                          <a-tag :style="{ margin: '0', padding: '0 2px' }" color="orange"
-                            v-if="clientCount[dbInbound.id].expiring.length">[[
-                            clientCount[dbInbound.id].expiring.length ]]</a-tag>
+                          <a-tag color="orange" v-if="clientCount[dbInbound.id].expiring.length">[[ clientCount[dbInbound.id].expiring.length ]]</a-tag>
                         </a-popover>
                         <a-popover title='{{ i18n "online" }}' :overlay-class-name="themeSwitcher.currentTheme">
                           <template slot="content">
@@ -334,9 +324,7 @@
                               </a-tooltip>
                             </div>
                           </template>
-                          <a-tag :style="{ margin: '0', padding: '0 2px' }" color="blue"
-                            v-if="clientCount[dbInbound.id].online.length">[[ clientCount[dbInbound.id].online.length
-                            ]]</a-tag>
+                          <a-tag color="blue" v-if="clientCount[dbInbound.id].online.length">[[ clientCount[dbInbound.id].online.length ]]</a-tag>
                         </a-popover>
                       </template>
                     </template>
@@ -431,9 +419,7 @@
                                       </a-tooltip>
                                     </div>
                                   </template>
-                                  <a-tag :style="{ margin: '0', padding: '0 2px' }"
-                                    v-if="clientCount[dbInbound.id].deactive.length">[[
-                                    clientCount[dbInbound.id].deactive.length ]]</a-tag>
+                                  <a-tag v-if="clientCount[dbInbound.id].deactive.length">[[ clientCount[dbInbound.id].deactive.length ]]</a-tag>
                                 </a-popover>
                                 <a-popover title='{{ i18n "depleted" }}'
                                   :overlay-class-name="themeSwitcher.currentTheme">
@@ -450,9 +436,7 @@
                                       </a-tooltip>
                                     </div>
                                   </template>
-                                  <a-tag :style="{ margin: '0', padding: '0 2px' }" color="red"
-                                    v-if="clientCount[dbInbound.id].depleted.length">[[
-                                    clientCount[dbInbound.id].depleted.length ]]</a-tag>
+                                  <a-tag color="red" v-if="clientCount[dbInbound.id].depleted.length">[[ clientCount[dbInbound.id].depleted.length ]]</a-tag>
                                 </a-popover>
                                 <a-popover title='{{ i18n "depletingSoon" }}'
                                   :overlay-class-name="themeSwitcher.currentTheme">
@@ -469,9 +453,7 @@
                                       </a-tooltip>
                                     </div>
                                   </template>
-                                  <a-tag :style="{ margin: '0', padding: '0 2px' }" color="orange"
-                                    v-if="clientCount[dbInbound.id].expiring.length">[[
-                                    clientCount[dbInbound.id].expiring.length ]]</a-tag>
+                                  <a-tag color="orange" v-if="clientCount[dbInbound.id].expiring.length">[[ clientCount[dbInbound.id].expiring.length ]]</a-tag>
                                 </a-popover>
                                 <a-popover title='{{ i18n "online" }}' :overlay-class-name="themeSwitcher.currentTheme">
                                   <template slot="content">
@@ -487,9 +469,7 @@
                                       </a-tooltip>
                                     </div>
                                   </template>
-                                  <a-tag :style="{ margin: '0', padding: '0 2px' }" color="green"
-                                    v-if="clientCount[dbInbound.id].online.length">[[
-                                    clientCount[dbInbound.id].online.length ]]</a-tag>
+                                  <a-tag color="green" v-if="clientCount[dbInbound.id].online.length">[[ clientCount[dbInbound.id].online.length ]]</a-tag>
                                 </a-popover>
                               </td>
                             </tr>
@@ -583,7 +563,6 @@
 {{template "modals/textModal"}}
 {{template "modals/inboundInfoModal"}}
 {{template "modals/clientsModal"}}
-{{template "modals/clientsBulkModal"}}
 <script>
   const columns = [{
     title: "ID",
@@ -931,9 +910,6 @@
           case "addClient":
             this.openAddClient(dbInbound.id)
             break;
-          case "addBulkClient":
-            this.openAddBulkClient(dbInbound.id)
-            break;
           case "export":
             this.inboundLinks(dbInbound.id);
             break;
@@ -1081,17 +1057,6 @@
             await this.addClient(clients, dbInboundId, clientModal);
           },
           isEdit: false
-        });
-      },
-      openAddBulkClient(dbInboundId) {
-        dbInbound = this.dbInbounds.find(row => row.id === dbInboundId);
-        clientsBulkModal.show({
-          title: '{{ i18n "pages.client.bulk"}} ' + dbInbound.remark,
-          okText: '{{ i18n "pages.client.bulk"}}',
-          dbInbound: dbInbound,
-          confirm: async (clients, dbInboundId) => {
-            await this.addClient(clients, dbInboundId, clientsBulkModal);
-          },
         });
       },
       openEditClient(dbInboundId, client) {
