@@ -38,6 +38,9 @@
                 </a-popover>
               </template>
               <a-form @submit.prevent="login">
+                <a-form-item :style="{ marginBottom: '12px' }" v-if="unsecuredConnection">
+                  <a-alert message='{{ i18n "secAlertTitle" }} {{ i18n "secAlertSsl" }}' type="error" show-icon />
+                </a-form-item>
                 <a-form-item :style="{ marginBottom: '12px' }">
                   <a-input autocomplete="username" name="username" v-model.trim="user.username"
                     placeholder='{{ i18n "username" }}' autofocus required>
@@ -80,9 +83,10 @@
       themeSwitcher,
       loadingStates: { fetched: false, spinning: false },
       user: { username: "", password: "", twoFactorCode: "" },
+      unsecuredConnection: !Utils.hasSecuredConnection(),
+      animationStarted: false,
       twoFactorEnable: false,
       lang: "",
-      animationStarted: false
     },
     async mounted() {
       this.lang = LanguageManager.getLanguage();
