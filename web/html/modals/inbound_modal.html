@@ -221,11 +221,10 @@
                 this.inbound.stream.reality.settings.mldsa65Verify = '';
             },
             randomizeRealityTarget() {
-                if (typeof getRandomRealityTarget !== 'undefined') {
-                    const randomTarget = getRandomRealityTarget();
-                    this.inbound.stream.reality.target = randomTarget.target;
-                    this.inbound.stream.reality.serverNames = randomTarget.sni;
-                }
+                const randomTarget = RandomUtil.getRandomRealityTarget();
+                
+                this.inbound.stream.reality.target = randomTarget.target;
+                this.inbound.stream.reality.serverNames = randomTarget.sni;
             },
             async getNewEchCert() {
                 inModal.loading(true);

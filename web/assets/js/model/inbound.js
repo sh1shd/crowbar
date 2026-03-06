@@ -777,9 +777,8 @@ class RealityStreamSettings extends XrayCommonClass {
         super();
         // If target/serverNames are not provided, use random values
         if (!target && !serverNames) {
-            const randomTarget = typeof getRandomRealityTarget !== 'undefined'
-                ? getRandomRealityTarget()
-                : { target: 'www.apple.com:443', sni: 'www.apple.com,apple.com' };
+            const randomTarget = RandomUtil.getRandomRealityTarget();
+            
             target = randomTarget.target;
             serverNames = randomTarget.sni;
         }

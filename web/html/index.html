@@ -8,11 +8,6 @@
     <a-layout-content>
       <a-spin :spinning="loadingStates.spinning" :delay="200" :tip="loadingTip">
         <transition name="list" appear>
-          <a-alert type="error" v-if="showAlert && loadingStates.fetched" class="mb-10"
-            message='{{ i18n "secAlertTitle" }}' color="red" description='{{ i18n "secAlertSsl" }}' show-icon closable>
-          </a-alert>
-        </transition>
-        <transition name="list" appear>
           <template>
             <a-row v-if="!loadingStates.fetched">
               <a-card class="card-placeholder text-center">
@@ -628,7 +623,6 @@
       xraylogModal,
       backupModal,
       loadingTip: '{{ i18n "loading"}}',
-      showAlert: false,
       showIp: false,
       ipLimitEnable: false,
     },
@@ -817,10 +811,6 @@
       },
     },
     async mounted() {
-      if (window.location.protocol !== "https:") {
-        this.showAlert = true;
-      }
-
       const msg = await HttpUtil.post('/panel/setting/defaultSettings');
       if (msg.success) {
         this.ipLimitEnable = msg.obj.ipLimitEnable;

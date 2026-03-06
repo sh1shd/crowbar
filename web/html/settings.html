@@ -8,17 +8,6 @@
     <a-layout-content>
       <a-spin :spinning="loadingStates.spinning" :delay="500" tip='{{ i18n "loading"}}'>
         <transition name="list" appear>
-          <a-alert type="error" v-if="confAlerts.length>0 && loadingStates.fetched" :style="{ marginBottom: '10px' }"
-            message='{{ i18n "secAlertTitle" }}' color="red" show-icon closable>
-            <template slot="description">
-              <b>{{ i18n "secAlertConf" }}</b>
-              <ul>
-                <li v-for="a in confAlerts">[[ a ]]</li>
-              </ul>
-            </template>
-          </a-alert>
-        </transition>
-        <transition name="list" appear>
           <template>
             <a-row v-if="!loadingStates.fetched">
               <a-card
@@ -583,25 +572,6 @@
           this.allSetting.subJsonRules = JSON.stringify(rules);
         }
       },
-      confAlerts: {
-        get: function () {
-          if (!this.allSetting) return [];
-          var alerts = []
-          if (window.location.protocol !== "https:") alerts.push('{{ i18n "secAlertSSL" }}');
-          if (this.allSetting.webPort === 2053) alerts.push('{{ i18n "secAlertPanelPort" }}');
-          panelPath = window.location.pathname.split('/').length < 4
-          if (panelPath && this.allSetting.webBasePath == '/') alerts.push('{{ i18n "secAlertPanelURI" }}');
-          if (this.allSetting.subEnable) {
-            subPath = this.allSetting.subURI.length > 0 ? new URL(this.allSetting.subURI).pathname : this.allSetting.subPath;
-            if (subPath == '/sub/') alerts.push('{{ i18n "secAlertSubURI" }}');
-          }
-          if (this.allSetting.subJsonEnable) {
-            subJsonPath = this.allSetting.subJsonURI.length > 0 ? new URL(this.allSetting.subJsonURI).pathname : this.allSetting.subJsonPath;
-            if (subJsonPath == '/json/') alerts.push('{{ i18n "secAlertSubJsonURI" }}');
-          }
-          return alerts
-        }
-      }
     },
     async mounted() {
       this.entryHost = window.location.hostname;

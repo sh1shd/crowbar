@@ -24,6 +24,15 @@
                         <a-icon class="ant-crowbar-header-tab-icon" type="bg-colors"></a-icon>
                     </div>
                 </a-popover>
+                <a-popover :overlay-class-name="themeSwitcher.currentTheme" title='{{ i18n "secAlertTitle" }}' 
+                    placement="bottomRight" trigger="click" v-else-if="tab.type === 'securityAlert' && unsecuredConnection">
+                    <template #content>
+                        {{ i18n "secAlertSsl" }}
+                    </template>
+                    <div class="ant-crowbar-header-tab">
+                        <a-icon class="ant-crowbar-header-tab-icon" type="warning" :style="{ color: 'var(--dark-color-btn-danger)' }"></a-icon>
+                    </div>
+                </a-popover>
             </div>
         </div>
     </div>
@@ -59,6 +68,9 @@
                 ],
                 rightTabs: [
                     {
+                        type: "securityAlert"
+                    },
+                    {
                         type: "theme"
                     },
                     {
@@ -68,7 +80,8 @@
                         title: '{{ i18n "menu.logout"}}'
                     }
                 ],
-                activeLeftTab: '{{ .request_uri }}'
+                activeLeftTab: '{{ .request_uri }}',
+                unsecuredConnection: !Utils.hasSecuredConnection(),
             }
         },
         methods: {
