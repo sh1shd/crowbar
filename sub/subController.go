@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/mhsanaei/3x-ui/v2/config"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -57,8 +55,9 @@ func (a *SUBController) subs(c *gin.Context) {
 	subId := c.Param("subid")
 	scheme, host, hostWithPort, hostHeader := a.subService.ResolveRequest(c)
 	subs, lastOnline, traffic, err := a.subService.GetSubs(subId, host)
+
 	if err != nil || len(subs) == 0 {
-		c.String(http.StatusBadRequest, "Error!")
+		c.String(http.StatusBadRequest, "400 bad request")
 	} else {
 		result := ""
 		for _, sub := range subs {
@@ -88,25 +87,7 @@ func (a *SUBController) subs(c *gin.Context) {
 			if a.subCustomHtml != "" {
 				tpl, err := template.New("sub_custom").Parse(a.subCustomHtml)
 				if err == nil {
-					_ = tpl.Execute(c.Writer, gin.H{
-						"title":        "subscription.title",
-						"cur_ver":      config.GetVersion(),
-						"host":         page.Host,
-						"base_path":    page.BasePath,
-						"sId":          page.SId,
-						"download":     page.Download,
-						"upload":       page.Upload,
-						"total":        page.Total,
-						"used":         page.Used,
-						"remained":     page.Remained,
-						"expire":       page.Expire,
-						"lastOnline":   page.LastOnline,
-						"downloadByte": page.DownloadByte,
-						"uploadByte":   page.UploadByte,
-						"totalByte":    page.TotalByte,
-						"subUrl":       page.SubUrl,
-						"result":       page.Result,
-					})
+					_ = tpl.Execute(c.Writer, page)
 					return
 				}
 			} else {
