@@ -1,10 +1,7 @@
 services:
-  3xui:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    container_name: 3xui_app
-    # hostname: yourhostname <- optional
+  crowbar:
+    image: ghcr.io/sh1shd/crowbar:latest
+    container_name: crowbar_app
     volumes:
       - $PWD/db/:/etc/x-ui/
       - $PWD/cert/:/root/cert/
