@@ -71,9 +71,8 @@ func (a *SUBController) subs(c *gin.Context) {
 			result += sub + "\n"
 		}
 
-		// If the request expects HTML (e.g., browser) or explicitly asked (?html=1 or ?view=html), render the info page here
-		accept := c.GetHeader("Accept")
-		if strings.Contains(strings.ToLower(accept), "text/html") || c.Query("html") == "1" || strings.EqualFold(c.Query("view"), "html") {
+		// If the request was made from a web browser (by a accept header and user agent), render the info page here
+		if strings.Contains(c.GetHeader("Accept"), "text/html") || strings.Contains(c.GetHeader("User-Agent"), "mozilla") {
 			// Build page data in service
 			subURL := a.subService.BuildURLs(scheme, hostWithPort, a.subPath, subId)
 			// Get base_path from context (set by middleware)
@@ -118,15 +117,30 @@ func (a *SUBController) subs(c *gin.Context) {
 				}
 			} else {
 				// Fallback: minimal HTML output if custom template not available/failed
-				c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-				fmt.Fprintf(c.Writer, "<html><head><title>Subscription %s</title></head><body>", page.SId)
-				fmt.Fprintf(c.Writer, "<h1>Subscription %s</h1>", page.SId)
-				fmt.Fprintf(c.Writer, "<p>Download: %s, Upload: %s, Used: %s, Total: %s</p>", page.Download, page.Upload, page.Used, page.Total)
-				if page.SubUrl != "" {
-					fmt.Fprintf(c.Writer, "<p>URL: <a href=\"%s\">%s</a></p>", page.SubUrl, page.SubUrl)
+				fallbackTpl, err := template.New("sub_fallback").Parse(`
+					<!DOCTYPE html>
+					<html lang="en">
+					<head>
+						<meta charset="UTF-8">
+						<meta name="viewport" content="width=device-width, initial-scale=1.0">
+						<title>Subscription "{{.SId}}"</title>
+					</head>
+					<body>
+						<h2>Client information</h2>
+						<p>Subscription ID: {{.SId}}</p>
+						<p>Download: {{.Download}}</p>
+						<p>Upload: {{.Upload}}</p>
+						<p>Used: {{.Used}}</p>
+						<p>Total: {{.Total}}</p>
+						{{if .SubUrl}}<p>URL: <a href="{{.SubUrl}}">{{.SubUrl}}</a></p>{{end}}
+					</body>
+					</html>
+				`)
+				if err == nil {
+					c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+					_ = fallbackTpl.Execute(c.Writer, page)
+					return
 				}
-				fmt.Fprint(c.Writer, "</body></html>")
-				return	
 			}
 		}
 
