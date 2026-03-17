@@ -254,6 +254,7 @@
 "days" = "Day(s)"
 "renew" = "Auto Renew"
 "renewDesc" = "Auto-renewal after expiration. (0 = disable)(unit: day)"
+"clientDisabled" = "The client's has expired or its traffic has been used up, so it has been disabled."
 
 [pages.inbounds.periodicTrafficReset]
 "never" = "Never"
