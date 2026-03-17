@@ -18,29 +18,20 @@ type SUBController struct {
 	subCustomHeaders string
 	subCustomHtml   string
 	subPath         string
-	subJsonPath     string
-	jsonEnabled     bool
 	subEncrypt      bool
 	updateInterval  string
 
 	subService     *SubService
-	subJsonService *SubJsonService
 }
 
 // NewSUBController creates a new subscription controller with the given configuration.
 func NewSUBController(
 	g *gin.RouterGroup,
 	subPath string,
-	jsonPath string,
-	jsonEnabled bool,
 	encrypt bool,
 	showInfo bool,
 	rModel string,
 	update string,
-	jsonFragment string,
-	jsonNoise string,
-	jsonMux string,
-	jsonRules string,
 	subTitle string,
 	subCustomHeaders string,
 	subCustomHtml string,
@@ -51,13 +42,10 @@ func NewSUBController(
 		subCustomHeaders: subCustomHeaders,
 		subCustomHtml:    subCustomHtml,
 		subPath:          subPath,
-		subJsonPath:      jsonPath,
-		jsonEnabled:      jsonEnabled,
 		subEncrypt:       encrypt,
 		updateInterval:   update,
 
 		subService:     sub,
-		subJsonService: NewSubJsonService(jsonFragment, jsonNoise, jsonMux, jsonRules, sub),
 	}
 	a.initRouter(g)
 	return a
@@ -68,10 +56,6 @@ func NewSUBController(
 func (a *SUBController) initRouter(g *gin.RouterGroup) {
 	gLink := g.Group(a.subPath)
 	gLink.GET(":subid", a.subs)
-	if a.jsonEnabled {
-		gJson := g.Group(a.subJsonPath)
-		gJson.GET(":subid", a.subJsons)
-	}
 }
 
 // subs handles HTTP requests for subscription links, returning either HTML page or base64-encoded subscription data.
@@ -91,10 +75,7 @@ func (a *SUBController) subs(c *gin.Context) {
 		accept := c.GetHeader("Accept")
 		if strings.Contains(strings.ToLower(accept), "text/html") || c.Query("html") == "1" || strings.EqualFold(c.Query("view"), "html") {
 			// Build page data in service
-			subURL, subJsonURL := a.subService.BuildURLs(scheme, hostWithPort, a.subPath, a.subJsonPath, subId)
-			if !a.jsonEnabled {
-				subJsonURL = ""
-			}
+			subURL := a.subService.BuildURLs(scheme, hostWithPort, a.subPath, subId)
 			// Get base_path from context (set by middleware)
 			basePath, exists := c.Get("base_path")
 			if !exists {
@@ -108,7 +89,7 @@ func (a *SUBController) subs(c *gin.Context) {
 				// Remove trailing slash if exists, add subId, then add trailing slash
 				basePathStr = strings.TrimRight(basePathStr, "/") + "/" + subId + "/"
 			}
-			page := a.subService.BuildPageData(subId, hostHeader, traffic, lastOnline, subs, subURL, subJsonURL, basePathStr)
+			page := a.subService.BuildPageData(subId, hostHeader, traffic, lastOnline, subs, subURL, basePathStr)
 
 			// If custom HTML provided in settings, parse and execute it as a template
 			if a.subCustomHtml != "" {
@@ -131,7 +112,6 @@ func (a *SUBController) subs(c *gin.Context) {
 						"uploadByte":   page.UploadByte,
 						"totalByte":    page.TotalByte,
 						"subUrl":       page.SubUrl,
-						"subJsonUrl":   page.SubJsonUrl,
 						"result":       page.Result,
 					})
 					return
@@ -159,21 +139,6 @@ func (a *SUBController) subs(c *gin.Context) {
 		} else {
 			c.String(200, result)
 		}
-	}
-}
-
-// subJsons handles HTTP requests for JSON subscription configurations.
-func (a *SUBController) subJsons(c *gin.Context) {
-	subId := c.Param("subid")
-	_, host, _, _ := a.subService.ResolveRequest(c)
-	jsonSub, header, err := a.subJsonService.GetJson(subId, host)
-	if err != nil || len(jsonSub) == 0 {
-		c.String(400, "Error!")
-	} else {
-		// Add headers
-		a.ApplyCommonHeaders(c, header, a.updateInterval, a.subTitle, a.subCustomHeaders)
-
-		c.String(200, jsonSub)
 	}
 }
 

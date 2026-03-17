@@ -66,17 +66,6 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 		return nil, err
 	}
 
-	JsonPath, err := s.settingService.GetSubJsonPath()
-	if err != nil {
-		return nil, err
-	}
-
-	// Determine if JSON subscription endpoint is enabled
-	subJsonEnable, err := s.settingService.GetSubJsonEnable()
-	if err != nil {
-		return nil, err
-	}
-
 	// Set base_path based on LinksPath for template rendering
 	// Ensure LinksPath ends with "/" for proper asset URL generation
 	basePath := LinksPath
@@ -108,26 +97,6 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 		SubUpdates = "10"
 	}
 
-	SubJsonFragment, err := s.settingService.GetSubJsonFragment()
-	if err != nil {
-		SubJsonFragment = ""
-	}
-
-	SubJsonNoises, err := s.settingService.GetSubJsonNoises()
-	if err != nil {
-		SubJsonNoises = ""
-	}
-
-	SubJsonMux, err := s.settingService.GetSubJsonMux()
-	if err != nil {
-		SubJsonMux = ""
-	}
-
-	SubJsonRules, err := s.settingService.GetSubJsonRules()
-	if err != nil {
-		SubJsonRules = ""
-	}
-
 	SubTitle, err := s.settingService.GetSubTitle()
 	if err != nil {
 		SubTitle = ""
@@ -154,9 +123,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 
 	g := engine.Group("/")
 
-	s.sub = NewSUBController(
-		g, LinksPath, JsonPath, subJsonEnable, Encrypt, ShowInfo, RemarkModel, SubUpdates,
-		SubJsonFragment, SubJsonNoises, SubJsonMux, SubJsonRules, SubTitle, SubCustomHeaders, SubCustomHtml)
+	s.sub = NewSUBController(g, LinksPath, Encrypt, ShowInfo, RemarkModel, SubUpdates, SubTitle, SubCustomHeaders, SubCustomHtml)
 
 	return engine, nil
 }
