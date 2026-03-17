@@ -1922,7 +1922,6 @@ func (s *InboundService) GetClientTrafficByEmail(email string) (traffic *xray.Cl
 		return nil, err
 	}
 	if t != nil && client != nil {
-		t.Enable = client.Enable
 		t.UUID = client.ID
 		t.SubId = client.SubID
 		return t, nil
