@@ -6,7 +6,6 @@ import (
 	"net"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
@@ -23,16 +22,14 @@ import (
 // SubService provides business logic for generating subscription links and managing subscription data.
 type SubService struct {
 	address        string
-	showInfo       bool
 	remarkModel    string
 	inboundService service.InboundService
 	settingService service.SettingService
 }
 
 // NewSubService creates a new subscription service with the given configuration.
-func NewSubService(showInfo bool, remarkModel string) *SubService {
+func NewSubService(remarkModel string) *SubService {
 	return &SubService{
-		showInfo:    showInfo,
 		remarkModel: remarkModel,
 	}
 }
@@ -907,61 +904,6 @@ func (s *SubService) genRemark(inbound *model.Inbound, email string, extra strin
 		}
 	}
 
-	if s.showInfo {
-		statsExist := false
-		var stats xray.ClientTraffic
-		for _, clientStat := range inbound.ClientStats {
-			if clientStat.Email == email {
-				stats = clientStat
-				statsExist = true
-				break
-			}
-		}
-
-		// Get remained days
-		if statsExist {
-			if !stats.Enable {
-				return fmt.Sprintf("⛔️N/A%s%s", separationChar, strings.Join(remark, separationChar))
-			}
-			if vol := stats.Total - (stats.Up + stats.Down); vol > 0 {
-				remark = append(remark, fmt.Sprintf("%s%s", common.FormatTraffic(vol), "📊"))
-			}
-			now := time.Now().Unix()
-			switch exp := stats.ExpiryTime / 1000; {
-			case exp > 0:
-				remainingSeconds := exp - now
-				days := remainingSeconds / 86400
-				hours := (remainingSeconds % 86400) / 3600
-				minutes := (remainingSeconds % 3600) / 60
-				if days > 0 {
-					if hours > 0 {
-						remark = append(remark, fmt.Sprintf("%dD,%dH⏳", days, hours))
-					} else {
-						remark = append(remark, fmt.Sprintf("%dD⏳", days))
-					}
-				} else if hours > 0 {
-					remark = append(remark, fmt.Sprintf("%dH⏳", hours))
-				} else {
-					remark = append(remark, fmt.Sprintf("%dM⏳", minutes))
-				}
-			case exp < 0:
-				days := exp / -86400
-				hours := (exp % -86400) / 3600
-				minutes := (exp % -3600) / 60
-				if days > 0 {
-					if hours > 0 {
-						remark = append(remark, fmt.Sprintf("%dD,%dH⏳", days, hours))
-					} else {
-						remark = append(remark, fmt.Sprintf("%dD⏳", days))
-					}
-				} else if hours > 0 {
-					remark = append(remark, fmt.Sprintf("%dH⏳", hours))
-				} else {
-					remark = append(remark, fmt.Sprintf("%dM⏳", minutes))
-				}
-			}
-		}
-	}
 	return strings.Join(remark, separationChar)
 }
 

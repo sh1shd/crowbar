@@ -82,24 +82,9 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 		return nil, err
 	}
 
-	ShowInfo, err := s.settingService.GetSubShowInfo()
-	if err != nil {
-		return nil, err
-	}
-
 	RemarkModel, err := s.settingService.GetRemarkModel()
 	if err != nil {
 		RemarkModel = "-ieo"
-	}
-
-	SubUpdates, err := s.settingService.GetSubUpdates()
-	if err != nil {
-		SubUpdates = "10"
-	}
-
-	SubTitle, err := s.settingService.GetSubTitle()
-	if err != nil {
-		SubTitle = ""
 	}
 
 	SubCustomHeaders, err := s.settingService.GetSubCustomHeaders()
@@ -123,7 +108,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 
 	g := engine.Group("/")
 
-	s.sub = NewSUBController(g, LinksPath, Encrypt, ShowInfo, RemarkModel, SubUpdates, SubTitle, SubCustomHeaders, SubCustomHtml)
+	s.sub = NewSUBController(g, LinksPath, Encrypt, RemarkModel, SubCustomHeaders, SubCustomHtml)
 
 	return engine, nil
 }

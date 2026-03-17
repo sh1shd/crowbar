@@ -42,7 +42,6 @@ type AllSetting struct {
 
 	// Subscription server settings
 	SubEnable                   bool   `json:"subEnable" form:"subEnable"`                                     // Enable subscription server
-	SubTitle                    string `json:"subTitle" form:"subTitle"`                                       // Subscription title
 	SubCustomHeaders            string `json:"subCustomHeaders" form:"subCustomHeaders"`                       // Custom HTTP headers for subscription responses (JSON)
 	SubCustomHtml               string `json:"subCustomHtml" form:"subCustomHtml"`                         // Custom HTML content returned for subscription pages
 	SubListen                   string `json:"subListen" form:"subListen"`                                     // Subscription server listen IP
@@ -51,11 +50,9 @@ type AllSetting struct {
 	SubDomain                   string `json:"subDomain" form:"subDomain"`                                     // Domain for subscription server validation
 	SubCertFile                 string `json:"subCertFile" form:"subCertFile"`                                 // SSL certificate file for subscription server
 	SubKeyFile                  string `json:"subKeyFile" form:"subKeyFile"`                                   // SSL private key file for subscription server
-	SubUpdates                  int    `json:"subUpdates" form:"subUpdates"`                                   // Subscription update interval in minutes
 	ExternalTrafficInformEnable bool   `json:"externalTrafficInformEnable" form:"externalTrafficInformEnable"` // Enable external traffic reporting
 	ExternalTrafficInformURI    string `json:"externalTrafficInformURI" form:"externalTrafficInformURI"`       // URI for external traffic reporting
 	SubEncrypt                  bool   `json:"subEncrypt" form:"subEncrypt"`                                   // Encrypt subscription responses
-	SubShowInfo                 bool   `json:"subShowInfo" form:"subShowInfo"`                                 // Show client information in subscriptions
 	SubURI                      string `json:"subURI" form:"subURI"`                                           // Subscription server URI
 }
 

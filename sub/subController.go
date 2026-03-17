@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"net/http"
 	"strings"
 
 	"github.com/mhsanaei/3x-ui/v2/config"
@@ -14,12 +15,10 @@ import (
 
 // SUBController handles HTTP requests for subscription links and JSON configurations.
 type SUBController struct {
-	subTitle        string
 	subCustomHeaders string
 	subCustomHtml   string
 	subPath         string
 	subEncrypt      bool
-	updateInterval  string
 
 	subService     *SubService
 }
@@ -29,21 +28,16 @@ func NewSUBController(
 	g *gin.RouterGroup,
 	subPath string,
 	encrypt bool,
-	showInfo bool,
 	rModel string,
-	update string,
-	subTitle string,
 	subCustomHeaders string,
 	subCustomHtml string,
 ) *SUBController {
-	sub := NewSubService(showInfo, rModel)
+	sub := NewSubService(rModel)
 	a := &SUBController{
-		subTitle:         subTitle,
 		subCustomHeaders: subCustomHeaders,
 		subCustomHtml:    subCustomHtml,
 		subPath:          subPath,
 		subEncrypt:       encrypt,
-		updateInterval:   update,
 
 		subService:     sub,
 	}
@@ -64,7 +58,7 @@ func (a *SUBController) subs(c *gin.Context) {
 	scheme, host, hostWithPort, hostHeader := a.subService.ResolveRequest(c)
 	subs, lastOnline, traffic, err := a.subService.GetSubs(subId, host)
 	if err != nil || len(subs) == 0 {
-		c.String(400, "Error!")
+		c.String(http.StatusBadRequest, "Error!")
 	} else {
 		result := ""
 		for _, sub := range subs {
@@ -145,33 +139,23 @@ func (a *SUBController) subs(c *gin.Context) {
 		}
 
 		// Add headers
-		header := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d", traffic.Up, traffic.Down, traffic.Total, traffic.ExpiryTime/1000)
-		a.ApplyCommonHeaders(c, header, a.updateInterval, a.subTitle, a.subCustomHeaders)  
+		subUserInfoHeader := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d", traffic.Up, traffic.Down, traffic.Total, traffic.ExpiryTime/1000)
+		a.ApplyCommonHeaders(c, subUserInfoHeader, a.subCustomHeaders)  
 
 		if a.subEncrypt {
-			c.String(200, base64.StdEncoding.EncodeToString([]byte(result)))
+			c.String(http.StatusOK, base64.StdEncoding.EncodeToString([]byte(result)))
 		} else {
-			c.String(200, result)
+			c.String(http.StatusOK, result)
 		}
 	}
 }
 
-// ApplyCommonHeaders sets common HTTP headers for subscription responses including user info, update interval, and custom headers.
+// ApplyCommonHeaders sets common HTTP headers for subscription responses including user info, and custom headers.
 func (a *SUBController) ApplyCommonHeaders(
 	c *gin.Context,
-	header,
-	updateInterval,
-	profileTitle string,
+	userInfoHeader string,
 	customHeadersJSON string,
 ) {
-	c.Writer.Header().Set("Subscription-Userinfo", header)
-	c.Writer.Header().Set("Profile-Update-Interval", updateInterval)
-
-	// Set Profile-Title header
-	if profileTitle != "" {
-		c.Writer.Header().Set("Profile-Title", "base64:"+base64.StdEncoding.EncodeToString([]byte(profileTitle)))
-	}
-
 	// Parse and apply custom headers
 	var customHeaders []map[string]string
 	if customHeadersJSON != "" {
@@ -185,4 +169,16 @@ func (a *SUBController) ApplyCommonHeaders(
 			}
 		}
 	}
+
+	// If the 'Profile-Update-Interval' header is missing, add it with a default value of 12 hours
+	if c.Writer.Header().Get("Profile-Update-Interval") == "" {
+		c.Writer.Header().Set("Profile-Update-Interval", "12")
+	}
+
+	// If the 'Profile-Title' header is missing, add it with a default value
+	if c.Writer.Header().Get("Profile-Title") == "" {
+		c.Writer.Header().Set("Profile-Title", "A Subscription Server")
+	}
+
+	c.Writer.Header().Set("Subscription-Userinfo", userInfoHeader)
 }

@@ -16,7 +16,6 @@ class AllSetting {
         this.twoFactorToken = "";
         this.xrayTemplateConfig = "";
         this.subEnable = true;
-        this.subTitle = "";
         this.subCustomHeaders = "";
         this.subCustomHtml = "";
         this.subListen = "";
@@ -27,9 +26,7 @@ class AllSetting {
         this.externalTrafficInformURI = "";
         this.subCertFile = "";
         this.subKeyFile = "";
-        this.subUpdates = 12;
         this.subEncrypt = true;
-        this.subShowInfo = true;
         this.subURI = "";
 
         this.timeLocation = "Local";

@@ -42,7 +42,6 @@ var defaultValueMap = map[string]string{
 	"twoFactorEnable":             "false",
 	"twoFactorToken":              "",
 	"subEnable":                   "true",
-	"subTitle":                    "",
 	"subCustomHeaders":            "[]",
 	"subCustomHtml":               "",
 	"subListen":                   "",
@@ -51,9 +50,7 @@ var defaultValueMap = map[string]string{
 	"subDomain":                   "",
 	"subCertFile":                 "",
 	"subKeyFile":                  "",
-	"subUpdates":                  "12",
 	"subEncrypt":                  "true",
-	"subShowInfo":                 "true",
 	"subURI":                      "",
 	"externalTrafficInformEnable": "false",
 	"externalTrafficInformURI":    "",
@@ -359,10 +356,6 @@ func (s *SettingService) GetSubEnable() (bool, error) {
 	return s.getBool("subEnable")
 }
 
-func (s *SettingService) GetSubTitle() (string, error) {
-	return s.getString("subTitle")
-}
-
 func (s *SettingService) GetSubCustomHeaders() (string, error) {
 	return s.getString("subCustomHeaders")
 }
@@ -407,16 +400,8 @@ func (s *SettingService) GetSubKeyFile() (string, error) {
 	return s.getString("subKeyFile")
 }
 
-func (s *SettingService) GetSubUpdates() (string, error) {
-	return s.getString("subUpdates")
-}
-
 func (s *SettingService) GetSubEncrypt() (bool, error) {
 	return s.getBool("subEncrypt")
-}
-
-func (s *SettingService) GetSubShowInfo() (bool, error) {
-	return s.getBool("subShowInfo")
 }
 
 func (s *SettingService) GetPageSize() (int, error) {
@@ -512,7 +497,6 @@ func (s *SettingService) GetDefaultSettings(host string) (any, error) {
 		"defaultCert":   func() (any, error) { return s.GetCertFile() },
 		"defaultKey":    func() (any, error) { return s.GetKeyFile() },
 		"subEnable":     func() (any, error) { return s.GetSubEnable() },
-		"subTitle":      func() (any, error) { return s.GetSubTitle() },
 		"subURI":        func() (any, error) { return s.GetSubURI() },
 		"remarkModel":   func() (any, error) { return s.GetRemarkModel() },
 		"ipLimitEnable": func() (any, error) { return s.GetIpLimitEnable() },
@@ -532,7 +516,6 @@ func (s *SettingService) GetDefaultSettings(host string) (any, error) {
 
 	if (subEnable && result["subURI"].(string) == "") {
 		subURI := ""
-		subTitle, _ := s.GetSubTitle()
 		subPort, _ := s.GetSubPort()
 		subPath, _ := s.GetSubPath()
 		subDomain, _ := s.GetSubDomain()
@@ -557,9 +540,6 @@ func (s *SettingService) GetDefaultSettings(host string) (any, error) {
 		}
 		if subEnable && result["subURI"].(string) == "" {
 			result["subURI"] = subURI + subPath
-		}
-		if result["subTitle"].(string) == "" {
-			result["subTitle"] = subTitle
 		}
 	}
 
