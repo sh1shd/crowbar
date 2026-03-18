@@ -42,8 +42,6 @@ type AllSetting struct {
 
 	// Subscription server settings
 	SubEnable                   bool   `json:"subEnable" form:"subEnable"`                                     // Enable subscription server
-	SubJsonEnable               bool   `json:"subJsonEnable" form:"subJsonEnable"`                             // Enable JSON subscription endpoint
-	SubTitle                    string `json:"subTitle" form:"subTitle"`                                       // Subscription title
 	SubCustomHeaders            string `json:"subCustomHeaders" form:"subCustomHeaders"`                       // Custom HTTP headers for subscription responses (JSON)
 	SubCustomHtml               string `json:"subCustomHtml" form:"subCustomHtml"`                         // Custom HTML content returned for subscription pages
 	SubListen                   string `json:"subListen" form:"subListen"`                                     // Subscription server listen IP
@@ -52,18 +50,10 @@ type AllSetting struct {
 	SubDomain                   string `json:"subDomain" form:"subDomain"`                                     // Domain for subscription server validation
 	SubCertFile                 string `json:"subCertFile" form:"subCertFile"`                                 // SSL certificate file for subscription server
 	SubKeyFile                  string `json:"subKeyFile" form:"subKeyFile"`                                   // SSL private key file for subscription server
-	SubUpdates                  int    `json:"subUpdates" form:"subUpdates"`                                   // Subscription update interval in minutes
 	ExternalTrafficInformEnable bool   `json:"externalTrafficInformEnable" form:"externalTrafficInformEnable"` // Enable external traffic reporting
 	ExternalTrafficInformURI    string `json:"externalTrafficInformURI" form:"externalTrafficInformURI"`       // URI for external traffic reporting
 	SubEncrypt                  bool   `json:"subEncrypt" form:"subEncrypt"`                                   // Encrypt subscription responses
-	SubShowInfo                 bool   `json:"subShowInfo" form:"subShowInfo"`                                 // Show client information in subscriptions
 	SubURI                      string `json:"subURI" form:"subURI"`                                           // Subscription server URI
-	SubJsonPath                 string `json:"subJsonPath" form:"subJsonPath"`                                 // Path for JSON subscription endpoint
-	SubJsonURI                  string `json:"subJsonURI" form:"subJsonURI"`                                   // JSON subscription server URI
-	SubJsonFragment             string `json:"subJsonFragment" form:"subJsonFragment"`                         // JSON subscription fragment configuration
-	SubJsonNoises               string `json:"subJsonNoises" form:"subJsonNoises"`                             // JSON subscription noise configuration
-	SubJsonMux                  string `json:"subJsonMux" form:"subJsonMux"`                                   // JSON subscription mux configuration
-	SubJsonRules                string `json:"subJsonRules" form:"subJsonRules"`
 }
 
 // CheckValid validates all settings in the AllSetting struct, checking IP addresses, ports, SSL certificates, and other configuration values.
@@ -119,13 +109,6 @@ func (s *AllSetting) CheckValid() error {
 	}
 	if !strings.HasSuffix(s.SubPath, "/") {
 		s.SubPath += "/"
-	}
-
-	if !strings.HasPrefix(s.SubJsonPath, "/") {
-		s.SubJsonPath = "/" + s.SubJsonPath
-	}
-	if !strings.HasSuffix(s.SubJsonPath, "/") {
-		s.SubJsonPath += "/"
 	}
 
 	_, err := time.LoadLocation(s.TimeLocation)

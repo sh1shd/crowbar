@@ -9,13 +9,6 @@
             </template>
         </a-setting-list-item>
         <a-setting-list-item paddings="small">
-            <template #title>JSON Subscription</template>
-            <template #description>{{ i18n "pages.settings.subJsonEnable"}}</template>
-            <template #control>
-                <a-switch v-model="allSetting.subJsonEnable"></a-switch>
-            </template>
-        </a-setting-list-item>
-        <a-setting-list-item paddings="small">
             <template #title>{{ i18n "pages.settings.subListen"}}</template>
             <template #description>{{ i18n "pages.settings.subListenDesc"}}</template>
             <template #control>
@@ -62,21 +55,6 @@
             <template #description>{{ i18n "pages.settings.subEncryptDesc"}}</template>
             <template #control>
                 <a-switch v-model="allSetting.subEncrypt"></a-switch>
-            </template>
-        </a-setting-list-item>
-        <a-setting-list-item paddings="small">
-            <template #title>{{ i18n "pages.settings.subShowInfo"}}</template>
-            <template #description>{{ i18n "pages.settings.subShowInfoDesc"}}</template>
-            <template #control>
-                <a-switch v-model="allSetting.subShowInfo"></a-switch>
-            </template>
-        </a-setting-list-item>
-        <a-divider>{{ i18n "pages.xray.basicTemplate"}}</a-divider>
-        <a-setting-list-item paddings="small">
-            <template #title>{{ i18n "pages.settings.subTitle"}}</template>
-            <template #description>{{ i18n "pages.settings.subTitleDesc"}}</template>
-            <template #control>
-                <a-input type="text" v-model="allSetting.subTitle"></a-input>
             </template>
         </a-setting-list-item>
         <a-setting-list-item paddings="small">
@@ -134,15 +112,6 @@
             <template #description>{{ i18n "pages.settings.customSubscriptionHtmlDesc" }}</template>
             <template #control>
                 <a-textarea v-model="allSetting.subCustomHtml" :rows="5"></a-textarea>
-            </template>
-        </a-setting-list-item>
-    </a-collapse-panel>
-    <a-collapse-panel key="5" header='{{ i18n "pages.settings.intervals"}}'>
-        <a-setting-list-item paddings="small">
-            <template #title>{{ i18n "pages.settings.subUpdates"}}</template>
-            <template #description>{{ i18n "pages.settings.subUpdatesDesc"}}</template>
-            <template #control>
-                <a-input-number :min="1" v-model="allSetting.subUpdates" :style="{ width: '100%' }"></a-input-number>
             </template>
         </a-setting-list-item>
     </a-collapse-panel>

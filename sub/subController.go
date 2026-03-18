@@ -5,59 +5,39 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"net/http"
 	"strings"
-
-	"github.com/mhsanaei/3x-ui/v2/config"
 
 	"github.com/gin-gonic/gin"
 )
 
 // SUBController handles HTTP requests for subscription links and JSON configurations.
 type SUBController struct {
-	subTitle        string
 	subCustomHeaders string
 	subCustomHtml   string
 	subPath         string
-	subJsonPath     string
-	jsonEnabled     bool
 	subEncrypt      bool
-	updateInterval  string
 
 	subService     *SubService
-	subJsonService *SubJsonService
 }
 
 // NewSUBController creates a new subscription controller with the given configuration.
 func NewSUBController(
 	g *gin.RouterGroup,
 	subPath string,
-	jsonPath string,
-	jsonEnabled bool,
 	encrypt bool,
-	showInfo bool,
 	rModel string,
-	update string,
-	jsonFragment string,
-	jsonNoise string,
-	jsonMux string,
-	jsonRules string,
-	subTitle string,
 	subCustomHeaders string,
 	subCustomHtml string,
 ) *SUBController {
-	sub := NewSubService(showInfo, rModel)
+	sub := NewSubService(rModel)
 	a := &SUBController{
-		subTitle:         subTitle,
 		subCustomHeaders: subCustomHeaders,
 		subCustomHtml:    subCustomHtml,
 		subPath:          subPath,
-		subJsonPath:      jsonPath,
-		jsonEnabled:      jsonEnabled,
 		subEncrypt:       encrypt,
-		updateInterval:   update,
 
 		subService:     sub,
-		subJsonService: NewSubJsonService(jsonFragment, jsonNoise, jsonMux, jsonRules, sub),
 	}
 	a.initRouter(g)
 	return a
@@ -68,10 +48,6 @@ func NewSUBController(
 func (a *SUBController) initRouter(g *gin.RouterGroup) {
 	gLink := g.Group(a.subPath)
 	gLink.GET(":subid", a.subs)
-	if a.jsonEnabled {
-		gJson := g.Group(a.subJsonPath)
-		gJson.GET(":subid", a.subJsons)
-	}
 }
 
 // subs handles HTTP requests for subscription links, returning either HTML page or base64-encoded subscription data.
@@ -79,22 +55,19 @@ func (a *SUBController) subs(c *gin.Context) {
 	subId := c.Param("subid")
 	scheme, host, hostWithPort, hostHeader := a.subService.ResolveRequest(c)
 	subs, lastOnline, traffic, err := a.subService.GetSubs(subId, host)
+
 	if err != nil || len(subs) == 0 {
-		c.String(400, "Error!")
+		c.String(http.StatusBadRequest, "400 bad request")
 	} else {
 		result := ""
 		for _, sub := range subs {
 			result += sub + "\n"
 		}
 
-		// If the request expects HTML (e.g., browser) or explicitly asked (?html=1 or ?view=html), render the info page here
-		accept := c.GetHeader("Accept")
-		if strings.Contains(strings.ToLower(accept), "text/html") || c.Query("html") == "1" || strings.EqualFold(c.Query("view"), "html") {
+		// If the request was made from a web browser (by a accept header and user agent), render the info page here
+		if strings.Contains(c.GetHeader("Accept"), "text/html") || strings.Contains(c.GetHeader("User-Agent"), "mozilla") {
 			// Build page data in service
-			subURL, subJsonURL := a.subService.BuildURLs(scheme, hostWithPort, a.subPath, a.subJsonPath, subId)
-			if !a.jsonEnabled {
-				subJsonURL = ""
-			}
+			subURL := a.subService.BuildURLs(scheme, hostWithPort, a.subPath, subId)
 			// Get base_path from context (set by middleware)
 			basePath, exists := c.Get("base_path")
 			if !exists {
@@ -108,91 +81,62 @@ func (a *SUBController) subs(c *gin.Context) {
 				// Remove trailing slash if exists, add subId, then add trailing slash
 				basePathStr = strings.TrimRight(basePathStr, "/") + "/" + subId + "/"
 			}
-			page := a.subService.BuildPageData(subId, hostHeader, traffic, lastOnline, subs, subURL, subJsonURL, basePathStr)
+			page := a.subService.BuildPageData(subId, hostHeader, traffic, lastOnline, subs, subURL, basePathStr)
 
 			// If custom HTML provided in settings, parse and execute it as a template
 			if a.subCustomHtml != "" {
 				tpl, err := template.New("sub_custom").Parse(a.subCustomHtml)
 				if err == nil {
-					_ = tpl.Execute(c.Writer, gin.H{
-						"title":        "subscription.title",
-						"cur_ver":      config.GetVersion(),
-						"host":         page.Host,
-						"base_path":    page.BasePath,
-						"sId":          page.SId,
-						"download":     page.Download,
-						"upload":       page.Upload,
-						"total":        page.Total,
-						"used":         page.Used,
-						"remained":     page.Remained,
-						"expire":       page.Expire,
-						"lastOnline":   page.LastOnline,
-						"downloadByte": page.DownloadByte,
-						"uploadByte":   page.UploadByte,
-						"totalByte":    page.TotalByte,
-						"subUrl":       page.SubUrl,
-						"subJsonUrl":   page.SubJsonUrl,
-						"result":       page.Result,
-					})
+					_ = tpl.Execute(c.Writer, page)
 					return
 				}
 			} else {
 				// Fallback: minimal HTML output if custom template not available/failed
-				c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-				fmt.Fprintf(c.Writer, "<html><head><title>Subscription %s</title></head><body>", page.SId)
-				fmt.Fprintf(c.Writer, "<h1>Subscription %s</h1>", page.SId)
-				fmt.Fprintf(c.Writer, "<p>Download: %s, Upload: %s, Used: %s, Total: %s</p>", page.Download, page.Upload, page.Used, page.Total)
-				if page.SubUrl != "" {
-					fmt.Fprintf(c.Writer, "<p>URL: <a href=\"%s\">%s</a></p>", page.SubUrl, page.SubUrl)
+				fallbackTpl, err := template.New("sub_fallback").Parse(`
+					<!DOCTYPE html>
+					<html lang="en">
+					<head>
+						<meta charset="UTF-8">
+						<meta name="viewport" content="width=device-width, initial-scale=1.0">
+						<title>Subscription "{{.SId}}"</title>
+					</head>
+					<body>
+						<h2>Client information</h2>
+						<p>Subscription ID: {{.SId}}</p>
+						<p>Download: {{.Download}}</p>
+						<p>Upload: {{.Upload}}</p>
+						<p>Used: {{.Used}}</p>
+						<p>Total: {{.Total}}</p>
+						{{if .SubUrl}}<p>URL: <a href="{{.SubUrl}}">{{.SubUrl}}</a></p>{{end}}
+					</body>
+					</html>
+				`)
+				if err == nil {
+					c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+					_ = fallbackTpl.Execute(c.Writer, page)
+					return
 				}
-				fmt.Fprint(c.Writer, "</body></html>")
-				return	
 			}
 		}
 
 		// Add headers
-		header := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d", traffic.Up, traffic.Down, traffic.Total, traffic.ExpiryTime/1000)
-		a.ApplyCommonHeaders(c, header, a.updateInterval, a.subTitle, a.subCustomHeaders)  
+		subUserInfoHeader := fmt.Sprintf("upload=%d; download=%d; total=%d; expire=%d", traffic.Up, traffic.Down, traffic.Total, traffic.ExpiryTime/1000)
+		a.ApplyCommonHeaders(c, subUserInfoHeader, a.subCustomHeaders)  
 
 		if a.subEncrypt {
-			c.String(200, base64.StdEncoding.EncodeToString([]byte(result)))
+			c.String(http.StatusOK, base64.StdEncoding.EncodeToString([]byte(result)))
 		} else {
-			c.String(200, result)
+			c.String(http.StatusOK, result)
 		}
 	}
 }
 
-// subJsons handles HTTP requests for JSON subscription configurations.
-func (a *SUBController) subJsons(c *gin.Context) {
-	subId := c.Param("subid")
-	_, host, _, _ := a.subService.ResolveRequest(c)
-	jsonSub, header, err := a.subJsonService.GetJson(subId, host)
-	if err != nil || len(jsonSub) == 0 {
-		c.String(400, "Error!")
-	} else {
-		// Add headers
-		a.ApplyCommonHeaders(c, header, a.updateInterval, a.subTitle, a.subCustomHeaders)
-
-		c.String(200, jsonSub)
-	}
-}
-
-// ApplyCommonHeaders sets common HTTP headers for subscription responses including user info, update interval, and custom headers.
+// ApplyCommonHeaders sets common HTTP headers for subscription responses including user info, and custom headers.
 func (a *SUBController) ApplyCommonHeaders(
 	c *gin.Context,
-	header,
-	updateInterval,
-	profileTitle string,
+	userInfoHeader string,
 	customHeadersJSON string,
 ) {
-	c.Writer.Header().Set("Subscription-Userinfo", header)
-	c.Writer.Header().Set("Profile-Update-Interval", updateInterval)
-
-	// Set Profile-Title header
-	if profileTitle != "" {
-		c.Writer.Header().Set("Profile-Title", "base64:"+base64.StdEncoding.EncodeToString([]byte(profileTitle)))
-	}
-
 	// Parse and apply custom headers
 	var customHeaders []map[string]string
 	if customHeadersJSON != "" {
@@ -206,4 +150,16 @@ func (a *SUBController) ApplyCommonHeaders(
 			}
 		}
 	}
+
+	// If the 'Profile-Update-Interval' header is missing, add it with a default value of 12 hours
+	if c.Writer.Header().Get("Profile-Update-Interval") == "" {
+		c.Writer.Header().Set("Profile-Update-Interval", "12")
+	}
+
+	// If the 'Profile-Title' header is missing, add it with a default value
+	if c.Writer.Header().Get("Profile-Title") == "" {
+		c.Writer.Header().Set("Profile-Title", "A Subscription Server")
+	}
+
+	c.Writer.Header().Set("Subscription-Userinfo", userInfoHeader)
 }

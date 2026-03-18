@@ -6,7 +6,6 @@ import (
 	"net"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
@@ -23,16 +22,14 @@ import (
 // SubService provides business logic for generating subscription links and managing subscription data.
 type SubService struct {
 	address        string
-	showInfo       bool
 	remarkModel    string
 	inboundService service.InboundService
 	settingService service.SettingService
 }
 
 // NewSubService creates a new subscription service with the given configuration.
-func NewSubService(showInfo bool, remarkModel string) *SubService {
+func NewSubService(remarkModel string) *SubService {
 	return &SubService{
-		showInfo:    showInfo,
 		remarkModel: remarkModel,
 	}
 }
@@ -907,61 +904,6 @@ func (s *SubService) genRemark(inbound *model.Inbound, email string, extra strin
 		}
 	}
 
-	if s.showInfo {
-		statsExist := false
-		var stats xray.ClientTraffic
-		for _, clientStat := range inbound.ClientStats {
-			if clientStat.Email == email {
-				stats = clientStat
-				statsExist = true
-				break
-			}
-		}
-
-		// Get remained days
-		if statsExist {
-			if !stats.Enable {
-				return fmt.Sprintf("⛔️N/A%s%s", separationChar, strings.Join(remark, separationChar))
-			}
-			if vol := stats.Total - (stats.Up + stats.Down); vol > 0 {
-				remark = append(remark, fmt.Sprintf("%s%s", common.FormatTraffic(vol), "📊"))
-			}
-			now := time.Now().Unix()
-			switch exp := stats.ExpiryTime / 1000; {
-			case exp > 0:
-				remainingSeconds := exp - now
-				days := remainingSeconds / 86400
-				hours := (remainingSeconds % 86400) / 3600
-				minutes := (remainingSeconds % 3600) / 60
-				if days > 0 {
-					if hours > 0 {
-						remark = append(remark, fmt.Sprintf("%dD,%dH⏳", days, hours))
-					} else {
-						remark = append(remark, fmt.Sprintf("%dD⏳", days))
-					}
-				} else if hours > 0 {
-					remark = append(remark, fmt.Sprintf("%dH⏳", hours))
-				} else {
-					remark = append(remark, fmt.Sprintf("%dM⏳", minutes))
-				}
-			case exp < 0:
-				days := exp / -86400
-				hours := (exp % -86400) / 3600
-				minutes := (exp % -3600) / 60
-				if days > 0 {
-					if hours > 0 {
-						remark = append(remark, fmt.Sprintf("%dD,%dH⏳", days, hours))
-					} else {
-						remark = append(remark, fmt.Sprintf("%dD⏳", days))
-					}
-				} else if hours > 0 {
-					remark = append(remark, fmt.Sprintf("%dH⏳", hours))
-				} else {
-					remark = append(remark, fmt.Sprintf("%dM⏳", minutes))
-				}
-			}
-		}
-	}
 	return strings.Join(remark, separationChar)
 }
 
@@ -1024,7 +966,6 @@ type PageData struct {
 	UploadByte   int64
 	TotalByte    int64
 	SubUrl       string
-	SubJsonUrl   string
 	Result       []string
 }
 
@@ -1074,29 +1015,25 @@ func (s *SubService) ResolveRequest(c *gin.Context) (scheme string, host string,
 
 // BuildURLs constructs absolute subscription and JSON subscription URLs for a given subscription ID.
 // It prioritizes configured URIs, then individual settings, and finally falls back to request-derived components.
-func (s *SubService) BuildURLs(scheme, hostWithPort, subPath, subJsonPath, subId string) (subURL, subJsonURL string) {
+func (s *SubService) BuildURLs(scheme, hostWithPort, subPath, subId string) (subURL string) {
 	// Input validation
 	if subId == "" {
-		return "", ""
+		return ""
 	}
 
 	// Get configured URIs first (highest priority)
 	configuredSubURI, _ := s.settingService.GetSubURI()
-	configuredSubJsonURI, _ := s.settingService.GetSubJsonURI()
 
 	// Determine base scheme and host (cached to avoid duplicate calls)
 	var baseScheme, baseHostWithPort string
-	if configuredSubURI == "" || configuredSubJsonURI == "" {
+	if configuredSubURI == "" {
 		baseScheme, baseHostWithPort = s.getBaseSchemeAndHost(scheme, hostWithPort)
 	}
 
 	// Build subscription URL
 	subURL = s.buildSingleURL(configuredSubURI, baseScheme, baseHostWithPort, subPath, subId)
 
-	// Build JSON subscription URL
-	subJsonURL = s.buildSingleURL(configuredSubJsonURI, baseScheme, baseHostWithPort, subJsonPath, subId)
-
-	return subURL, subJsonURL
+	return subURL
 }
 
 // getBaseSchemeAndHost determines the base scheme and host from settings or falls back to request values
@@ -1143,7 +1080,7 @@ func (s *SubService) joinPathWithID(basePath, subId string) string {
 
 // BuildPageData parses header and prepares the template view model.
 // BuildPageData constructs page data for rendering the subscription information page.
-func (s *SubService) BuildPageData(subId string, hostHeader string, traffic xray.ClientTraffic, lastOnline int64, subs []string, subURL, subJsonURL string, basePath string) PageData {
+func (s *SubService) BuildPageData(subId string, hostHeader string, traffic xray.ClientTraffic, lastOnline int64, subs []string, subURL, basePath string) PageData {
 	download := common.FormatTraffic(traffic.Down)
 	upload := common.FormatTraffic(traffic.Up)
 	total := "∞"
@@ -1170,7 +1107,6 @@ func (s *SubService) BuildPageData(subId string, hostHeader string, traffic xray
 		UploadByte:   traffic.Up,
 		TotalByte:    traffic.Total,
 		SubUrl:       subURL,
-		SubJsonUrl:   subJsonURL,
 		Result:       subs,
 	}
 }
