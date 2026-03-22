@@ -15,6 +15,7 @@ import (
 type SUBController struct {
 	subCustomHeaders string
 	subCustomHtml   string
+	subCustomErrorHtml string
 	subPath         string
 	subEncrypt      bool
 
@@ -29,15 +30,17 @@ func NewSUBController(
 	rModel string,
 	subCustomHeaders string,
 	subCustomHtml string,
+	subCustomErrorHtml string,
 ) *SUBController {
 	sub := NewSubService(rModel)
 	a := &SUBController{
-		subCustomHeaders: subCustomHeaders,
-		subCustomHtml:    subCustomHtml,
-		subPath:          subPath,
-		subEncrypt:       encrypt,
+		subCustomHeaders:   subCustomHeaders,
+		subCustomHtml:      subCustomHtml,
+		subCustomErrorHtml: subCustomErrorHtml,
+		subPath:            subPath,
+		subEncrypt:         encrypt,
 
-		subService:     sub,
+		subService:         sub,
 	}
 	a.initRouter(g)
 	return a
@@ -50,6 +53,57 @@ func (a *SUBController) initRouter(g *gin.RouterGroup) {
 	gLink.GET(":subid", a.subs)
 }
 
+
+// handleError provides a custom error response, returning HTML for browsers or plain text otherwise.
+func (a *SUBController) handleError(c *gin.Context, status int, message string) {
+	type ErrorPageData struct {
+		Status  int
+		Message string
+	}
+
+	if strings.Contains(c.GetHeader("Accept"), "text/html") || strings.Contains(c.GetHeader("User-Agent"), "mozilla") {
+		if (a.subCustomErrorHtml != "") {
+			tpl, err := template.New("sub_error").Parse(a.subCustomErrorHtml)
+			if err == nil {
+				c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+				errorData := ErrorPageData{
+					Status:  status,
+					Message: message,
+				}
+				_ = tpl.Execute(c.Writer, errorData)
+				return
+			}
+		} else {
+			errorTpl, err := template.New("error_page").Parse(`
+				<!DOCTYPE html>
+				<html lang="en">
+				<head>
+					<meta charset="UTF-8">
+					<meta name="viewport" content="width=device-width, initial-scale=1.0">
+					<title>A Subscription Server</title>
+				</head>
+				<body>
+					<h2>{{.Status}} {{.Message}}</h2>
+					<pre>Crowbar</pre>
+				</body>
+				</html>
+			`)
+			if err == nil {
+				c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+				errorData := ErrorPageData{
+					Status:  status,
+					Message: message,
+				}
+				_ = errorTpl.Execute(c.Writer, errorData)
+			} else {
+				c.String(status, message)
+			}
+		}
+	} else {
+		c.String(status, message)
+	}
+}
+
 // subs handles HTTP requests for subscription links, returning either HTML page or base64-encoded subscription data.
 func (a *SUBController) subs(c *gin.Context) {
 	subId := c.Param("subid")
@@ -57,7 +111,7 @@ func (a *SUBController) subs(c *gin.Context) {
 	subs, lastOnline, traffic, err := a.subService.GetSubs(subId, host)
 
 	if err != nil || len(subs) == 0 {
-		c.String(http.StatusBadRequest, "400 bad request")
+		a.handleError(c, http.StatusNotFound, "Subscription Not Found")
 	} else {
 		result := ""
 		for _, sub := range subs {
@@ -98,7 +152,7 @@ func (a *SUBController) subs(c *gin.Context) {
 					<head>
 						<meta charset="UTF-8">
 						<meta name="viewport" content="width=device-width, initial-scale=1.0">
-						<title>Subscription "{{.SId}}"</title>
+						<title>A Subscription Server</title>
 					</head>
 					<body>
 						<h2>Client information</h2>
@@ -108,6 +162,7 @@ func (a *SUBController) subs(c *gin.Context) {
 						<p>Used: {{.Used}}</p>
 						<p>Total: {{.Total}}</p>
 						{{if .SubUrl}}<p>URL: <a href="{{.SubUrl}}">{{.SubUrl}}</a></p>{{end}}
+						<pre>Crowbar</pre>
 					</body>
 					</html>
 				`)

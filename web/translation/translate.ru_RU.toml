@@ -388,7 +388,9 @@
 "language" = "Язык интерфейса"
 "customPages" = "Настраиваемые страницы"
 "customSubscriptionHtml" = "HTML-страница подписки"
-"customSubscriptionHtmlDesc" = "HTML-страница, которая будет отправляться пользователю при запросе адреса подписки"
+"customSubscriptionHtmlDesc" = "HTML-страница, которая будет отправлена пользователю при запросе адреса подписки"
+"customSubscriptionErrorHtml" = "HTML-страница ошибки"
+"customSubscriptionErrorHtmlDesc" = "HTML-страница, которая будет отправлена пользователю, если произошла ошибка"
 
 [pages.settings.customHeaders]
 "headerName" = "Заголовок"
