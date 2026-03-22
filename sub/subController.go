@@ -80,11 +80,13 @@ func (a *SUBController) handleError(c *gin.Context, status int, message string) 
 				<head>
 					<meta charset="UTF-8">
 					<meta name="viewport" content="width=device-width, initial-scale=1.0">
-					<title>A Subscription Server</title>
+					<title>Subscription</title>
+					<style>body { font-family: system-ui, sans-serif; }</style>
 				</head>
 				<body>
-					<h2>{{.Status}} {{.Message}}</h2>
-					<pre>Crowbar</pre>
+					<h1>Something went wrong</h1>
+					<p>Status: <code>{{.Status}}</code></p>
+					<p>Message: <code>{{.Message}}</code></p>
 				</body>
 				</html>
 			`)
@@ -152,17 +154,22 @@ func (a *SUBController) subs(c *gin.Context) {
 					<head>
 						<meta charset="UTF-8">
 						<meta name="viewport" content="width=device-width, initial-scale=1.0">
-						<title>A Subscription Server</title>
+						<title>Subscription</title>
+						<style>body { font-family: system-ui, sans-serif; }</style>
 					</head>
 					<body>
-						<h2>Client information</h2>
-						<p>Subscription ID: {{.SId}}</p>
-						<p>Download: {{.Download}}</p>
-						<p>Upload: {{.Upload}}</p>
-						<p>Used: {{.Used}}</p>
-						<p>Total: {{.Total}}</p>
-						{{if .SubUrl}}<p>URL: <a href="{{.SubUrl}}">{{.SubUrl}}</a></p>{{end}}
-						<pre>Crowbar</pre>
+						<h1>Client information</h1>
+						{{if .SubUrl}}
+						<img 
+							src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{.SubUrl}}"
+							alt="QR code for subscription URL"
+						/>
+						{{end}}
+						<p>Subscription ID: <code>{{.SId}}</code></p>
+						<p>Download: <code>{{.Download}}</code></p>
+						<p>Upload: <code>{{.Upload}}</code></p>
+						<p>Used: <code>{{.Used}}</code></p>
+						<p>Total: <code>{{.Total}}</code></p>
 					</body>
 					</html>
 				`)
@@ -213,7 +220,7 @@ func (a *SUBController) ApplyCommonHeaders(
 
 	// If the 'Profile-Title' header is missing, add it with a default value
 	if c.Writer.Header().Get("Profile-Title") == "" {
-		c.Writer.Header().Set("Profile-Title", "A Subscription Server")
+		c.Writer.Header().Set("Profile-Title", "Subscription")
 	}
 
 	c.Writer.Header().Set("Subscription-Userinfo", userInfoHeader)
