@@ -114,6 +114,13 @@
                 <a-textarea v-model="allSetting.subCustomHtml" :rows="5"></a-textarea>
             </template>
         </a-setting-list-item>
+        <a-setting-list-item paddings="small">
+            <template #title>{{ i18n "pages.settings.customSubscriptionErrorHtml" }}</template>
+            <template #description>{{ i18n "pages.settings.customSubscriptionErrorHtmlDesc" }}</template>
+            <template #control>
+                <a-textarea v-model="allSetting.subCustomErrorHtml" :rows="5"></a-textarea>
+            </template>
+        </a-setting-list-item>
     </a-collapse-panel>
 </a-collapse>
 {{end}}

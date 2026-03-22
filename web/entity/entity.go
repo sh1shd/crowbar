@@ -43,7 +43,8 @@ type AllSetting struct {
 	// Subscription server settings
 	SubEnable                   bool   `json:"subEnable" form:"subEnable"`                                     // Enable subscription server
 	SubCustomHeaders            string `json:"subCustomHeaders" form:"subCustomHeaders"`                       // Custom HTTP headers for subscription responses (JSON)
-	SubCustomHtml               string `json:"subCustomHtml" form:"subCustomHtml"`                         // Custom HTML content returned for subscription pages
+	SubCustomHtml               string `json:"subCustomHtml" form:"subCustomHtml"`                             // Custom HTML content returned for subscription pages
+	SubCustomErrorHtml          string `json:"subCustomErrorHtml" form:"subCustomErrorHtml"`                   // Custom HTML content returned for error pages
 	SubListen                   string `json:"subListen" form:"subListen"`                                     // Subscription server listen IP
 	SubPort                     int    `json:"subPort" form:"subPort"`                                         // Subscription server port
 	SubPath                     string `json:"subPath" form:"subPath"`                                         // Base path for subscription URLs
