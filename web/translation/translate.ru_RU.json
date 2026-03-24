@@ -204,11 +204,6 @@
       "download": "Загрузка",
       "exportDatabase": "Экспорт базы данных",
       "exportDatabaseDesc": "Нажмите, чтобы скачать файл .db, содержащий резервную копию вашей текущей базы данных на ваше устройство.",
-      "geofileUpdateDialog": "Вы действительно хотите обновить геофайл?",
-      "geofileUpdateDialogDesc": "Это обновит файл #filename#.",
-      "geofileUpdatePopover": "Геофайлы успешно обновлены",
-      "geofilesUpdateAll": "Обновить все",
-      "geofilesUpdateDialogDesc": "Это обновит все геофайлы.",
       "getConfigError": "Произошла ошибка при получении конфигурационного файла",
       "getDatabaseError": "Произошла ошибка при получении базы данных",
       "importDatabase": "Импорт базы данных",
@@ -389,7 +384,16 @@
         "userPassMustBeNotEmpty": "Новое имя пользователя и новый пароль должны быть заполнены"
       },
       "trafficDiff": "Порог трафика для уведомления",
-      "trafficDiffDesc": "Получение уведомления об исчерпании трафика до достижения порога (значение: ГБ)"
+      "trafficDiffDesc": "Получение уведомления об исчерпании трафика до достижения порога (значение: ГБ)",
+      "geofilesTitle": "Геофайлы",
+      "manageGeofiles": "Управление геофайлами",
+      "manageGeofilesDesc": "Здесь вы можете обновлять геофайлы и использовать их, например, в правилах маршрутизации.",
+      "geofileUpdateDialog": "Вы действительно хотите обновить геофайл?",
+      "geofileUpdateDialogDesc": "Это обновит файл #filename#.",
+      "geofileUpdatePopover": "Геофайлы успешно обновлены",
+      "geofilesUpdateAll": "Обновить все",
+      "geofilesUpdateDialogDesc": "Это обновит все геофайлы.",
+      "geofilesName": "Название геофайла"
     },
     "xray": {
       "Template": "Конфигурационный файл Xray",

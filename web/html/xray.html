@@ -21,7 +21,7 @@
               <a-card>
                 <template #title>
                   <a-space direction="horizontal">
-                    <a-button type="primary" :disabled="saveBtnDisable" @click="updateXraySetting">{{ i18n "pages.xray.save" }}</a-button>
+                    <a-button type="primary" icon="save" :disabled="saveBtnDisable" @click="updateXraySetting">{{ i18n "pages.xray.save" }}</a-button>
                     <a-dropdown :trigger="['click']">
                       <a-button icon="menu"></a-button>
                       <a-menu slot="overlay" @click="a => generalActions(a)" :theme="themeSwitcher.currentTheme">
@@ -59,12 +59,10 @@
   </a-layout>
 </a-layout>
 {{template "page/body_scripts" .}}
-<script src="{{ .base_path }}assets/js/model/outbound.js?{{ .cur_ver }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/lib/codemirror.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/mode/javascript/javascript.js"></script>
 {{template "component/aCrowbarHeader" .}}
 {{template "component/aThemeSwitch" .}}
-{{template "component/aTableSortable" .}}
 {{template "component/aSettingListItem" .}}
 <script>
   const app = new Vue({
@@ -81,7 +79,6 @@
       oldXraySetting: '',
       xraySetting: '',
       saveBtnDisable: true,
-      refreshing: false,
       restartResult: '',
       cm: null,
       cmOptions: {
@@ -205,19 +202,6 @@
       await this.getXrayResult();
 
       this.initCodeMirror();
-    },
-    computed: {
-      templateSettings: {
-        get: function () {
-          const parsedSettings = this.xraySetting ? JSON.parse(this.xraySetting) : null;
-          return parsedSettings;
-        },
-        set: function (newValue) {
-          if (newValue) {
-            this.xraySetting = JSON.stringify(newValue, null, 2);
-          }
-        },
-      },
     },
   });
 </script>

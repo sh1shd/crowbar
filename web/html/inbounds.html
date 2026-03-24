@@ -102,9 +102,7 @@
                       <template v-if="!isMobile">{{ i18n "pages.inbounds.addInbound" }}</template>
                     </a-button>
                     <a-dropdown :trigger="['click']">
-                      <a-button type="primary" icon="menu">
-                        <template v-if="!isMobile">{{ i18n "pages.inbounds.generalActions" }}</template>
-                      </a-button>
+                      <a-button icon="menu"></a-button>
                       <a-menu slot="overlay" @click="a => generalActions(a)" :theme="themeSwitcher.currentTheme">
                         <a-menu-item key="import">
                           <a-icon type="import"></a-icon>

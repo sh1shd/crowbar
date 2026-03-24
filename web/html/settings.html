@@ -20,9 +20,9 @@
                 <a-card>
                   <template #title>
                     <a-space direction="horizontal">
-                      <a-button type="primary" :disabled="saveBtnDisable" @click="updateAllSetting">{{ i18n
+                      <a-button type="primary" icon="save" :disabled="saveBtnDisable" @click="updateAllSetting">{{ i18n
                         "pages.settings.save" }}</a-button>
-                      <a-button type="danger" :disabled="!saveBtnDisable" @click="restartPanel">{{ i18n
+                      <a-button type="danger" icon="reload" :disabled="!saveBtnDisable" @click="restartPanel">{{ i18n
                         "pages.settings.restartPanel" }}</a-button>
                     </a-space>
                   </template>
@@ -100,24 +100,6 @@
       remarkSample: '',
       showHeaderModal: false,
       customHeaders: [],
-      headerColumns: [
-        {
-          title: '{{ i18n "pages.settings.customHeaders.headerName" }}',
-          dataIndex: 'name',
-          key: 'name',
-          width: '50%'
-        },
-        {
-          title: '{{ i18n "pages.settings.customHeaders.headerValue" }}',
-          dataIndex: 'value',
-          key: 'value',
-          width: '50%'
-        },
-        {
-          key: 'operation',
-          scopedSlots: { customRender: 'operation' },
-        }
-      ],
       get remarkModel() {
         rm = this.allSetting.remarkModel;
         return rm.length > 1 ? rm.substring(1).split('') : [];
@@ -355,7 +337,28 @@
       },
       goToXrayConfigPage() {
         window.location.href = basePath + "panel/xray";
-      }
+      },
+      updateGeofile(fileName) {
+        console.log(fileName)
+        const isSingleFile = !!fileName;
+        this.$confirm({
+          title: '{{ i18n "pages.settings.geofileUpdateDialog" }}',
+          content: isSingleFile
+            ? '{{ i18n "pages.settings.geofileUpdateDialogDesc" }}'.replace("#filename#", fileName)
+            : '{{ i18n "pages.settings.geofilesUpdateDialogDesc" }}',
+          okText: '{{ i18n "confirm"}}',
+          class: themeSwitcher.currentTheme,
+          cancelText: '{{ i18n "cancel"}}',
+          onOk: async () => {
+            this.loading(true);
+            const url = isSingleFile
+              ? `/panel/api/server/updateGeofile/${fileName}`
+              : `/panel/api/server/updateGeofile`;
+            await HttpUtil.post(url);
+            this.loading(false);
+          },
+        });
+      },
     },
     async mounted() {
       this.entryHost = window.location.hostname;

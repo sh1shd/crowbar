@@ -204,11 +204,6 @@
       "download": "Download",
       "exportDatabase": "Back Up",
       "exportDatabaseDesc": "Click to download a .db file containing a backup of your current database to your device.",
-      "geofileUpdateDialog": "Do you really want to update the geofile?",
-      "geofileUpdateDialogDesc": "This will update the #filename# file.",
-      "geofileUpdatePopover": "Geofile updated successfully",
-      "geofilesUpdateAll": "Update all",
-      "geofilesUpdateDialogDesc": "This will update all geofiles.",
       "getConfigError": "An error occurred while retrieving the config file.",
       "getDatabaseError": "An error occurred while retrieving the database.",
       "importDatabase": "Restore",
@@ -389,7 +384,16 @@
         "userPassMustBeNotEmpty": "The new username and password is empty"
       },
       "trafficDiff": "Traffic Cap Notification",
-      "trafficDiffDesc": "Get notified about traffic cap when reaching this threshold. (unit: GB)"
+      "trafficDiffDesc": "Get notified about traffic cap when reaching this threshold. (unit: GB)",
+      "geofilesTitle": "Geofiles",
+      "manageGeofiles": "Manage geofiles",
+      "manageGeofilesDesc": "Here you can update geofiles and use them, for example, in routing rules.",
+      "geofileUpdateDialog": "Do you really want to update the geofile?",
+      "geofileUpdateDialogDesc": "This will update the #filename# file.",
+      "geofileUpdatePopover": "Geofile updated successfully",
+      "geofilesUpdateAll": "Update all",
+      "geofilesUpdateDialogDesc": "This will update all geofiles.",
+      "geofilesName": "Geofile name"
     },
     "xray": {
       "Template": "Xray configuration file",
