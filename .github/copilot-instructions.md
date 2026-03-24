@@ -119,7 +119,7 @@ Each service has standard CRUD methods, called by controllers.
 
 ### 8. Internationalization
 - English and Russian supported (`web/translation/`)
-- TOML-based translation files
+- JSON-based translation files
 - Use `web/locale` package to get locale from session
 - Load strings via `locale.Localize()` helper
 

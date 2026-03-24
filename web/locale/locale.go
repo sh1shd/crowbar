@@ -4,15 +4,16 @@ package locale
 
 import (
 	"embed"
+	"encoding/json"
 	"io/fs"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/mhsanaei/3x-ui/v2/logger"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"github.com/pelletier/go-toml/v2"
 	"golang.org/x/text/language"
 )
 
@@ -32,7 +33,7 @@ const (
 func InitLocalizer(i18nFS embed.FS) error {
 	// set default bundle to english
 	i18nBundle = i18n.NewBundle(language.MustParse("en-US"))
-	i18nBundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	i18nBundle.RegisterUnmarshalFunc("json", json.Unmarshal)
 
 	// parse files
 	if err := parseTranslationFiles(i18nFS, i18nBundle); err != nil {
@@ -100,7 +101,7 @@ func LocalizerMiddleware() gin.HandlerFunc {
 		// Ensure bundle is initialized so creating a Localizer won't panic
 		if i18nBundle == nil {
 			i18nBundle = i18n.NewBundle(language.MustParse("en-US"))
-			i18nBundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+			i18nBundle.RegisterUnmarshalFunc("json", json.Unmarshal)
 			// Try lazy-load from disk when running sub server without InitLocalizer
 			if err := loadTranslationsFromDisk(i18nBundle); err != nil {
 				logger.Warning("i18n lazy load failed:", err)
@@ -129,7 +130,7 @@ func loadTranslationsFromDisk(bundle *i18n.Bundle) error {
 		if err != nil {
 			return err
 		}
-		if d.IsDir() {
+		if d.IsDir() || filepath.Ext(path) != ".json" {
 			return nil
 		}
 		data, err := fs.ReadFile(root, path)
@@ -149,7 +150,7 @@ func parseTranslationFiles(i18nFS embed.FS, i18nBundle *i18n.Bundle) error {
 				return err
 			}
 
-			if d.IsDir() {
+			if d.IsDir() || filepath.Ext(path) != ".json" {
 				return nil
 			}
 
