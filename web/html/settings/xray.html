@@ -1,0 +1,13 @@
+{{define "settings/panel/xray"}}
+<a-collapse default-active-key="1">
+    <a-collapse-panel key="1" header='{{ i18n "pages.xray.generalConfigs"}}'>
+        <a-setting-list-item paddings="small">
+            <template #title>{{ i18n "pages.xray.Template"}}</template>
+            <template #description>{{ i18n "pages.xray.TemplateDesc"}}</template>
+            <template #control>
+                <a-button type="primary" @click="goToXrayConfigPage" icon="edit">{{ i18n "edit" }}</a-button>
+            </template>
+        </a-setting-list-item>
+    </a-collapse-panel>
+</a-collapse>
+{{end}}
