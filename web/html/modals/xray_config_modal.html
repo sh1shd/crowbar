@@ -1,0 +1,197 @@
+{{define "modals/xrayConfigModal"}}
+<a-modal id="xray-config-modal" v-model="xrayConfigModal.visible" title='{{ i18n "pages.xray.Template"}}' :closable="true"
+    :class="themeSwitcher.currentTheme" :width="1024" :centered="true">
+    <template>
+        <template v-if="!xrayConfigModal.fetched && xrayConfigModal.editor === null">
+            <div :style="{ textAlign: 'center', padding: '20% 0' }"><a-spin></a-spin></div>
+        </template>
+
+        <template v-if="xrayConfigModal.restartResult">
+            <a-alert type="error" show-icon :style="{ marginBottom: '16px' }">
+                <template #message>
+                    <span>{{ i18n "pages.index.xrayErrorPopoverTitle" }}</span>
+                </template>
+                <template #description>
+                    <span v-for="line in xrayConfigModal.restartResult.split('\n')">[[ line ]]</span>
+                </template>
+            </a-alert>
+        </template>
+
+        <textarea :style="{ position: 'absolute', left: '-800px' }" id="xraySetting"></textarea>
+    </template>
+
+    <template #footer>
+        <a-dropdown placement="topRight" :trigger="['click']">
+            <a-button icon="menu"></a-button>
+            <a-menu slot="overlay" @click="a => xrayConfigModal.generalActions(a)" :theme="themeSwitcher.currentTheme">
+                <a-menu-item key="restartXray" :disabled="xrayConfigModal.canSave">
+                    <a-icon type="reload"></a-icon>
+                    {{ i18n "pages.xray.restart" }}
+                </a-menu-item>
+                <a-menu-item key="resetXrayConfig" :style="{ color: '#FF4D4F' }">
+                    <a-icon type="history"></a-icon>
+                    {{ i18n "pages.settings.resetDefaultConfig" }}
+                </a-menu-item>
+                <a-menu-divider></a-menu-divider>
+                <a-menu-item key="openXrayDocumentation">
+                    <a-icon type="link"></a-icon>
+                    {{ i18n "pages.xray.documentationLink" }}
+                </a-menu-item>
+            </a-menu>
+        </a-dropdown>
+        <a-button icon="save" type="primary" @click="xrayConfigModal.saveXrayConfig" :disabled="!xrayConfigModal.canSave">
+            <span>{{ i18n "pages.xray.save" }}</span>
+        </a-button>
+    </template>
+</a-modal>
+
+<script>
+    const xrayConfigModal = {
+        title: '',
+        visible: false,
+        canSave: false,
+        fetched: false,
+        restartResult: '',
+        editorValues: {
+            old: '',
+            current: ''
+        },
+        editor: null,
+        editorOptions: {
+            lineNumbers: true,
+            mode: "application/json",
+            theme: 'monokai',
+            matchBrackets: true,
+            autoCloseTags: true,
+            lineWrapping: true,
+        },
+        show: async () => {
+            xrayConfigModal.visible = true
+
+            await xrayConfigModal.getXraySettings();
+            await xrayConfigModal.getXrayResult();
+
+            xrayConfigModal.initCodeMirror();
+        },
+        generalActions: async (action) => {
+            switch (action.key) {
+                case "restartXray":
+                    await xrayConfigModal.restartXray();
+                    break;
+                case "resetXrayConfig":
+                    await xrayConfigModal.resetXrayConfig();
+                    break;
+                case "openXrayDocumentation":
+                    window.open("https://xtls.github.io/en/config/")
+                    break;
+            }
+        },
+        initCodeMirror() {
+            if (xrayConfigModal.editor != null) {
+                xrayConfigModal.editor.toTextArea();
+                xrayConfigModal.editor = null;
+            }
+
+            const textAreaObj = document.getElementById('xraySetting');
+
+            textAreaObj.value = xrayConfigModal.editorValues.current;
+
+            xrayConfigModal.editor = CodeMirror.fromTextArea(textAreaObj, xrayConfigModal.editorOptions);
+            xrayConfigModal.editor.setSize("100%", "640px");
+
+            xrayConfigModal.editor.on('change', editor => {
+                const value = editor.getValue();
+                if (xrayConfigModal.isJsonString(value)) {
+                    xrayConfigModal.editorValues.current = value;
+                }
+            });
+        },
+        isJsonString(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+
+            return true;
+        },
+        syncEditor() {
+            if (!xrayConfigModal.editor) return;
+
+            const editorValue = xrayConfigModal.editor.getValue();
+
+            if (editorValue !== xrayConfigModal.editorValues.current) {
+                const cursor = xrayConfigModal.editor.getCursor();
+                xrayConfigModal.editor.setValue(xrayConfigModal.editorValues.current);
+                xrayConfigModal.editor.setCursor(cursor);
+            }
+        },
+        getXraySettings: async () => {
+            const msg = await HttpUtil.get("/panel/xray/getXraySettings");
+
+            if (msg.success) {
+                if (!xrayConfigModal.fetched) {
+                    xrayConfigModal.fetched = true;
+                }
+
+                const result = JSON.parse(msg.obj);
+                const xs = JSON.stringify(result, null, 2);
+                xrayConfigModal.editorValues.old = xs;
+                xrayConfigModal.editorValues.current = xs;
+                xrayConfigModal.canSave = false;
+                xrayConfigModal.syncEditor();
+            }
+        },
+        getXrayResult: async () => {
+            const msg = await HttpUtil.get("/panel/xray/getXrayResult");
+            if (msg.success) {
+                xrayConfigModal.restartResult = msg.obj;
+            }
+        },
+        saveXrayConfig: async () => {
+            const msg = await HttpUtil.post("/panel/xray/update", {
+                xraySetting: xrayConfigModal.editorValues.current
+            });
+
+            if (msg.success) {
+                await xrayConfigModal.getXraySettings();
+            }
+        },
+        restartXray: async () => {
+            const msg = await HttpUtil.post("/panel/api/server/restartXrayService");
+
+            if (msg.success) {
+                await PromiseUtil.sleep(500);
+                await xrayConfigModal.getXrayResult();
+            }
+        },
+        resetXrayConfig: async () => {
+            const msg = await HttpUtil.get("/panel/setting/getDefaultJsonConfig");
+
+            if (msg.success) {
+                xrayConfigModal.editorValues.current = JSON.stringify(msg.obj, null, 2);
+
+                xrayConfigModal.syncEditor();
+            }
+        },
+        close: () => {
+            xrayConfigModal.visible = false
+        }
+    }
+
+    const xrayConfigModalApp = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#xray-config-modal',
+        data: {
+            xrayConfigModal: xrayConfigModal,
+        },
+        watch: {
+            'xrayConfigModal.editorValues.current': function (newVal) {
+                xrayConfigModal.canSave = (newVal !== xrayConfigModal.editorValues.old);
+
+                xrayConfigModal.syncEditor();
+            }
+        }
+    })
+</script>
+{{end}}

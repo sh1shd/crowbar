@@ -404,6 +404,7 @@
     "xray": {
       "Template": "Xray configuration file",
       "TemplateDesc": "Click «Edit» to change the Xray configuration file.",
+      "documentationLink": "Xray documentation",
       "restart": "Restart Xray",
       "restartError": "There was an error when rebooting the Xray.",
       "restartSuccess": "Xray has been successfully relaunched.",

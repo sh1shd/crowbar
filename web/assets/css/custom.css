@@ -759,6 +759,10 @@ style attribute {
     color: var(--dark-color-text-primary)
 }
 
+.dark .ant-dropdown-menu-item-divider {
+    background-color: var(--dark-color-surface-400)
+}
+
 .dark .ant-table-small {
     border-color: var(--dark-color-surface-300);
 }

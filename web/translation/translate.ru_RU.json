@@ -312,7 +312,7 @@
       "publicKeyPath": "Путь к файлу публичного ключа сертификата панели",
       "publicKeyPathDesc": "Введите полный путь, начинающийся с '/'",
       "remarkModel": "Модель примечания и символ разделения",
-      "resetDefaultConfig": "Восстановить настройки по умолчанию",
+      "resetDefaultConfig": "Сбросить настройки",
       "restartPanel": "Перезапуск панели",
       "restartPanelDesc": "Вы уверены, что хотите перезапустить панель?",
       "restartPanelSuccess": "Панель успешно перезапущена",
@@ -404,6 +404,7 @@
     "xray": {
       "Template": "Конфигурационный файл Xray",
       "TemplateDesc": "Нажмите «Изменить» для изменения файла конфигурации Xray.",
+      "documentationLink": "Документация Xray",
       "restart": "Перезапуск Xray",
       "restartError": "Произошла ошибка при перезапуске Xray.",
       "restartSuccess": "Xray успешно перезапущен",

@@ -1,4 +1,6 @@
 {{ template "page/head_start" .}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/lib/codemirror.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/theme/monokai.css">
 {{ template "page/head_end" .}}
 
 {{ template "page/body_start" .}}
@@ -68,12 +70,15 @@
 {{template "page/body_scripts" .}}
 <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/otpauth@9.5.0/dist/otpauth.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/mode/javascript/javascript.js"></script>
 <script src="{{ .base_path }}assets/js/model/setting.js?{{ .cur_ver }}"></script>
 {{template "component/aCrowbarHeader" .}}
 {{template "component/aThemeSwitch" .}}
 {{template "component/aSettingListItem" .}}
 {{template "modals/twoFactorModal"}}
 {{template "modals/customHeadersModal"}}
+{{template "modals/xrayConfigModal"}}
 <script>
   const app = new Vue({
     delimiters: ['[[', ']]'],
@@ -340,9 +345,6 @@
         this.allSetting.subCustomHeaders = JSON.stringify(this.customHeaders);
         headerModal.close();
       },
-      goToXrayConfigPage() {
-        window.location.href = basePath + "panel/xray";
-      },
       updateGeofile(fileName) {
         console.log(fileName)
         const isSingleFile = !!fileName;
@@ -397,6 +399,16 @@
       },
       openXrayChangelog(version) {
         return window.open(`https://github.com/xtls/xray-core/releases/tag/${version}`);
+      },
+      subscriptionHeaderActions(actions) {
+        switch (actions.key) {
+          case 'openHappDocumentation':
+            window.open('https://www.happ.su/main/ru/dev-docs/app-management');
+            break;
+          case 'openHappRoutingBuilder':
+            window.open('https://utils.docs.rw/happ-rb');
+            break;
+        }
       }
     },
     async mounted() {

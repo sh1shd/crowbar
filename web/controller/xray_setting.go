@@ -28,9 +28,9 @@ func NewXraySettingController(g *gin.RouterGroup) *XraySettingController {
 func (a *XraySettingController) initRouter(g *gin.RouterGroup) {
 	g = g.Group("/xray")
 	g.GET("/getDefaultJsonConfig", a.getDefaultXrayConfig)
+	g.GET("/getXraySettings", a.getXraySetting)
 	g.GET("/getXrayResult", a.getXrayResult)
 
-	g.POST("/", a.getXraySetting)
 	g.POST("/update", a.updateSetting)
 }
 
@@ -41,15 +41,7 @@ func (a *XraySettingController) getXraySetting(c *gin.Context) {
 		jsonMsg(c, I18nWeb(c, "pages.settings.toasts.getSettings"), err)
 		return
 	}
-	xrayResponse := map[string]interface{}{
-		"xraySetting":     json.RawMessage(xraySetting),
-	}
-	result, err := json.Marshal(xrayResponse)
-	if err != nil {
-		jsonMsg(c, I18nWeb(c, "pages.settings.toasts.getSettings"), err)
-		return
-	}
-	jsonObj(c, string(result), nil)
+	jsonObj(c, string(json.RawMessage(xraySetting)), nil)
 }
 
 // updateSetting updates the Xray configuration settings.

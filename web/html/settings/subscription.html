@@ -61,7 +61,22 @@
             <template #title>{{ i18n "pages.settings.customHeaders.subscriptionHeaders" }}</template>
             <template #description>{{ i18n "pages.settings.customHeaders.subscriptionHeadersDesc" }}</template>
             <template #control>
-                <a-button type="primary" icon="plus" @click="showAddHeaderModal()">{{ i18n "pages.settings.customHeaders.addHeader" }}</a-button>
+                <a-space direction="horizontal" size="small">
+                    <a-button type="primary" icon="plus" @click="showAddHeaderModal()">{{ i18n "pages.settings.customHeaders.addHeader" }}</a-button>
+                    <a-dropdown :trigger="['click']">
+                        <a-button icon="menu"></a-button>
+                        <a-menu slot="overlay" @click="a => subscriptionHeaderActions(a)" :theme="themeSwitcher.currentTheme">
+                            <a-menu-item key="openHappDocumentation">
+                                <a-icon type="link"></a-icon>
+                                Happ Documentation
+                            </a-menu-item>
+                            <a-menu-item key="openHappRoutingBuilder">
+                                <a-icon type="link"></a-icon>
+                                Happ Routing Builder
+                            </a-menu-item>
+                        </a-menu>
+                    </a-dropdown>
+                </a-space>
             </template>
         </a-setting-list-item>
         <a-table 
