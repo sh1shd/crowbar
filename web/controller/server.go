@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
-	"time"
 
 	"github.com/mhsanaei/3x-ui/v2/web/global"
 	"github.com/mhsanaei/3x-ui/v2/web/service"
@@ -21,11 +20,9 @@ type ServerController struct {
 
 	serverService  service.ServerService
 	settingService service.SettingService
+	xrayService service.XrayService
 
 	lastStatus *service.Status
-
-	lastVersions        []string
-	lastGetVersionsTime int64 // unix seconds
 }
 
 // NewServerController creates a new ServerController, initializes routes, and starts background tasks.
@@ -86,22 +83,26 @@ func (a *ServerController) status(c *gin.Context) { jsonObj(c, a.lastStatus, nil
 
 // getXrayVersion retrieves available Xray versions, with caching for 1 minute.
 func (a *ServerController) getXrayVersion(c *gin.Context) {
-	now := time.Now().Unix()
-	if now-a.lastGetVersionsTime <= 60 { // 1 minute cache
-		jsonObj(c, a.lastVersions, nil)
-		return
-	}
-
 	versions, err := a.serverService.GetXrayVersions()
 	if err != nil {
 		jsonMsg(c, I18nWeb(c, "getVersion"), err)
 		return
 	}
 
-	a.lastVersions = versions
-	a.lastGetVersionsTime = now
+	currentVersion := "unknown"
+	if a.lastStatus != nil {
+		currentVersion = a.xrayService.GetXrayVersion()
+	}
+	if err != nil {
+		currentVersion = "unknown"
+	}
 
-	jsonObj(c, versions, nil)
+	xrayResponse := map[string]interface{}{
+		"current":   currentVersion,
+		"available": versions,
+	}
+
+	jsonObj(c, xrayResponse, nil)
 }
 
 // installXray installs or updates Xray to the specified version.

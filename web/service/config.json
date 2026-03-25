@@ -28,17 +28,11 @@
   "outbounds": [
     {
       "tag": "direct",
-      "protocol": "freedom",
-      "settings": {
-        "domainStrategy": "AsIs",
-        "redirect": "",
-        "noises": []
-      }
+      "protocol": "freedom"
     },
     {
       "tag": "blocked",
-      "protocol": "blackhole",
-      "settings": {}
+      "protocol": "blackhole"
     }
   ],
   "policy": {
@@ -59,21 +53,18 @@
     "domainStrategy": "AsIs",
     "rules": [
       {
-        "type": "field",
         "inboundTag": [
           "api"
         ],
         "outboundTag": "api"
       },
       {
-        "type": "field",
         "outboundTag": "blocked",
         "ip": [
           "geoip:private"
         ]
       },
       {
-        "type": "field",
         "outboundTag": "blocked",
         "protocol": [
           "bittorrent"

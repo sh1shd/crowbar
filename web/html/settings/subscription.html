@@ -1,4 +1,4 @@
-{{define "settings/panel/subscription/general"}}
+{{define "settings/panel/subscription"}}
 <a-collapse default-active-key="1">
     <a-collapse-panel key="1" header='{{ i18n "pages.xray.generalConfigs"}}'>
         <a-setting-list-item paddings="small">
@@ -65,7 +65,24 @@
             </template>
         </a-setting-list-item>
         <a-table 
-            :columns="headerColumns" 
+            :columns='[
+                {
+                    title: `{{ i18n "pages.settings.customHeaders.headerName" }}`,
+                    dataIndex: `name`,
+                    key: `name`,
+                    width: `50%`
+                },
+                {
+                    title: `{{ i18n "pages.settings.customHeaders.headerValue" }}`,
+                    dataIndex: `value`,
+                    key: `value`,
+                    width: `50%`
+                },
+                {
+                    key: `operation`,
+                    scopedSlots: { customRender: `operation` },
+                }
+            ]'
             :data-source="customHeaders" 
             :pagination="false" 
             size="small" 

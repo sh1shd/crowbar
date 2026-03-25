@@ -475,10 +475,6 @@ style attribute {
     .drawer-handle {
         display: none
     }
-
-    .ant-tabs {
-        padding: 2rem
-    }
 }
 
 .fade-in-enter,
@@ -790,11 +786,6 @@ style attribute {
 .dark .ant-calendar,
 .dark .ant-card-bordered {
     border-color: var(--dark-color-surface-200)
-}
-
-.dark #content-layout .ant-tabs,
-.dark .ant-modal-content {
-    border: 1px solid var(--dark-color-surface-200);
 }
 
 .dark .ant-table-bordered,

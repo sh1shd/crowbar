@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 
-	"github.com/mhsanaei/3x-ui/v2/util/common"
 	"github.com/mhsanaei/3x-ui/v2/web/service"
 
 	"github.com/gin-gonic/gin"
@@ -29,13 +28,10 @@ func NewXraySettingController(g *gin.RouterGroup) *XraySettingController {
 func (a *XraySettingController) initRouter(g *gin.RouterGroup) {
 	g = g.Group("/xray")
 	g.GET("/getDefaultJsonConfig", a.getDefaultXrayConfig)
-	g.GET("/getOutboundsTraffic", a.getOutboundsTraffic)
 	g.GET("/getXrayResult", a.getXrayResult)
 
 	g.POST("/", a.getXraySetting)
 	g.POST("/update", a.updateSetting)
-	g.POST("/resetOutboundsTraffic", a.resetOutboundsTraffic)
-	g.POST("/testOutbound", a.testOutbound)
 }
 
 // getXraySetting retrieves the Xray configuration template, inbound tags, and outbound test URL.
@@ -45,19 +41,8 @@ func (a *XraySettingController) getXraySetting(c *gin.Context) {
 		jsonMsg(c, I18nWeb(c, "pages.settings.toasts.getSettings"), err)
 		return
 	}
-	inboundTags, err := a.InboundService.GetInboundTags()
-	if err != nil {
-		jsonMsg(c, I18nWeb(c, "pages.settings.toasts.getSettings"), err)
-		return
-	}
-	outboundTestUrl, _ := a.SettingService.GetXrayOutboundTestUrl()
-	if outboundTestUrl == "" {
-		outboundTestUrl = "https://www.google.com/generate_204"
-	}
 	xrayResponse := map[string]interface{}{
 		"xraySetting":     json.RawMessage(xraySetting),
-		"inboundTags":     json.RawMessage(inboundTags),
-		"outboundTestUrl": outboundTestUrl,
 	}
 	result, err := json.Marshal(xrayResponse)
 	if err != nil {
@@ -74,11 +59,6 @@ func (a *XraySettingController) updateSetting(c *gin.Context) {
 		jsonMsg(c, I18nWeb(c, "pages.settings.toasts.modifySettings"), err)
 		return
 	}
-	outboundTestUrl := c.PostForm("outboundTestUrl")
-	if outboundTestUrl == "" {
-		outboundTestUrl = "https://www.google.com/generate_204"
-	}
-	_ = a.SettingService.SetXrayOutboundTestUrl(outboundTestUrl)
 	jsonMsg(c, I18nWeb(c, "pages.settings.toasts.modifySettings"), nil)
 }
 
@@ -95,48 +75,4 @@ func (a *XraySettingController) getDefaultXrayConfig(c *gin.Context) {
 // getXrayResult retrieves the current Xray service result.
 func (a *XraySettingController) getXrayResult(c *gin.Context) {
 	jsonObj(c, a.XrayService.GetXrayResult(), nil)
-}
-
-// getOutboundsTraffic retrieves the traffic statistics for outbounds.
-func (a *XraySettingController) getOutboundsTraffic(c *gin.Context) {
-	outboundsTraffic, err := a.OutboundService.GetOutboundsTraffic()
-	if err != nil {
-		jsonMsg(c, I18nWeb(c, "pages.settings.toasts.getOutboundTrafficError"), err)
-		return
-	}
-	jsonObj(c, outboundsTraffic, nil)
-}
-
-// resetOutboundsTraffic resets the traffic statistics for the specified outbound tag.
-func (a *XraySettingController) resetOutboundsTraffic(c *gin.Context) {
-	tag := c.PostForm("tag")
-	err := a.OutboundService.ResetOutboundTraffic(tag)
-	if err != nil {
-		jsonMsg(c, I18nWeb(c, "pages.settings.toasts.resetOutboundTrafficError"), err)
-		return
-	}
-	jsonObj(c, "", nil)
-}
-
-// testOutbound tests an outbound configuration and returns the delay/response time.
-// Optional form "allOutbounds": JSON array of all outbounds; used to resolve sockopt.dialerProxy dependencies.
-func (a *XraySettingController) testOutbound(c *gin.Context) {
-	outboundJSON := c.PostForm("outbound")
-	allOutboundsJSON := c.PostForm("allOutbounds")
-
-	if outboundJSON == "" {
-		jsonMsg(c, I18nWeb(c, "somethingWentWrong"), common.NewError("outbound parameter is required"))
-		return
-	}
-
-	// Load the test URL from server settings to prevent SSRF via user-controlled URLs
-	testURL, _ := a.SettingService.GetXrayOutboundTestUrl()
-
-	result, err := a.OutboundService.TestOutbound(outboundJSON, testURL, allOutboundsJSON)
-	if err != nil {
-		jsonMsg(c, I18nWeb(c, "somethingWentWrong"), err)
-		return
-	}
-
-	jsonObj(c, result, nil)
 }
