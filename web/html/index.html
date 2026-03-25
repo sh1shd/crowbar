@@ -49,7 +49,7 @@
                   <template #title>
                     <a-space direction="horizontal">
                       <span>{{ i18n "pages.index.xrayStatus" }}</span>
-                      <a-tag v-if="isMobile && status.xray.version != 'Unknown'" color="green">
+                      <a-tag v-if="status.xray.version != 'Unknown'">
                         v[[ status.xray.version ]]
                       </a-tag>
                     </a-space>
@@ -92,13 +92,6 @@
                     <a-space direction="horizontal" @click="restartXrayService" class="jc-center">
                       <a-icon type="reload"></a-icon>
                       <span v-if="!isMobile">{{ i18n "pages.index.restartXray" }}</span>
-                    </a-space>
-                    <a-space direction="horizontal" @click="openSelectV2rayVersion" class="jc-center">
-                      <a-icon type="tool"></a-icon>
-                      <span v-if="!isMobile">
-                        [[ status.xray.version != 'Unknown' ? `v${status.xray.version}` : '{{ i18n
-                        "pages.index.xraySwitch" }}' ]]
-                      </span>
                     </a-space>
                   </template>
                 </a-card>
@@ -255,18 +248,6 @@
       </a-spin>
     </a-layout-content>
   </a-layout>
-  <a-modal id="version-modal" v-model="versionModal.visible" title='{{ i18n "pages.index.xraySwitch" }}'
-    :closable="true" @ok="() => versionModal.visible = false" :class="themeSwitcher.currentTheme" footer="">
-    <a-alert type="warning" class="mb-12 w-100" message='{{ i18n "pages.index.xraySwitchClickDesk" }}'
-      show-icon></a-alert>
-    <a-list class="ant-version-list w-100" bordered>
-      <a-list-item class="ant-version-list-item" v-for="version, index in versionModal.versions">
-        <a-tag :color="index % 2 == 0 ? 'purple' : 'green'">[[ version ]]</a-tag>
-        <a-radio :class="themeSwitcher.currentTheme" :checked="version === `v${status.xray.version}`"
-          @click="switchV2rayVersion(version)"></a-radio>
-      </a-list-item>
-    </a-list>
-  </a-modal>
   <a-modal id="log-modal" v-model="logModal.visible" :closable="true" @cancel="() => logModal.visible = false"
     :class="themeSwitcher.currentTheme" width="800px" footer="">
     <template slot="title">
@@ -448,18 +429,6 @@
     }
   }
 
-  const versionModal = {
-    visible: false,
-    versions: [],
-    show(versions) {
-      this.visible = true;
-      this.versions = versions;
-    },
-    hide() {
-      this.visible = false;
-    },
-  };
-
   const logModal = {
     visible: false,
     logs: [],
@@ -603,7 +572,6 @@
         spinning: false
       },
       status: new Status(),
-      versionModal,
       logModal,
       xraylogModal,
       backupModal,
@@ -632,30 +600,6 @@
       },
       setStatus(data) {
         this.status = new Status(data);
-      },
-      async openSelectV2rayVersion() {
-        this.loading(true);
-        const msg = await HttpUtil.get('/panel/api/server/getXrayVersion');
-        this.loading(false);
-        if (!msg.success) {
-          return;
-        }
-        versionModal.show(msg.obj);
-      },
-      switchV2rayVersion(version) {
-        this.$confirm({
-          title: '{{ i18n "pages.index.xraySwitchVersionDialog"}}',
-          content: '{{ i18n "pages.index.xraySwitchVersionDialogDesc"}}'.replace('#version#', version),
-          okText: '{{ i18n "confirm"}}',
-          class: themeSwitcher.currentTheme,
-          cancelText: '{{ i18n "cancel"}}',
-          onOk: async () => {
-            versionModal.hide();
-            this.loading(true, '{{ i18n "pages.index.dontRefresh"}}');
-            await HttpUtil.post(`/panel/api/server/installXray/${version}`);
-            this.loading(false);
-          },
-        });
       },
       async stopXrayService() {
         this.loading(true);

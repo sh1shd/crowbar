@@ -233,9 +233,6 @@
       "xrayStatusRunning": "Запущен",
       "xrayStatusStop": "Остановлен",
       "xrayStatusUnknown": "Неизвестно",
-      "xraySwitch": "Выбор версии",
-      "xraySwitchClick": "Выберите нужную версию",
-      "xraySwitchClickDesk": "Важно: старые версии могут не поддерживать текущие настройки",
       "xraySwitchVersionDialog": "Переключить версию Xray",
       "xraySwitchVersionDialogDesc": "Вы точно хотите сменить версию Xray?",
       "xraySwitchVersionPopover": "Xray успешно обновлён"
@@ -393,11 +390,20 @@
       "geofileUpdatePopover": "Геофайлы успешно обновлены",
       "geofilesUpdateAll": "Обновить все",
       "geofilesUpdateDialogDesc": "Это обновит все геофайлы.",
-      "geofilesName": "Название геофайла"
+      "geofilesName": "Название геофайла",
+      "xrayVersions": "Версии",
+      "xrayCurrentVersion": "Текущая версия Xray",
+      "xrayCurrentVersionDesc": "Версия Xray, которую вы в настоящее время используете.",
+      "xrayAnotherVersion": "Установить другую версию Xray",
+      "xrayAnotherVersionDesc": "Выберите версию Xray, которую вы хотите использовать из этого списка.",
+      "xrayVersionName": "Версия",
+      "xrayVersionChangelog": "Показать список изменений",
+      "xrayVersionAlreadyInstalled": "Уже установлено",
+      "xrayVersionInstall": "Установить эту версию"
     },
     "xray": {
       "Template": "Конфигурационный файл Xray",
-      "TemplateDesc": "Нажмите «Редактировать» для изменения файла конфигурации Xray.",
+      "TemplateDesc": "Нажмите «Изменить» для изменения файла конфигурации Xray.",
       "restart": "Перезапуск Xray",
       "restartError": "Произошла ошибка при перезапуске Xray.",
       "restartSuccess": "Xray успешно перезапущен",

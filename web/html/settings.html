@@ -83,7 +83,8 @@
       themeSwitcher,
       loadingStates: {
         fetched: false,
-        spinning: false
+        spinning: false,
+        fetchedXrayVersions: false
       },
       oldAllSetting: new AllSetting(),
       allSetting: new AllSetting(),
@@ -92,6 +93,10 @@
       entryPort: null,
       entryProtocol: null,
       entryIsIP: false,
+      xrayVersion: {
+        current: "",
+        available: []
+      },
       user: {},
       lang: LanguageManager.getLanguage(),
       inboundOptions: [],
@@ -359,6 +364,40 @@
           },
         });
       },
+      async changeXrayCollapse(key = []) {
+        if (key.includes("3")) await this.fetchXrayVersions();
+      },
+      async fetchXrayVersions(forced = false) {
+        if (this.loadingStates.fetchedXrayVersions && !forced) return;
+
+        const msg = await HttpUtil.get("/panel/api/server/getXrayVersion");
+
+        if (!msg.success) {
+          return;
+        }
+
+        this.xrayVersion.current = `v${msg.obj.current}`;
+        this.xrayVersion.available = msg.obj.available;
+        this.loadingStates.fetchedXrayVersions = true;
+      },
+      switchXrayVersion(version) {
+        this.$confirm({
+          title: '{{ i18n "pages.index.xraySwitchVersionDialog"}}',
+          content: '{{ i18n "pages.index.xraySwitchVersionDialogDesc"}}'.replace('#version#', version),
+          okText: '{{ i18n "confirm"}}',
+          class: themeSwitcher.currentTheme,
+          cancelText: '{{ i18n "cancel"}}',
+          onOk: async () => {
+            this.loading(true);
+            await HttpUtil.post(`/panel/api/server/installXray/${version}`);
+            this.loading(false);
+            this.fetchXrayVersions(true);
+          },
+        });
+      },
+      openXrayChangelog(version) {
+        return window.open(`https://github.com/xtls/xray-core/releases/tag/${version}`);
+      }
     },
     async mounted() {
       this.entryHost = window.location.hostname;

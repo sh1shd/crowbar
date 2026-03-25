@@ -28,13 +28,11 @@
   "outbounds": [
     {
       "tag": "direct",
-      "protocol": "freedom",
-      "settings": {}
+      "protocol": "freedom"
     },
     {
       "tag": "blocked",
-      "protocol": "blackhole",
-      "settings": {}
+      "protocol": "blackhole"
     }
   ],
   "policy": {

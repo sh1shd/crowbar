@@ -1,5 +1,5 @@
 {{define "settings/panel/xray"}}
-<a-collapse default-active-key="1">
+<a-collapse default-active-key="1" @change="(key) => changeXrayCollapse(key)">
     <a-collapse-panel key="1" header='{{ i18n "pages.xray.generalConfigs"}}'>
         <a-setting-list-item paddings="small">
             <template #title>{{ i18n "pages.xray.Template"}}</template>
@@ -14,7 +14,8 @@
             <template #title>{{ i18n "pages.settings.manageGeofiles" }}</template>
             <template #description>{{ i18n "pages.settings.manageGeofilesDesc" }}</template>
             <template #control>
-                <a-button icon="reload" @click="updateGeofile('')">{{ i18n "pages.settings.geofilesUpdateAll" }}</a-button>
+                <a-button icon="reload" @click="updateGeofile('')">{{ i18n "pages.settings.geofilesUpdateAll"
+                    }}</a-button>
             </template>
         </a-setting-list-item>
         <a-table 
@@ -29,10 +30,10 @@
                     key: `operation`,
                     scopedSlots: { customRender: `operation` },
                 }
-            ]'
+            ]' 
             :data-source="[{ name: 'geosite.dat' }, { name: 'geoip.dat' }]" 
             :pagination="false" 
-            size="small" 
+            size="small"
             :style="{ padding: '5px 20px !important'}"
             :locale='{ filterConfirm: `{{ i18n "confirm" }}`, filterReset: `{{ i18n "reset" }}`, emptyText: `{{ i18n "noData" }}` }'
         >
@@ -47,6 +48,67 @@
                 </a-space>
             </template>
         </a-table>
+    </a-collapse-panel>
+    <a-collapse-panel key="3" header='{{ i18n "pages.settings.xrayVersions" }}'>
+        <template v-if="!loadingStates.fetchedXrayVersions">
+            <div :style="{ textAlign: 'center', padding: '30px 0', marginTop: '10px', background: 'transparent', border: 'none' }">
+                <a-spin tip='{{ i18n "loading" }}' ></a-spin>
+            </div>
+        </template>
+        <template v-else>
+            <a-setting-list-item paddings="small">
+                <template #title>{{ i18n "pages.settings.xrayCurrentVersion" }}</template>
+                <template #description>{{ i18n "pages.settings.xrayCurrentVersionDesc" }}</template>
+                <template #control>
+                    <a-tag color="blue">[[ xrayVersion.current ]]</a-tag>
+                </template>
+            </a-setting-list-item>
+            <a-setting-list-item paddings="small">
+                <template #title>{{ i18n "pages.settings.xrayAnotherVersion" }}</template>
+                <template #description>{{ i18n "pages.settings.xrayAnotherVersionDesc" }}</template>
+            </a-setting-list-item>
+            <a-table 
+                :columns='[
+                    {
+                        title: `{{ i18n "pages.settings.xrayVersionName" }}`,
+                        dataIndex: `version`,
+                        key: `version`,
+                        width: `100%`
+                    },
+                    {
+                        key: `operation`,
+                        scopedSlots: { customRender: `operation` },
+                    }
+                ]' 
+                :data-source="xrayVersion.available.map((version) => ({ version }))" 
+                :pagination="false" 
+                size="small"
+                :style="{ padding: '5px 20px !important'}"
+                :locale='{ filterConfirm: `{{ i18n "confirm" }}`, filterReset: `{{ i18n "reset" }}`, emptyText: `{{ i18n "noData" }}` }'
+            >
+                <template #operation="object, record, index">
+                    <a-space direction="horizontal" size="middle">
+                        <a-tooltip :overlay-class-name="themeSwitcher.currentTheme">
+                            <template #title>{{ i18n "pages.settings.xrayVersionChangelog" }}</template>
+                            <a-icon type="github" @click="openXrayChangelog(object.version)" style="cursor: pointer;" />
+                        </a-tooltip>
+
+                        <template v-if="object.version === xrayVersion.current">
+                            <a-tooltip :overlay-class-name="themeSwitcher.currentTheme">
+                                <template #title>{{ i18n "pages.settings.xrayVersionAlreadyInstalled" }}</template>
+                                <a-icon type="check-circle"></a-icon>
+                            </a-tooltip>
+                        </template>
+                        <template v-else>
+                            <a-tooltip :overlay-class-name="themeSwitcher.currentTheme">
+                                <template #title>{{ i18n "pages.settings.xrayVersionInstall" }}</template>
+                                <a-icon type="download" @click="switchXrayVersion(object.version)"></a-icon>
+                            </a-tooltip>
+                        </template>
+                    </a-space>
+                </template>
+            </a-table>
+        </template>
     </a-collapse-panel>
 </a-collapse>
 {{end}}
