@@ -399,7 +399,12 @@
       "xrayVersionName": "Версия",
       "xrayVersionChangelog": "Показать список изменений",
       "xrayVersionAlreadyInstalled": "Уже установлено",
-      "xrayVersionInstall": "Установить эту версию"
+      "xrayVersionInstall": "Установить эту версию",
+      "subMessageTitle": "Сообщения сервера подписки",
+      "subMessageClientDisabled": "Сообщение об отключенном клиенте",
+      "subMessageClientExpired": "Сообщение об окончании подписки",
+      "subMessageClientTrafficEnd": "Сообщение об исчерпывании трафика",
+      "subMessageContactAdmin": "Сообщение о связи с администратором"
     },
     "xray": {
       "Template": "Конфигурационный файл Xray",

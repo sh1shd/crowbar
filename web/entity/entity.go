@@ -55,6 +55,10 @@ type AllSetting struct {
 	ExternalTrafficInformURI    string `json:"externalTrafficInformURI" form:"externalTrafficInformURI"`       // URI for external traffic reporting
 	SubEncrypt                  bool   `json:"subEncrypt" form:"subEncrypt"`                                   // Encrypt subscription responses
 	SubURI                      string `json:"subURI" form:"subURI"`                                           // Subscription server URI
+	SubMessageClientDisabled    string `json:"subMessageClientDisabled" form:"subMessageClientDisabled"`       // Message shown to clients when subscription is disabled
+	SubMessageClientExpired     string `json:"subMessageClientExpired" form:"subMessageClientExpired"`         // Message shown to clients when subscription has expired
+	SubMessageClientTrafficEnd  string `json:"subMessageClientTrafficEnd" form:"subMessageClientTrafficEnd"`   // Message shown to clients when traffic has ended
+	SubMessageContactAdmin      string `json:"subMessageContactAdmin" form:"subMessageContactAdmin"`           // Message shown to clients to contact administrator
 }
 
 // CheckValid validates all settings in the AllSetting struct, checking IP addresses, ports, SSL certificates, and other configuration values.

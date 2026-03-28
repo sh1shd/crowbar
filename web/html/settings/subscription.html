@@ -154,5 +154,31 @@
             </template>
         </a-setting-list-item>
     </a-collapse-panel>
+    <a-collapse-panel key="5" header='{{ i18n "pages.settings.subMessageTitle" }}'>
+        <a-setting-list-item paddings="small">
+            <template #title>{{ i18n "pages.settings.subMessageClientDisabled" }}</template>
+            <template #control>
+                <a-input type="text" v-model="allSetting.subMessageClientDisabled"></a-input>
+            </template>
+        </a-setting-list-item>
+        <a-setting-list-item paddings="small">
+            <template #title>{{ i18n "pages.settings.subMessageClientExpired" }}</template>
+            <template #control>
+                <a-input type="text" v-model="allSetting.subMessageClientExpired"></a-input>
+            </template>
+        </a-setting-list-item>
+        <a-setting-list-item paddings="small">
+            <template #title>{{ i18n "pages.settings.subMessageClientTrafficEnd" }}</template>
+            <template #control>
+                <a-input type="text" v-model="allSetting.subMessageClientTrafficEnd"></a-input>
+            </template>
+        </a-setting-list-item>
+        <a-setting-list-item paddings="small">
+            <template #title>{{ i18n "pages.settings.subMessageContactAdmin" }}</template>
+            <template #control>
+                <a-input type="text" v-model="allSetting.subMessageContactAdmin"></a-input>
+            </template>
+        </a-setting-list-item>
+    </a-collapse-panel>
 </a-collapse>
 {{end}}

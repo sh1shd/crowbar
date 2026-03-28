@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/url"
+	"time"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -41,6 +42,12 @@ func (s *SubService) GetSubs(subId string, host string) ([]string, int64, xray.C
 	var traffic xray.ClientTraffic
 	var lastOnline int64
 	var clientTraffics []xray.ClientTraffic
+
+	subMessageClientDisabled, _ := s.settingService.GetSubMessageClientDisabled()
+	subMessageClientExpired, _ := s.settingService.GetSubMessageClientExpired()
+	subMessageClientTrafficEnd, _ := s.settingService.GetSubMessageClientTrafficEnd()
+	subMessageContactAdmin, _ := s.settingService.GetSubMessageContactAdmin()
+
 	inbounds, err := s.getInboundsBySubId(subId)
 	if err != nil {
 		return nil, 0, traffic, err
@@ -67,13 +74,36 @@ func (s *SubService) GetSubs(subId string, host string) ([]string, int64, xray.C
 			}
 		}
 		for _, client := range clients {
-			if client.Enable && client.SubID == subId {
-				link := s.getLink(inbound, client.Email)
-				result = append(result, link)
+			if client.SubID == subId {
 				ct := s.getClientTraffics(inbound.ClientStats, client.Email)
 				clientTraffics = append(clientTraffics, ct)
+
+				link := s.getLink(inbound, client.Email)
+				result = append(result, link)
+
 				if ct.LastOnline > lastOnline {
 					lastOnline = ct.LastOnline
+				}
+
+				if ct.Total > 0 && ct.Up + ct.Down > ct.Total {
+					result = []string{
+						fmt.Sprintf("vless://00000000-0000-0000-0000-000000000000@127.0.0.1:80?type=tcp&encryption=none&security=none#%s", subMessageClientTrafficEnd),
+						fmt.Sprintf("vless://00000000-0000-0000-0000-000000000000@127.0.0.1:80?type=tcp&encryption=none&security=none#%s", subMessageContactAdmin),
+					}
+				}
+
+				if client.ExpiryTime > 0 && client.ExpiryTime < time.Now().UnixMilli() {
+					result = []string{
+						fmt.Sprintf("vless://00000000-0000-0000-0000-000000000000@127.0.0.1:80?type=tcp&encryption=none&security=none#%s", subMessageClientExpired),
+						fmt.Sprintf("vless://00000000-0000-0000-0000-000000000000@127.0.0.1:80?type=tcp&encryption=none&security=none#%s", subMessageContactAdmin),
+					}
+				}
+
+				if !client.Enable {
+					result = []string{
+						fmt.Sprintf("vless://00000000-0000-0000-0000-000000000000@127.0.0.1:80?type=tcp&encryption=none&security=none#%s", subMessageClientDisabled),
+						fmt.Sprintf("vless://00000000-0000-0000-0000-000000000000@127.0.0.1:80?type=tcp&encryption=none&security=none#%s", subMessageContactAdmin),
+					}	
 				}
 			}
 		}

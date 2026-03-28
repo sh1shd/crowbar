@@ -29,6 +29,10 @@ class AllSetting {
         this.subKeyFile = "";
         this.subEncrypt = true;
         this.subURI = "";
+        this.subMessageClientDisabled = "Disabled";
+        this.subMessageClientExpired = "Expired";
+        this.subMessageClientTrafficEnd = "Traffic has ended";
+        this.subMessageContactAdmin = "Please contact administrator";
 
         this.timeLocation = "Local";
 

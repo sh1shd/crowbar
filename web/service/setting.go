@@ -53,6 +53,10 @@ var defaultValueMap = map[string]string{
 	"subKeyFile":                  "",
 	"subEncrypt":                  "true",
 	"subURI":                      "",
+	"subMessageClientDisabled":    "Disabled",
+	"subMessageClientExpired":     "Expired",
+	"subMessageClientTrafficEnd":  "Traffic has ended",
+	"subMessageContactAdmin":      "Please contact administrator",
 	"externalTrafficInformEnable": "false",
 	"externalTrafficInformURI":    "",
 	"xrayOutboundTestUrl":         "https://www.google.com/generate_204",
@@ -419,6 +423,22 @@ func (s *SettingService) GetPageSize() (int, error) {
 
 func (s *SettingService) GetSubURI() (string, error) {
 	return s.getString("subURI")
+}
+
+func (s *SettingService) GetSubMessageClientDisabled() (string, error) {
+	return s.getString("subMessageClientDisabled")
+}
+
+func (s *SettingService) GetSubMessageClientExpired() (string, error) {
+	return s.getString("subMessageClientExpired")
+}
+
+func (s *SettingService) GetSubMessageClientTrafficEnd() (string, error) {
+	return s.getString("subMessageClientTrafficEnd")
+}
+
+func (s *SettingService) GetSubMessageContactAdmin() (string, error) {
+	return s.getString("subMessageContactAdmin")
 }
 
 func (s *SettingService) GetExternalTrafficInformEnable() (bool, error) {

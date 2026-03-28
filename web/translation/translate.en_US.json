@@ -399,7 +399,12 @@
       "xrayVersionName": "Version",
       "xrayVersionChangelog": "Show changelog",
       "xrayVersionAlreadyInstalled": "Already installed",
-      "xrayVersionInstall": "Install this version"
+      "xrayVersionInstall": "Install this version",
+      "subMessageTitle": "Messages",
+      "subMessageClientDisabled": "Disabled client message",
+      "subMessageClientExpired": "Subscription expiration message",
+      "subMessageClientTrafficEnd": "End of traffic message",
+      "subMessageContactAdmin": "Administrator contact message"
     },
     "xray": {
       "Template": "Xray configuration file",
