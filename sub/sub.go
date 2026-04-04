@@ -102,6 +102,16 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 		SubCustomErrorHtml = ""
 	}
 
+	SubEnableIndexPage, err := s.settingService.GetSubEnableIndexPage()
+	if err != nil {
+		SubEnableIndexPage = false
+	}
+
+	SubIndexPageHtml, err := s.settingService.GetSubIndexPageHtml()
+	if err != nil {
+		SubIndexPageHtml = ""
+	}
+
 	// set per-request localizer from headers/cookies
 	engine.Use(locale.LocalizerMiddleware())
 
@@ -113,7 +123,17 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 
 	g := engine.Group("/")
 
-	s.sub = NewSUBController(g, LinksPath, Encrypt, RemarkModel, SubCustomHeaders, SubCustomHtml, SubCustomErrorHtml)
+	s.sub = NewSUBController(
+		g,
+		LinksPath,
+		Encrypt,
+		RemarkModel,
+		SubCustomHeaders,
+		SubCustomHtml,
+		SubCustomErrorHtml,
+		SubEnableIndexPage,
+		SubIndexPageHtml,
+	)
 
 	engine.NoRoute(func(c *gin.Context) {
 		s.sub.handleError(c, http.StatusNotFound, "Page Not Found")

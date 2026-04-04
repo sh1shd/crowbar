@@ -19,6 +19,8 @@ class AllSetting {
         this.subCustomHeaders = "";
         this.subCustomHtml = "";
         this.subCustomErrorHtml = "";
+        this.subEnableIndexPage = false;
+        this.subIndexPageHtml = "";
         this.subListen = "";
         this.subPort = 2096;
         this.subPath = "/sub/";

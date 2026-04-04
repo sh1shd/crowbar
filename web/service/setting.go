@@ -45,6 +45,8 @@ var defaultValueMap = map[string]string{
 	"subCustomHeaders":            "[]",
 	"subCustomHtml":               "",
 	"subCustomErrorHtml":          "",
+	"subEnableIndexPage":          "false",
+	"subIndexPageHtml":            "",
 	"subListen":                   "",
 	"subPort":                     "2096",
 	"subPath":                     "/sub/",
@@ -415,6 +417,18 @@ func (s *SettingService) GetSubKeyFile() (string, error) {
 
 func (s *SettingService) GetSubEncrypt() (bool, error) {
 	return s.getBool("subEncrypt")
+}
+
+func (s *SettingService) GetSubEnableIndexPage() (bool, error) {
+	return s.getBool("subEnableIndexPage")
+}
+
+func (s *SettingService) GetSubIndexPageHtml() (string, error) {
+	return s.getString("subIndexPageHtml")
+}
+
+func (s *SettingService) SetSubIndexPageHtml(content string) error {
+	return s.setString("subIndexPageHtml", content)
 }
 
 func (s *SettingService) GetPageSize() (int, error) {
