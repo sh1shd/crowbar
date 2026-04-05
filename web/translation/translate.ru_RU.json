@@ -270,6 +270,8 @@
       "customSubscriptionErrorHtmlDesc": "HTML-страница, которая будет отправлена пользователю, если произошла ошибка",
       "customSubscriptionHtml": "HTML-страница подписки",
       "customSubscriptionHtmlDesc": "HTML-страница, которая будет отправлена пользователю при запросе адреса подписки",
+      "customEnableIndexPage": "Включить индексную страницу",
+      "customIndexPageHtml": "Пользовательская HTML-страница",
       "dateAndTime": "Дата и время",
       "direct": "Прямое подключение",
       "directDesc": "Устанавливает прямые соединения с доменами или IP-адресами определённой страны.",

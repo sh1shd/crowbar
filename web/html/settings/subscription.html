@@ -154,13 +154,13 @@
             </template>
         </a-setting-list-item>
         <a-setting-list-item paddings="small">
-            <template #title>Enable index page</template>
+            <template #title>{{ i18n "pages.settings.customEnableIndexPage" }}</template>
             <template #control>
                 <a-switch v-model="allSetting.subEnableIndexPage"></a-switch>
             </template>
         </a-setting-list-item>
         <a-setting-list-item v-if="allSetting.subEnableIndexPage" paddings="small">
-            <template #title>Custom index page content</template>
+            <template #title>{{ i18n "pages.settings.customIndexPageHtml" }}</template>
             <template #control>
                 <a-textarea v-model="allSetting.subIndexPageHtml" :rows="5"></a-textarea>
             </template>
