@@ -270,6 +270,8 @@
       "customSubscriptionErrorHtmlDesc": "The HTML page that will be sent to the user if an error has occurred",
       "customSubscriptionHtml": "Subscription HTML page",
       "customSubscriptionHtmlDesc": "The HTML page that will be sent to the user when requesting a subscription address.",
+      "customEnableIndexPage": "Enable index page",
+      "customIndexPageHtml": "Custom index page",
       "dateAndTime": "Date and Time",
       "direct": "Direct Connection",
       "directDesc": "Directly establishes connections with domains or IP ranges of a specific country.",

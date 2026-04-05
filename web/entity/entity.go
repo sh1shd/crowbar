@@ -59,6 +59,8 @@ type AllSetting struct {
 	SubMessageClientExpired     string `json:"subMessageClientExpired" form:"subMessageClientExpired"`         // Message shown to clients when subscription has expired
 	SubMessageClientTrafficEnd  string `json:"subMessageClientTrafficEnd" form:"subMessageClientTrafficEnd"`   // Message shown to clients when traffic has ended
 	SubMessageContactAdmin      string `json:"subMessageContactAdmin" form:"subMessageContactAdmin"`           // Message shown to clients to contact administrator
+	SubEnableIndexPage          bool   `json:"subEnableIndexPage" form:"subEnableIndexPage"`                   // Enable custom index page for subscription root
+	SubIndexPageHtml            string `json:"subIndexPageHtml" form:"subIndexPageHtml"`                       // Custom index page HTML/content
 }
 
 // CheckValid validates all settings in the AllSetting struct, checking IP addresses, ports, SSL certificates, and other configuration values.

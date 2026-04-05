@@ -13,13 +13,16 @@ import (
 
 // SUBController handles HTTP requests for subscription links and JSON configurations.
 type SUBController struct {
-	subCustomHeaders string
-	subCustomHtml   string
-	subCustomErrorHtml string
-	subPath         string
-	subEncrypt      bool
+	subCustomHeaders    string
+	subCustomHtml       string
+	subCustomErrorHtml  string
+	subPath             string
+	subEncrypt          bool
 
-	subService     *SubService
+	subEnableIndexPage  bool
+	subIndexPageHtml    string
+
+	subService          *SubService
 }
 
 // NewSUBController creates a new subscription controller with the given configuration.
@@ -31,6 +34,8 @@ func NewSUBController(
 	subCustomHeaders string,
 	subCustomHtml string,
 	subCustomErrorHtml string,
+	subEnableIndexPage bool,
+	subIndexPageHtml string,
 ) *SUBController {
 	sub := NewSubService(rModel)
 	a := &SUBController{
@@ -39,6 +44,8 @@ func NewSUBController(
 		subCustomErrorHtml: subCustomErrorHtml,
 		subPath:            subPath,
 		subEncrypt:         encrypt,
+		subEnableIndexPage: subEnableIndexPage,
+		subIndexPageHtml:   subIndexPageHtml,
 
 		subService:         sub,
 	}
@@ -49,8 +56,45 @@ func NewSUBController(
 // initRouter registers HTTP routes for subscription links and JSON endpoints
 // on the provided router group.
 func (a *SUBController) initRouter(g *gin.RouterGroup) {
-	gLink := g.Group(a.subPath)
-	gLink.GET(":subid", a.subs)
+	g.GET("/", a.indexPage)
+	g.GET(a.subPath + ":subid", a.subscriptionPage)
+}
+
+// indexPage serves the subscription server index. If custom index is enabled, render content; otherwise show 404.
+func (a *SUBController) indexPage(c *gin.Context) {
+	if !a.subEnableIndexPage {
+		a.handleError(c, http.StatusNotFound, "Page Not Found")
+		return
+	}
+
+	if a.subIndexPageHtml != "" {
+		// Try to parse and execute as template
+		tpl, err := template.New("sub_index").Parse(a.subIndexPageHtml)
+		if err == nil {
+			c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_ = tpl.Execute(c.Writer, nil)
+			return
+		}
+		// fallthrough to raw output on parse error
+	}
+
+	// If no custom content or template parse failed, return minimal index fallback
+	fallback := `
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Subscription</title>
+			<style>body { font-family: system-ui, sans-serif; }</style>
+		</head>
+		<body>
+			<h1>It's working</h1>
+		</body>
+		</html>
+	`
+	c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+	c.String(http.StatusOK, fallback)
 }
 
 
@@ -107,7 +151,7 @@ func (a *SUBController) handleError(c *gin.Context, status int, message string) 
 }
 
 // subs handles HTTP requests for subscription links, returning either HTML page or base64-encoded subscription data.
-func (a *SUBController) subs(c *gin.Context) {
+func (a *SUBController) subscriptionPage(c *gin.Context) {
 	subId := c.Param("subid")
 	scheme, host, hostWithPort, hostHeader := a.subService.ResolveRequest(c)
 	subs, lastOnline, traffic, err := a.subService.GetSubs(subId, host)
