@@ -51,8 +51,6 @@ type AllSetting struct {
 	SubDomain                   string `json:"subDomain" form:"subDomain"`                                     // Domain for subscription server validation
 	SubCertFile                 string `json:"subCertFile" form:"subCertFile"`                                 // SSL certificate file for subscription server
 	SubKeyFile                  string `json:"subKeyFile" form:"subKeyFile"`                                   // SSL private key file for subscription server
-	ExternalTrafficInformEnable bool   `json:"externalTrafficInformEnable" form:"externalTrafficInformEnable"` // Enable external traffic reporting
-	ExternalTrafficInformURI    string `json:"externalTrafficInformURI" form:"externalTrafficInformURI"`       // URI for external traffic reporting
 	SubEncrypt                  bool   `json:"subEncrypt" form:"subEncrypt"`                                   // Encrypt subscription responses
 	SubURI                      string `json:"subURI" form:"subURI"`                                           // Subscription server URI
 	SubMessageClientDisabled    string `json:"subMessageClientDisabled" form:"subMessageClientDisabled"`       // Message shown to clients when subscription is disabled

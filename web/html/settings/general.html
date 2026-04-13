@@ -108,24 +108,7 @@
             </template>
         </a-setting-list-item>
     </a-collapse-panel>
-    <a-collapse-panel key="4" header='{{ i18n "pages.settings.externalTraffic" }}'>
-        <a-setting-list-item paddings="small">
-            <template #title>{{ i18n "pages.settings.externalTrafficInformEnable"}}</template>
-            <template #description>{{ i18n "pages.settings.externalTrafficInformEnableDesc"}}</template>
-            <template #control>
-                <a-switch v-model="allSetting.externalTrafficInformEnable"></a-switch>
-            </template>
-        </a-setting-list-item>
-        <a-setting-list-item paddings="small">
-            <template #title>{{ i18n "pages.settings.externalTrafficInformURI"}}</template>
-            <template #description>{{ i18n "pages.settings.externalTrafficInformURIDesc"}}</template>
-            <template #control>
-                <a-input type="text" placeholder="(http|https)://domain[:port]/path/"
-                    v-model="allSetting.externalTrafficInformURI"></a-input>
-            </template>
-        </a-setting-list-item>
-    </a-collapse-panel>
-    <a-collapse-panel key="5" header='{{ i18n "pages.settings.dateAndTime" }}'>
+    <a-collapse-panel key="4" header='{{ i18n "pages.settings.dateAndTime" }}'>
         <a-setting-list-item paddings="small">
             <template #title>{{ i18n "pages.settings.timeZone"}}</template>
             <template #description>{{ i18n "pages.settings.timeZoneDesc"}}</template>

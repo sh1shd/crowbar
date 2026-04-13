@@ -25,8 +25,6 @@ class AllSetting {
         this.subPort = 2096;
         this.subPath = "/sub/";
         this.subDomain = "";
-        this.externalTrafficInformEnable = false;
-        this.externalTrafficInformURI = "";
         this.subCertFile = "";
         this.subKeyFile = "";
         this.subEncrypt = true;
