@@ -1,6 +1,6 @@
 {{define "form/inbound"}}
-<a-tabs default-active-key="1" size="small">
-    <a-tab-pane key="1" tab='{{ i18n "pages.xray.basicTemplate" }}'>
+<a-tabs default-active-key="basicTemplate" size="small">
+    <a-tab-pane key="basicTemplate" tab='{{ i18n "pages.xray.basicTemplate" }}'>
         <a-form :colon="false" :label-col="{ md: {span:8} }" :wrapper-col="{ md: {span:14} }">
             <a-form-item label='{{ i18n "enable" }}'>
                 <a-switch v-model="dbInbound.enable"></a-switch>
@@ -95,7 +95,7 @@
             </a-form-item>
         </a-form>
     </a-tab-pane>
-    <a-tab-pane key="2" tab='{{ i18n "protocol" }}'>
+    <a-tab-pane key="protocol" tab='{{ i18n "protocol" }}' v-if="![Protocols.VMESS].includes(inbound.protocol)">
         <!-- vmess settings -->
         <template v-if="inbound.protocol === Protocols.VMESS">
             {{template "form/vmess"}}
@@ -141,7 +141,7 @@
             {{template "form/tun"}}
         </template>
     </a-tab-pane>
-    <a-tab-pane key="3" tab='{{ i18n "transmission" }}'>
+    <a-tab-pane key="transmission" tab='{{ i18n "transmission" }}' v-if="[Protocols.VLESS, Protocols.VMESS, Protocols.TROJAN, Protocols.SHADOWSOCKS].includes(inbound.protocol)">
         <!-- stream settings -->
         <template v-if="inbound.canEnableStream()">
             {{template "form/streamSettings"}}
@@ -153,7 +153,7 @@
             {{template "form/tlsSettings"}}
         </template>
     </a-tab-pane>
-    <a-tab-pane key="4" tab='{{ i18n "sniffing" }}'>
+    <a-tab-pane key="sniffing" tab='{{ i18n "sniffing" }}'>
         {{template "form/sniffing"}}
     </a-tab-pane>
 </a-tabs>

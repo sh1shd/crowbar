@@ -1,12 +1,12 @@
 {{define "form/mixed"}}
 <a-form :colon="false" :label-col="{ md: {span:8} }" :wrapper-col="{ md: {span:14} }">
-  <a-form-item label='{{ i18n "pages.inbounds.enable" }} UDP'>
+  <a-form-item label='Enable UDP'>
     <a-switch v-model="inbound.settings.udp"></a-switch>
   </a-form-item>
-  <a-form-item label="IP" v-if="inbound.settings.udp">
+  <a-form-item label="UDP IP" v-if="inbound.settings.udp">
     <a-input v-model.trim="inbound.settings.ip"></a-input>
   </a-form-item>
-  <a-form-item label='{{ i18n "password" }}'>
+  <a-form-item label='Enable auth'>
     <a-switch :checked="inbound.settings.auth === 'password'" @change="checked => inbound.settings.auth = checked ? 'password' : 'noauth'"></a-switch>
   </a-form-item>
   <template v-if="inbound.settings.auth === 'password'">

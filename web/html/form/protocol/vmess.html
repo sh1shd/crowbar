@@ -1,14 +1,3 @@
 {{define "form/vmess"}}
-<table width="100%" v-if="isEdit">
-    <tr class="client-table-header">
-        <th>{{ i18n "pages.inbounds.email" }}</th>
-        <th>ID</th>
-        <th>{{ i18n "security" }}</th>
-    </tr>
-    <tr v-for="(client, index) in inbound.settings.vmesses" :class="index % 2 == 1 ? 'client-table-odd-row' : ''">
-        <td>[[ client.email ]]</td>
-        <td>[[ client.id ]]</td>
-        <td>[[ client.security ]]</td>
-    </tr>
-</table>
+<!-- There's nothing -->
 {{end}}
