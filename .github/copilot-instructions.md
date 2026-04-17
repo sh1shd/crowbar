@@ -12,7 +12,6 @@ main.go (entry point)
 │   ├── controller/      # HTTP handlers & API routes
 │   ├── service/         # Business logic layer
 │   ├── job/             # Scheduled tasks (cron-based)
-│   ├── websocket/       # Real-time dashboard updates
 │   ├── html/            # Embedded UI templates
 │   └── assets/          # CSS, JS (embedded in binary)
 ├── sub/                 # Subscription server (separate port, config generation)
@@ -67,7 +66,6 @@ main.go (entry point)
 ### 1. Service Layer Pattern
 Every domain has a corresponding service:
 - `InboundService` — Manage inbound rules (listening ports, protocols)
-- `OutboundService` — Manage outbound routing rules
 - `UserService` — Manage admin users
 - `SettingService` — Manage panel configuration
 - `XraySettingService` — Xray-specific configs
@@ -96,10 +94,9 @@ Each service has standard CRUD methods, called by controllers.
 - Cannot hot-reload without rebuilding binary
 - Template rendering in controllers via `c.HTML()`
 
-### 5. WebSocket Hub
-- Real-time dashboard updates via hub-based design (`web/websocket/hub.go`)
-- Clients connect, hub broadcasts events (traffic updates, logs)
-- Managed in `web/websocket/notifier.go`
+### 5. Real-time Updates
+- Real-time updates use polling via API calls
+- Clients periodically request status updates and traffic data
 
 ### 6. Configuration Management
 - Settings stored in SQLite (not files)
@@ -137,7 +134,7 @@ Each service has standard CRUD methods, called by controllers.
 | **Subscription Server Separate** | Runs on different port than web panel; clients don't access the main panel. |
 | **GORM N+1 Queries** | Must explicitly `Preload()` relations; lazy loading will cause multiple queries. |
 | **Xray Protocol Version Mismatch** | If Xray-core version doesn't match expectations, config generation may fail. |
-| **Graceful Reload Issues** | `SIGHUP` reloads both servers but may drop active WebSocket connections. |
+| **Graceful Reload Issues** | `SIGHUP` reloads both servers cleanly without connection concerns. |
 | **TLS Required** | Panel expects valid certs; can init with self-signed or disable (insecure). |
 
 ---
@@ -153,7 +150,7 @@ Each service has standard CRUD methods, called by controllers.
 | Modify database schema | `database/model/model.go`; GORM auto-migrates |
 | Add scheduled task | Create new file in `web/job/`, register in `web/web.go` |
 | Handle Xray traffic updates | `xray/traffic.go`, `xray/client_traffic.go` |
-| Fix WebSocket issues | `web/websocket/hub.go`, `web/controller/websocket.go` |
+| Handle real-time updates | Use API polling endpoints in controllers |
 | Modify Xray config generation | `xray/config.go`, review protocol-specific code |
 
 ---
@@ -174,9 +171,6 @@ Each service has standard CRUD methods, called by controllers.
 // Scheduling
 "github.com/robfig/cron/v3"
 
-// WebSocket
-"github.com/gorilla/websocket"
-
 // i18n
 "github.com/nicksnyder/go-i18n/v2"
 
@@ -193,7 +187,7 @@ Each service has standard CRUD methods, called by controllers.
 3. **Use `XUI_LOG_LEVEL=debug`** environment var for verbose logs.
 4. **Rebuild after HTML/CSS/JS changes**; embedded assets don't reload.
 5. **Test Xray configs** with `xray test -c config.json` before committing.
-6. **WebSocket debugging:** Use browser DevTools → Network → WS to inspect messages.
+6. **API polling debugging:** Use browser DevTools → Network → XHR to inspect API calls.
 7. **Reset to defaults:** Delete `database.db`; next run creates fresh DB with `admin:admin`.
 8. **Protocol documentation** in Xray-core repo; this panel is a UI/config wrapper.
 
@@ -201,6 +195,6 @@ Each service has standard CRUD methods, called by controllers.
 
 ## Next Steps
 
-- Suggest **file-level instructions** (`.github/instructions/`) for specific domains (e.g., Xray config generation, WebSocket handling)
+- Suggest **file-level instructions** (`.github/instructions/`) for specific domains (e.g., Xray config generation)
 - Suggest **custom agents** if multi-step workflows are needed (e.g., "Add new protocol end-to-end")
 - Suggest **hooks** to auto-format Go code on save or run tests

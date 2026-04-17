@@ -59,9 +59,6 @@ var defaultValueMap = map[string]string{
 	"subMessageClientExpired":     "Expired",
 	"subMessageClientTrafficEnd":  "Traffic has ended",
 	"subMessageContactAdmin":      "Please contact administrator",
-	"externalTrafficInformEnable": "false",
-	"externalTrafficInformURI":    "",
-	"xrayOutboundTestUrl":         "https://www.google.com/generate_204",
 }
 
 // SettingService provides business logic for application settings management.
@@ -232,14 +229,6 @@ func (s *SettingService) setInt(key string, value int) error {
 
 func (s *SettingService) GetXrayConfigTemplate() (string, error) {
 	return s.getString("xrayTemplateConfig")
-}
-
-func (s *SettingService) GetXrayOutboundTestUrl() (string, error) {
-	return s.getString("xrayOutboundTestUrl")
-}
-
-func (s *SettingService) SetXrayOutboundTestUrl(url string) error {
-	return s.setString("xrayOutboundTestUrl", url)
 }
 
 func (s *SettingService) GetListen() (string, error) {
@@ -453,22 +442,6 @@ func (s *SettingService) GetSubMessageClientTrafficEnd() (string, error) {
 
 func (s *SettingService) GetSubMessageContactAdmin() (string, error) {
 	return s.getString("subMessageContactAdmin")
-}
-
-func (s *SettingService) GetExternalTrafficInformEnable() (bool, error) {
-	return s.getBool("externalTrafficInformEnable")
-}
-
-func (s *SettingService) SetExternalTrafficInformEnable(value bool) error {
-	return s.setBool("externalTrafficInformEnable", value)
-}
-
-func (s *SettingService) GetExternalTrafficInformURI() (string, error) {
-	return s.getString("externalTrafficInformURI")
-}
-
-func (s *SettingService) SetExternalTrafficInformURI(InformURI string) error {
-	return s.setString("externalTrafficInformURI", InformURI)
 }
 
 func (s *SettingService) GetIpLimitEnable() (bool, error) {

@@ -13,7 +13,6 @@ type XraySettingController struct {
 	XraySettingService service.XraySettingService
 	SettingService     service.SettingService
 	InboundService     service.InboundService
-	OutboundService    service.OutboundService
 	XrayService        service.XrayService
 }
 
@@ -34,7 +33,7 @@ func (a *XraySettingController) initRouter(g *gin.RouterGroup) {
 	g.POST("/update", a.updateSetting)
 }
 
-// getXraySetting retrieves the Xray configuration template, inbound tags, and outbound test URL.
+// getXraySetting retrieves the Xray configuration template, inbound tags.
 func (a *XraySettingController) getXraySetting(c *gin.Context) {
 	xraySetting, err := a.SettingService.GetXrayConfigTemplate()
 	if err != nil {
