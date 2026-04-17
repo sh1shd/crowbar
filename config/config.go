@@ -62,7 +62,7 @@ func GetBinFolderPath() string {
 	if binFolderPath == "" {
 		binFolderPath = "bin"
 	}
-	return binFolderPath
+	return fmt.Sprintf("%s/%s", GetDBFolderPath(), binFolderPath)
 }
 
 func getBaseDir() string {
@@ -88,7 +88,7 @@ func GetDBFolderPath() string {
 	if dbFolderPath != "" {
 		return dbFolderPath
 	}
-	return "/etc/x-ui"
+	return "crowbar"
 }
 
 // GetDBPath returns the full path to the database file.
@@ -99,10 +99,10 @@ func GetDBPath() string {
 // GetLogFolder returns the path to the log folder based on environment variables or platform defaults.
 func GetLogFolder() string {
 	logFolderPath := os.Getenv("XUI_LOG_FOLDER")
-	if logFolderPath != "" {
-		return logFolderPath
+	if logFolderPath == "" {
+		return "logs"
 	}
-	return "/var/log/x-ui"
+	return fmt.Sprintf("%s/%s", GetDBFolderPath(), logFolderPath)
 }
 
 func copyFile(src, dst string) error {

@@ -13,8 +13,8 @@ case $1 in
         FNAME="amd64"
         ;;
 esac
-mkdir -p build/bin
-cd build/bin
+mkdir -p build/crowbar/bin
+cd build/crowbar/bin
 curl -sfLRO "https://github.com/XTLS/Xray-core/releases/download/v26.3.27/Xray-linux-${ARCH}.zip"
 unzip "Xray-linux-${ARCH}.zip"
 rm -f "Xray-linux-${ARCH}.zip" geoip.dat geosite.dat
