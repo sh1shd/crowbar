@@ -1,9 +1,10 @@
 services:
   crowbar:
-    image: ghcr.io/sh1shd/crowbar:main
+    image: ghcr.io/sh1shd/crowbar:latest
     container_name: crowbar_app
     volumes:
-      - ./data/:/app/crowbar/
+      - $PWD/db/:/etc/x-ui/
+      - $PWD/cert/:/root/cert/
     environment:
       XRAY_VMESS_AEAD_FORCED: "false"
       XUI_ENABLE_FAIL2BAN: "true"

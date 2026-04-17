@@ -13,7 +13,7 @@ tmp/
 
 # Ignore build and distribution directories
 backup/
-crowbar/
+bin/
 dist/
 release/
 node_modules/
@@ -30,6 +30,7 @@ main
 Thumbs.db
 
 # Ignore Go build files
+*.exe
 x-ui.db
 
 # Ignore Docker specific files
