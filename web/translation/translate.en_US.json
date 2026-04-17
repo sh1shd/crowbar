@@ -368,13 +368,11 @@
       "timeZoneDesc": "Scheduled tasks will run based on this time zone.",
       "title": "Panel Settings",
       "toasts": {
-        "getOutboundTrafficError": "Error getting traffics",
         "getSettings": "An error occurred while retrieving parameters.",
         "modifySettings": "The parameters have been changed.",
         "modifyUser": "You have successfully changed the credentials of the administrator.",
         "modifyUserError": "An error occurred while changing administrator credentials.",
         "originalUserPassIncorrect": "The сurrent username or password is invalid",
-        "resetOutboundTrafficError": "Error in reset outbound traffics",
         "userPassMustBeNotEmpty": "The new username and password is empty"
       },
       "trafficDiff": "Traffic Cap Notification",

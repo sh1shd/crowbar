@@ -55,15 +55,6 @@ type Inbound struct {
 	Sniffing       string   `json:"sniffing" form:"sniffing"`
 }
 
-// OutboundTraffics tracks traffic statistics for Xray outbound connections.
-type OutboundTraffics struct {
-	Id    int    `json:"id" form:"id" gorm:"primaryKey;autoIncrement"`
-	Tag   string `json:"tag" form:"tag" gorm:"unique"`
-	Up    int64  `json:"up" form:"up" gorm:"default:0"`
-	Down  int64  `json:"down" form:"down" gorm:"default:0"`
-	Total int64  `json:"total" form:"total" gorm:"default:0"`
-}
-
 // InboundClientIps stores IP addresses associated with inbound clients for access control.
 type InboundClientIps struct {
 	Id          int    `json:"id" gorm:"primaryKey;autoIncrement"`

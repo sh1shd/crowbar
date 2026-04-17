@@ -78,8 +78,6 @@ func (a *IndexController) login(c *gin.Context) {
 		return
 	}
 
-	logger.Infof("%s logged in successfully, Ip Address: %s\n", safeUser, getRemoteIp(c))
-
 	sessionMaxAge, err := a.settingService.GetSessionMaxAge()
 	if err != nil {
 		logger.Warning("Unable to get session's max age from DB")
@@ -92,7 +90,7 @@ func (a *IndexController) login(c *gin.Context) {
 		return
 	}
 
-	logger.Infof("%s logged in successfully", safeUser)
+	logger.Infof("%s logged in successfully, Ip Address: %s\n", safeUser, getRemoteIp(c))
 	jsonMsg(c, I18nWeb(c, "pages.login.toasts.successLogin"), nil)
 }
 

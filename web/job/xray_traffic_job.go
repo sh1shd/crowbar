@@ -11,7 +11,6 @@ type XrayTrafficJob struct {
 	settingService  service.SettingService
 	xrayService     service.XrayService
 	inboundService  service.InboundService
-	outboundService service.OutboundService
 }
 
 // NewXrayTrafficJob creates a new traffic collection job instance.
@@ -32,11 +31,7 @@ func (j *XrayTrafficJob) Run() {
 	if err != nil {
 		logger.Warning("add inbound traffic failed:", err)
 	}
-	err, needRestart1 := j.outboundService.AddTraffic(traffics, clientTraffics)
-	if err != nil {
-		logger.Warning("add outbound traffic failed:", err)
-	}
-	if needRestart0 || needRestart1 {
+	if needRestart0 {
 		j.xrayService.SetToNeedRestart()
 	}
 
@@ -55,11 +50,6 @@ func (j *XrayTrafficJob) Run() {
 		logger.Warning("get all inbounds for websocket failed:", err)
 	}
 
-	updatedOutbounds, err := j.outboundService.GetOutboundsTraffic()
-	if err != nil {
-		logger.Warning("get all outbounds for websocket failed:", err)
-	}
-
 	// Broadcast traffic update via WebSocket with accumulated values from database
 	trafficUpdate := map[string]any{
 		"traffics":       traffics,
@@ -73,9 +63,4 @@ func (j *XrayTrafficJob) Run() {
 	if updatedInbounds != nil {
 		websocket.BroadcastInbounds(updatedInbounds)
 	}
-
-	if updatedOutbounds != nil {
-		websocket.BroadcastOutbounds(updatedOutbounds)
-	}
-
 }

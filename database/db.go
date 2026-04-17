@@ -33,7 +33,6 @@ func initModels() error {
 	models := []any{
 		&model.User{},
 		&model.Inbound{},
-		&model.OutboundTraffics{},
 		&model.Setting{},
 		&model.InboundClientIps{},
 		&xray.ClientTraffic{},

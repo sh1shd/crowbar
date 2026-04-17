@@ -20,7 +20,6 @@ const (
 	MessageTypeInbounds     MessageType = "inbounds"     // Inbounds list update
 	MessageTypeNotification MessageType = "notification" // System notification
 	MessageTypeXrayState    MessageType = "xray_state"   // Xray state change
-	MessageTypeOutbounds    MessageType = "outbounds"    // Outbounds list update
 )
 
 // Message represents a WebSocket message

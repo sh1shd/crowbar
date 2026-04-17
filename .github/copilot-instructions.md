@@ -67,7 +67,6 @@ main.go (entry point)
 ### 1. Service Layer Pattern
 Every domain has a corresponding service:
 - `InboundService` — Manage inbound rules (listening ports, protocols)
-- `OutboundService` — Manage outbound routing rules
 - `UserService` — Manage admin users
 - `SettingService` — Manage panel configuration
 - `XraySettingService` — Xray-specific configs
