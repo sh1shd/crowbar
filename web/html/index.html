@@ -727,55 +727,8 @@
       // Initial status fetch
       await this.getStatus();
 
-      // Setup WebSocket for real-time updates
-      if (window.wsClient) {
-        window.wsClient.connect();
-        
-        // Listen for status updates
-        window.wsClient.on('status', (payload) => {
-          this.setStatus(payload);
-        });
-
-        // Listen for Xray state changes
-        window.wsClient.on('xray_state', (payload) => {
-          if (this.status && this.status.xray) {
-            this.status.xray.state = payload.state;
-            this.status.xray.errorMsg = payload.errorMsg || '';
-            switch (payload.state) {
-              case 'running':
-                this.status.xray.color = "green";
-                this.status.xray.stateMsg = '{{ i18n "pages.index.xrayStatusRunning" }}';
-                break;
-              case 'stop':
-                this.status.xray.color = "orange";
-                this.status.xray.stateMsg = '{{ i18n "pages.index.xrayStatusStop" }}';
-                break;
-              case 'error':
-                this.status.xray.color = "red";
-                this.status.xray.stateMsg = '{{ i18n "pages.index.xrayStatusError" }}';
-                break;
-            }
-          }
-        });
-
-        // Notifications disabled - white notifications are not needed
-
-        // Fallback to polling if WebSocket fails
-        window.wsClient.on('error', () => {
-          console.warn('WebSocket connection failed, falling back to polling');
-          this.startPolling();
-        });
-
-        window.wsClient.on('disconnected', () => {
-          if (window.wsClient.reconnectAttempts >= window.wsClient.maxReconnectAttempts) {
-            console.warn('WebSocket reconnection failed, falling back to polling');
-            this.startPolling();
-          }
-        });
-      } else {
-        // Fallback to polling if WebSocket is not available
-        this.startPolling();
-      }
+      // Use polling for status updates (WebSocket support has been removed)
+      this.startPolling();
     },
   });
 </script>

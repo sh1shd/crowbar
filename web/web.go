@@ -25,7 +25,6 @@ import (
 	"github.com/mhsanaei/3x-ui/v2/web/middleware"
 	"github.com/mhsanaei/3x-ui/v2/web/network"
 	"github.com/mhsanaei/3x-ui/v2/web/service"
-	"github.com/mhsanaei/3x-ui/v2/web/websocket"
 
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/sessions"
@@ -99,12 +98,9 @@ type Server struct {
 	index *controller.IndexController
 	panel *controller.XUIController
 	api   *controller.APIController
-	ws    *controller.WebSocketController
 
 	xrayService    service.XrayService
 	settingService service.SettingService
-
-	wsHub *websocket.Hub
 
 	cron *cron.Cron
 
@@ -269,15 +265,6 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	s.panel = controller.NewXUIController(g)
 	s.api = controller.NewAPIController(g)
 
-	// Initialize WebSocket hub
-	s.wsHub = websocket.NewHub()
-	go s.wsHub.Run()
-
-	// Initialize WebSocket controller
-	s.ws = controller.NewWebSocketController(s.wsHub)
-	// Register WebSocket route with basePath (g already has basePath prefix)
-	g.GET("/ws", s.ws.HandleWebSocket)
-
 	// Chrome DevTools endpoint for debugging web apps
 	engine.GET("/.well-known/appspecific/com.chrome.devtools.json", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{})
@@ -412,10 +399,6 @@ func (s *Server) Stop() error {
 	if s.cron != nil {
 		s.cron.Stop()
 	}
-	// Gracefully stop WebSocket hub
-	if s.wsHub != nil {
-		s.wsHub.Stop()
-	}
 	var err1 error
 	var err2 error
 	if s.httpServer != nil {
@@ -435,9 +418,4 @@ func (s *Server) GetCtx() context.Context {
 // GetCron returns the server's cron scheduler instance.
 func (s *Server) GetCron() *cron.Cron {
 	return s.cron
-}
-
-// GetWSHub returns the WebSocket hub instance.
-func (s *Server) GetWSHub() any {
-	return s.wsHub
 }
