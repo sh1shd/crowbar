@@ -48,8 +48,6 @@ func (a *ServerController) initRouter(g *gin.RouterGroup) {
 	g.POST("/stopXrayService", a.stopXrayService)
 	g.POST("/restartXrayService", a.restartXrayService)
 	g.POST("/installXray/:version", a.installXray)
-	g.POST("/updateGeofile", a.updateGeofile)
-	g.POST("/updateGeofile/:fileName", a.updateGeofile)
 	g.POST("/logs/:count", a.getLogs)
 	g.POST("/xraylogs/:count", a.getXrayLogs)
 	g.POST("/importDB", a.importDB)
@@ -105,21 +103,6 @@ func (a *ServerController) installXray(c *gin.Context) {
 	version := c.Param("version")
 	err := a.serverService.UpdateXray(version)
 	jsonMsg(c, I18nWeb(c, "pages.index.xraySwitchVersionPopover"), err)
-}
-
-// updateGeofile updates the specified geo file for Xray.
-func (a *ServerController) updateGeofile(c *gin.Context) {
-	fileName := c.Param("fileName")
-
-	// Validate the filename for security (prevent path traversal attacks)
-	if fileName != "" && !a.serverService.IsValidGeofileName(fileName) {
-		jsonMsg(c, I18nWeb(c, "pages.index.geofileUpdatePopover"),
-			fmt.Errorf("invalid filename: contains unsafe characters or path traversal patterns"))
-		return
-	}
-
-	err := a.serverService.UpdateGeofile(fileName)
-	jsonMsg(c, I18nWeb(c, "pages.index.geofileUpdatePopover"), err)
 }
 
 // stopXrayService stops the Xray service.

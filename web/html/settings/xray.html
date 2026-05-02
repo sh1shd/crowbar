@@ -9,46 +9,7 @@
             </template>
         </a-setting-list-item>
     </a-collapse-panel>
-    <a-collapse-panel key="2" header='{{ i18n "pages.settings.geofilesTitle" }}'>
-        <a-setting-list-item paddings="small">
-            <template #title>{{ i18n "pages.settings.manageGeofiles" }}</template>
-            <template #description>{{ i18n "pages.settings.manageGeofilesDesc" }}</template>
-            <template #control>
-                <a-button icon="reload" @click="updateGeofile('')">{{ i18n "pages.settings.geofilesUpdateAll" }}</a-button>
-            </template>
-        </a-setting-list-item>
-        <a-table 
-            :columns='[
-                {
-                    title: `{{ i18n "pages.settings.geofilesName" }}`,
-                    dataIndex: `name`,
-                    key: `name`,
-                    width: `100%`
-                },
-                {
-                    key: `operation`,
-                    scopedSlots: { customRender: `operation` },
-                }
-            ]' 
-            :data-source="[{ name: 'geosite.dat' }, { name: 'geoip.dat' }]" 
-            :pagination="false" 
-            size="small"
-            :style="{ padding: '5px 20px !important'}"
-            :locale='{ filterConfirm: `{{ i18n "confirm" }}`, filterReset: `{{ i18n "reset" }}`, emptyText: `{{ i18n "noData" }}` }'
-        >
-            <template #operation="object, record, index">
-                <a-space direction="horizontal" size="small">
-                    <a-tooltip :overlay-class-name="themeSwitcher.currentTheme">
-                        <template #title>
-                            {{ i18n "update" }}
-                        </template>
-                        <a-icon type="reload" @click="updateGeofile(object.name)" />
-                    </a-tooltip>
-                </a-space>
-            </template>
-        </a-table>
-    </a-collapse-panel>
-    <a-collapse-panel key="3" header='{{ i18n "pages.settings.xrayVersions" }}'>
+    <a-collapse-panel key="2" header='{{ i18n "pages.settings.xrayVersions" }}'>
         <template v-if="!loadingStates.fetchedXrayVersions">
             <div :style="{ textAlign: 'center', padding: '30px 0', marginTop: '10px', background: 'transparent', border: 'none' }">
                 <a-spin tip='{{ i18n "loading" }}' ></a-spin>

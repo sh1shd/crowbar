@@ -345,27 +345,6 @@
         this.allSetting.subCustomHeaders = JSON.stringify(this.customHeaders);
         headerModal.close();
       },
-      updateGeofile(fileName) {
-        console.log(fileName)
-        const isSingleFile = !!fileName;
-        this.$confirm({
-          title: '{{ i18n "pages.settings.geofileUpdateDialog" }}',
-          content: isSingleFile
-            ? '{{ i18n "pages.settings.geofileUpdateDialogDesc" }}'.replace("#filename#", fileName)
-            : '{{ i18n "pages.settings.geofilesUpdateDialogDesc" }}',
-          okText: '{{ i18n "confirm"}}',
-          class: themeSwitcher.currentTheme,
-          cancelText: '{{ i18n "cancel"}}',
-          onOk: async () => {
-            this.loading(true);
-            const url = isSingleFile
-              ? `/panel/api/server/updateGeofile/${fileName}`
-              : `/panel/api/server/updateGeofile`;
-            await HttpUtil.post(url);
-            this.loading(false);
-          },
-        });
-      },
       async changeXrayCollapse(key = []) {
         if (key.includes("3")) await this.fetchXrayVersions();
       },
