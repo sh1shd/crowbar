@@ -1,6 +1,6 @@
 {{define "settings/panel/xray"}}
-<a-collapse default-active-key="1" @change="(key) => changeXrayCollapse(key)">
-    <a-collapse-panel key="1" header='{{ i18n "pages.xray.generalConfigs"}}'>
+<a-collapse default-active-key="xray_config" @change="(key) => changeXrayCollapse(key)">
+    <a-collapse-panel key="xray_config" header='{{ i18n "pages.xray.generalConfigs"}}'>
         <a-setting-list-item paddings="small">
             <template #title>{{ i18n "pages.xray.Template"}}</template>
             <template #description>{{ i18n "pages.xray.TemplateDesc"}}</template>
@@ -9,7 +9,7 @@
             </template>
         </a-setting-list-item>
     </a-collapse-panel>
-    <a-collapse-panel key="2" header='{{ i18n "pages.settings.xrayVersions" }}'>
+    <a-collapse-panel key="xray_versions" header='{{ i18n "pages.settings.xrayVersions" }}'>
         <template v-if="!loadingStates.fetchedXrayVersions">
             <div :style="{ textAlign: 'center', padding: '30px 0', marginTop: '10px', background: 'transparent', border: 'none' }">
                 <a-spin tip='{{ i18n "loading" }}' ></a-spin>

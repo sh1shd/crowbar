@@ -9,6 +9,7 @@ import (
 // Config represents the complete Xray configuration structure.
 // It contains all sections of an Xray config file including inbounds, outbounds, routing, etc.
 type Config struct {
+	Version          json_util.RawMessage `json:"version"`
 	LogConfig        json_util.RawMessage `json:"log"`
 	RouterConfig     json_util.RawMessage `json:"routing"`
 	DNSConfig        json_util.RawMessage `json:"dns"`
@@ -23,6 +24,7 @@ type Config struct {
 	Observatory      json_util.RawMessage `json:"observatory"`
 	BurstObservatory json_util.RawMessage `json:"burstObservatory"`
 	Metrics          json_util.RawMessage `json:"metrics"`
+	Geodata          json_util.RawMessage `json:"geodata"`
 }
 
 // Equals compares two Config instances for deep equality.
@@ -34,6 +36,9 @@ func (c *Config) Equals(other *Config) bool {
 		if !inbound.Equals(&other.InboundConfigs[i]) {
 			return false
 		}
+	}
+	if !bytes.Equal(c.Version, other.Version) {
+		return false
 	}
 	if !bytes.Equal(c.LogConfig, other.LogConfig) {
 		return false
@@ -66,6 +71,9 @@ func (c *Config) Equals(other *Config) bool {
 		return false
 	}
 	if !bytes.Equal(c.Metrics, other.Metrics) {
+		return false
+	}
+	if !bytes.Equal(c.Geodata, other.Geodata) {
 		return false
 	}
 	return true

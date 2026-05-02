@@ -1,6 +1,6 @@
 {{define "settings/panel/security"}}
-<a-collapse default-active-key="1">
-    <a-collapse-panel key="1" header='{{ i18n "pages.settings.security.admin"}}'>
+<a-collapse default-active-key="security_changeCredentials">
+    <a-collapse-panel key="security_changeCredentials" header='{{ i18n "pages.settings.security.admin"}}'>
         <a-setting-list-item paddings="small">
             <template #title>{{ i18n "pages.settings.oldUsername"}}</template>
             <template #control>
@@ -31,7 +31,7 @@
             </a-space>
         </a-list-item>
     </a-collapse-panel>
-    <a-collapse-panel key="2" header='{{ i18n "pages.settings.security.twoFactor" }}'>
+    <a-collapse-panel key="security_twoFactor" header='{{ i18n "pages.settings.security.twoFactor" }}'>
         <a-setting-list-item paddings="small">
             <template #title>{{ i18n "pages.settings.security.twoFactorEnable" }}</template>
             <template #description>{{ i18n "pages.settings.security.twoFactorEnableDesc" }}</template>

@@ -28,29 +28,29 @@
                         "pages.settings.restartPanel" }}</a-button>
                     </a-space>
                   </template>
-                  <a-tabs default-active-key="1">
-                    <a-tab-pane key="1" :style="{ paddingTop: '20px' }">
+                  <a-tabs default-active-key="panel">
+                    <a-tab-pane key="panel" :style="{ paddingTop: '20px' }">
                       <template #tab>
                         <a-icon type="setting"></a-icon>
                         <span>{{ i18n "pages.settings.panelSettings" }}</span>
                       </template>
                       {{ template "settings/panel/general" . }}
                     </a-tab-pane>
-                    <a-tab-pane key="2" :style="{ paddingTop: '20px' }">
+                    <a-tab-pane key="xray" :style="{ paddingTop: '20px' }">
                       <template #tab>
                         <a-icon type="code"></a-icon>
                         <span>Xray</span>
                       </template>
                       {{ template "settings/panel/xray" . }}
                     </a-tab-pane>
-                    <a-tab-pane key="3" :style="{ paddingTop: '20px' }">
+                    <a-tab-pane key="security" :style="{ paddingTop: '20px' }">
                       <template #tab>
                         <a-icon type="safety"></a-icon>
                         <span>{{ i18n "pages.settings.securitySettings" }}</span>
                       </template>
                       {{ template "settings/panel/security" . }}
                     </a-tab-pane>
-                    <a-tab-pane key="4" :style="{ paddingTop: '20px' }">
+                    <a-tab-pane key="subscription" :style="{ paddingTop: '20px' }">
                       <template #tab>
                         <a-icon type="cloud-server"></a-icon>
                         <span>{{ i18n "pages.settings.subSettings" }}</span>
@@ -346,7 +346,7 @@
         headerModal.close();
       },
       async changeXrayCollapse(key = []) {
-        if (key.includes("3")) await this.fetchXrayVersions();
+        if (key.includes("xray_versions")) await this.fetchXrayVersions();
       },
       async fetchXrayVersions(forced = false) {
         if (this.loadingStates.fetchedXrayVersions && !forced) return;

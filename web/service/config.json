@@ -1,4 +1,7 @@
 {
+  "version": {
+    "min": "26.4.25"
+  },
   "log": {
     "access": "none",
     "dnsLog": false,
