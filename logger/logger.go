@@ -55,20 +55,13 @@ func InitLogger(level logging.Level) {
 	logger = newLogger
 }
 
-// initDefaultBackend creates the console/syslog logging backend.
-// Attempts syslog, falls back to stderr
+// initDefaultBackend creates the console logging backend.
 func initDefaultBackend() logging.Backend {
 	var backend logging.Backend
 	includeTime := false
 
-	// Try syslog, fallback to stderr
-	if syslogBackend, err := logging.NewSyslogBackend(""); err != nil {
-		fmt.Fprintf(os.Stderr, "syslog backend disabled: %v\n", err)
-		backend = logging.NewLogBackend(os.Stderr, "", 0)
-		includeTime = os.Getppid() > 0
-	} else {
-		backend = syslogBackend
-	}
+	backend = logging.NewLogBackend(os.Stderr, "", 0)
+	includeTime = os.Getppid() > 0
 
 	return logging.NewBackendFormatter(backend, newFormatter(includeTime))
 }
