@@ -117,12 +117,11 @@ func (a *ServerController) restartXrayService(c *gin.Context) {
 	jsonMsg(c, I18nWeb(c, "pages.xray.restartSuccess"), err)
 }
 
-// getLogs retrieves the application logs based on count, level, and syslog filters.
+// getLogs retrieves the application logs based on count and level filters.
 func (a *ServerController) getLogs(c *gin.Context) {
 	count := c.Param("count")
 	level := c.PostForm("level")
-	syslog := c.PostForm("syslog")
-	logs := a.serverService.GetLogs(count, level, syslog)
+	logs := a.serverService.GetLogs(count, level)
 	jsonObj(c, logs, nil)
 }
 
