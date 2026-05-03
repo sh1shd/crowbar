@@ -36,7 +36,9 @@ class HttpUtil {
         } else {
             // Ensure URL starts with / for relative paths
             const normalizedUrl = url.startsWith('/') ? url : '/' + url;
-            fullUrl = this.basePath === '/' ? normalizedUrl : this.basePath + normalizedUrl;
+            // Ensure basePath doesn't end with / to avoid double slashes
+            const normalizedBasePath = this.basePath.replace(/\/+$/, '');
+            fullUrl = normalizedBasePath + normalizedUrl;
         }
         
         const headers = {
