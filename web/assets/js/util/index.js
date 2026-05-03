@@ -53,6 +53,7 @@ class HttpUtil {
         if (fetchOptions.body) {
             if (fetchOptions.body instanceof FormData) {
                 // FormData - let fetch handle the headers automatically
+                delete headers['Content-Type'];
             } else if (fetchOptions.body instanceof URLSearchParams) {
                 // URLSearchParams - let fetch handle the Content-Type header automatically
                 // Remove any manually set Content-Type to avoid conflicts
