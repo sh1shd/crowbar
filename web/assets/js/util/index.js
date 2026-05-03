@@ -7,6 +7,79 @@ class Msg {
 }
 
 class HttpUtil {
+    static basePath = '/';
+
+    static _encodeFormData(data) {
+        if (data instanceof FormData) {
+            return data;
+        }
+        if (typeof data === 'object' && data !== null) {
+            const params = new URLSearchParams();
+            for (const [key, value] of Object.entries(data)) {
+                if (Array.isArray(value)) {
+                    value.forEach(item => params.append(key, item));
+                } else {
+                    params.append(key, value);
+                }
+            }
+            return params;
+        }
+        return data;
+    }
+
+    static async _fetchWithDefaults(url, options = {}) {
+        let fullUrl;
+        
+        // Construct full URL: if it starts with http, use as-is; otherwise prepend basePath
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            fullUrl = url;
+        } else {
+            // Ensure URL starts with / for relative paths
+            const normalizedUrl = url.startsWith('/') ? url : '/' + url;
+            fullUrl = this.basePath === '/' ? normalizedUrl : this.basePath + normalizedUrl;
+        }
+        
+        const headers = {
+            'X-Requested-With': 'XMLHttpRequest',
+            ...options.headers,
+        };
+
+        const fetchOptions = {
+            ...options,
+            headers,
+        };
+
+        // Handle request body encoding
+        if (fetchOptions.body) {
+            if (fetchOptions.body instanceof FormData) {
+                // FormData - let fetch handle the headers automatically
+            } else if (fetchOptions.body instanceof URLSearchParams) {
+                // URLSearchParams - let fetch handle the Content-Type header automatically
+                // Remove any manually set Content-Type to avoid conflicts
+                delete headers['Content-Type'];
+            } else {
+                // Regular object - encode as URLSearchParams
+                fetchOptions.body = this._encodeFormData(fetchOptions.body);
+                // Remove any manually set Content-Type to let fetch handle it
+                delete headers['Content-Type'];
+            }
+        }
+
+        try {
+            const response = await fetch(fullUrl, fetchOptions);
+            
+            // Handle 401 Unauthorized
+            if (response.status === 401) {
+                window.location.reload();
+                return null;
+            }
+            
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static _handleMsg(msg) {
         if (!(msg instanceof Msg) || msg.msg === "") {
             return;
@@ -15,29 +88,55 @@ class HttpUtil {
         Vue.prototype.$message[messageType](msg.msg);
     }
 
-    static _respToMsg(resp) {
-        if (!resp || !resp.data) {
-            return new Msg(false, 'No response data');
+    static async _respToMsg(resp) {
+        if (!resp) {
+            return new Msg(false, 'No response');
         }
-        const { data } = resp;
-        if (data == null) {
-            return new Msg(true);
+        try {
+            const contentType = resp.headers.get('content-type');
+            let data;
+            
+            if (contentType && contentType.includes('application/json')) {
+                data = await resp.json();
+            } else {
+                data = await resp.text();
+            }
+
+            if (data == null) {
+                return new Msg(true);
+            }
+            if (typeof data === 'object' && 'success' in data) {
+                return new Msg(data.success, data.msg, data.obj);
+            }
+            return typeof data === 'object' ? data : new Msg(false, 'unknown data:', data);
+        } catch (error) {
+            console.error('Error parsing response:', error);
+            return new Msg(false, 'Failed to parse response');
         }
-        if (typeof data === 'object' && 'success' in data) {
-            return new Msg(data.success, data.msg, data.obj);
-        }
-        return typeof data === 'object' ? data : new Msg(false, 'unknown data:', data);
     }
 
     static async get(url, params, options = {}) {
         try {
-            const resp = await axios.get(url, { params, ...options });
-            const msg = this._respToMsg(resp);
+            let requestUrl = url;
+            if (params && typeof params === 'object') {
+                const queryParams = new URLSearchParams();
+                for (const [key, value] of Object.entries(params)) {
+                    if (Array.isArray(value)) {
+                        value.forEach(item => queryParams.append(key, item));
+                    } else {
+                        queryParams.append(key, value);
+                    }
+                }
+                const queryString = queryParams.toString();
+                requestUrl = queryString ? `${url}?${queryString}` : url;
+            }
+            const resp = await this._fetchWithDefaults(requestUrl, { method: 'GET', ...options });
+            const msg = await this._respToMsg(resp);
             this._handleMsg(msg);
             return msg;
         } catch (error) {
             console.error('GET request failed:', error);
-            const errorMsg = new Msg(false, error.response?.data?.message || error.message || 'Request failed');
+            const errorMsg = new Msg(false, error.message || 'Request failed');
             this._handleMsg(errorMsg);
             return errorMsg;
         }
@@ -45,13 +144,20 @@ class HttpUtil {
 
     static async post(url, data, options = {}) {
         try {
-            const resp = await axios.post(url, data, options);
-            const msg = this._respToMsg(resp);
+            const fetchOptions = {
+                method: 'POST',
+                ...options,
+            };
+            if (data) {
+                fetchOptions.body = this._encodeFormData(data);
+            }
+            const resp = await this._fetchWithDefaults(url, fetchOptions);
+            const msg = await this._respToMsg(resp);
             this._handleMsg(msg);
             return msg;
         } catch (error) {
             console.error('POST request failed:', error);
-            const errorMsg = new Msg(false, error.response?.data?.message || error.message || 'Request failed');
+            const errorMsg = new Msg(false, error.message || 'Request failed');
             this._handleMsg(errorMsg);
             return errorMsg;
         }

@@ -69,13 +69,9 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ant-design-vue@1.7.8/dist/antd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios@1.12.2/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qs@6.15.0/dist/qs.min.js"></script>
-<script src="{{ .base_path }}assets/js/axios-init.js?{{ .cur_ver }}"></script>
 <script src="{{ .base_path }}assets/js/util/index.js?{{ .cur_ver }}"></script>
 <script>
-  const basePath = '{{ .base_path }}';
-  axios.defaults.baseURL = basePath;
+  HttpUtil.basePath = '{{ .base_path }}';
 </script>
 {{ end }}
   

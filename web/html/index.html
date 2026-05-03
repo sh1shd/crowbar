@@ -277,9 +277,6 @@
           </a-select>
         </a-input-group>
       </a-form-item>
-      <a-form-item>
-        <a-checkbox v-model="logModal.syslog" @change="openLogs()">SysLog</a-checkbox>
-      </a-form-item>
       <a-form-item :style="{ float: 'right', marginRight: 0 }">
         <a-button type="primary" icon="download" size="small" @click="FileManager.downloadTextFile(logModal.logs?.join('\n'), 'x-ui.log')">{{ i18n "download" }}</a-button>
       </a-form-item>
@@ -434,7 +431,6 @@
     logs: [],
     rows: 20,
     level: 'info',
-    syslog: false,
     loading: false,
     show(logs) {
       this.visible = true;
@@ -619,7 +615,7 @@
       },
       async openLogs() {
         logModal.loading = true;
-        const msg = await HttpUtil.post('/panel/api/server/logs/' + logModal.rows, { level: logModal.level, syslog: logModal.syslog });
+        const msg = await HttpUtil.post('/panel/api/server/logs/' + logModal.rows, { level: logModal.level });
         if (!msg.success) {
           return;
         }
@@ -669,7 +665,7 @@
         backupModal.show();
       },
       exportDatabase() {
-        window.location = basePath + 'panel/api/server/getDb';
+        window.location = HttpUtil.basePath + 'panel/api/server/getDb';
       },
       importDatabase() {
         const fileInput = document.createElement('input');

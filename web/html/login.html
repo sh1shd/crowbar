@@ -97,7 +97,7 @@
         this.loadingStates.spinning = true;
         const msg = await HttpUtil.post('/login', this.user);
         if (msg.success) {
-          location.href = basePath + 'panel/';
+          location.href = HttpUtil.basePath + 'panel/';
         }
         this.loadingStates.spinning = false;
       },
