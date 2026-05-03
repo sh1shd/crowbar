@@ -278,7 +278,7 @@
         </a-input-group>
       </a-form-item>
       <a-form-item :style="{ float: 'right', marginRight: 0 }">
-        <a-button type="primary" icon="download" size="small" @click="FileManager.downloadTextFile(logModal.logs?.join('\n'), 'x-ui.log')">{{ i18n "download" }}</a-button>
+        <a-button type="primary" icon="download" size="small" @click="FileManager.downloadTextFile(logModal.logs?.join('\n'), 'crowbar.log')">{{ i18n "download" }}</a-button>
       </a-form-item>
     </a-form>
     <div class="ant-input log-container" v-html="logModal.formattedLogs"></div>
@@ -635,7 +635,7 @@
       },
       downloadXrayLogs() {
         if (!Array.isArray(this.xraylogModal.logs) || this.xraylogModal.logs.length === 0) {
-          FileManager.downloadTextFile('', 'x-ui.log');
+          FileManager.downloadTextFile('', 'crowbar.log');
           return;
         }
         const lines = this.xraylogModal.logs.map(l => {
@@ -650,7 +650,7 @@
             return JSON.stringify(l);
           }
         }).join('\n');
-        FileManager.downloadTextFile(lines, 'x-ui.log');
+        FileManager.downloadTextFile(lines, 'crowbar.log');
       },
       async openConfig() {
         this.loading(true);
