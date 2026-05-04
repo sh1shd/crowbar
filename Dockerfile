@@ -47,7 +47,6 @@ RUN chmod +x \
   /app/x-ui
 
 ENV XUI_ENABLE_FAIL2BAN="true"
-EXPOSE 2053
 VOLUME [ "/etc/x-ui" ]
 CMD [ "./x-ui" ]
 ENTRYPOINT [ "/app/DockerEntrypoint.sh" ]

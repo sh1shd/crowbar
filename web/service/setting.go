@@ -8,7 +8,6 @@ import (
     "net"
 	"reflect"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/mhsanaei/3x-ui/v2/database"
@@ -26,14 +25,7 @@ var xrayTemplateConfig string
 
 var defaultValueMap = map[string]string{
 	"xrayTemplateConfig":          xrayTemplateConfig,
-	"webListen":                   "",
-	"webDomain":                   "",
-	"webPort":                     "2053",
-	"webCertFile":                 "",
-	"webKeyFile":                  "",
 	"secret":                      random.Seq(32),
-	"webBasePath":                 "/",
-	"sessionMaxAge":               "360",
 	"pageSize":                    "25",
 	"expireDiff":                  "0",
 	"trafficDiff":                 "0",
@@ -41,18 +33,11 @@ var defaultValueMap = map[string]string{
 	"timeLocation":                "Local",
 	"twoFactorEnable":             "false",
 	"twoFactorToken":              "",
-	"subEnable":                   "true",
 	"subCustomHeaders":            "[]",
 	"subCustomHtml":               "",
 	"subCustomErrorHtml":          "",
 	"subEnableIndexPage":          "false",
 	"subIndexPageHtml":            "",
-	"subListen":                   "",
-	"subPort":                     "2096",
-	"subPath":                     "/sub/",
-	"subDomain":                   "",
-	"subCertFile":                 "",
-	"subKeyFile":                  "",
 	"subEncrypt":                  "true",
 	"subURI":                      "",
 	"subMessageClientDisabled":    "Disabled",
@@ -231,18 +216,6 @@ func (s *SettingService) GetXrayConfigTemplate() (string, error) {
 	return s.getString("xrayTemplateConfig")
 }
 
-func (s *SettingService) GetListen() (string, error) {
-	return s.getString("webListen")
-}
-
-func (s *SettingService) SetListen(ip string) error {
-	return s.setString("webListen", ip)
-}
-
-func (s *SettingService) GetWebDomain() (string, error) {
-	return s.getString("webDomain")
-}
-
 func (s *SettingService) GetTwoFactorEnable() (bool, error) {
 	return s.getBool("twoFactorEnable")
 }
@@ -259,40 +232,12 @@ func (s *SettingService) SetTwoFactorToken(value string) error {
 	return s.setString("twoFactorToken", value)
 }
 
-func (s *SettingService) GetPort() (int, error) {
-	return s.getInt("webPort")
-}
-
-func (s *SettingService) SetPort(port int) error {
-	return s.setInt("webPort", port)
-}
-
-func (s *SettingService) SetCertFile(webCertFile string) error {
-	return s.setString("webCertFile", webCertFile)
-}
-
-func (s *SettingService) GetCertFile() (string, error) {
-	return s.getString("webCertFile")
-}
-
-func (s *SettingService) SetKeyFile(webKeyFile string) error {
-	return s.setString("webKeyFile", webKeyFile)
-}
-
-func (s *SettingService) GetKeyFile() (string, error) {
-	return s.getString("webKeyFile")
-}
-
 func (s *SettingService) GetExpireDiff() (int, error) {
 	return s.getInt("expireDiff")
 }
 
 func (s *SettingService) GetTrafficDiff() (int, error) {
 	return s.getInt("trafficDiff")
-}
-
-func (s *SettingService) GetSessionMaxAge() (int, error) {
-	return s.getInt("sessionMaxAge")
 }
 
 func (s *SettingService) GetRemarkModel() (string, error) {
@@ -310,30 +255,6 @@ func (s *SettingService) GetSecret() ([]byte, error) {
 	return []byte(secret), err
 }
 
-func (s *SettingService) SetBasePath(basePath string) error {
-	if !strings.HasPrefix(basePath, "/") {
-		basePath = "/" + basePath
-	}
-	if !strings.HasSuffix(basePath, "/") {
-		basePath += "/"
-	}
-	return s.setString("webBasePath", basePath)
-}
-
-func (s *SettingService) GetBasePath() (string, error) {
-	basePath, err := s.getString("webBasePath")
-	if err != nil {
-		return "", err
-	}
-	if !strings.HasPrefix(basePath, "/") {
-		basePath = "/" + basePath
-	}
-	if !strings.HasSuffix(basePath, "/") {
-		basePath += "/"
-	}
-	return basePath, nil
-}
-
 func (s *SettingService) GetTimeLocation() (*time.Location, error) {
 	l, err := s.getString("timeLocation")
 	if err != nil {
@@ -346,10 +267,6 @@ func (s *SettingService) GetTimeLocation() (*time.Location, error) {
 		return time.LoadLocation(defaultLocation)
 	}
 	return location, nil
-}
-
-func (s *SettingService) GetSubEnable() (bool, error) {
-	return s.getBool("subEnable")
 }
 
 func (s *SettingService) GetSubCustomHeaders() (string, error) {
@@ -370,38 +287,6 @@ func (s *SettingService) GetSubCustomErrorHtml() (string, error) {
 
 func (s *SettingService) SetSubCustomErrorHtml(html string) error {
 	return s.setString("subCustomErrorHtml", html)
-}
-
-func (s *SettingService) GetSubListen() (string, error) {
-	return s.getString("subListen")
-}
-
-func (s *SettingService) GetSubPort() (int, error) {
-	return s.getInt("subPort")
-}
-
-func (s *SettingService) GetSubPath() (string, error) {
-	return s.getString("subPath")
-}
-
-func (s *SettingService) GetSubDomain() (string, error) {
-	return s.getString("subDomain")
-}
-
-func (s *SettingService) SetSubCertFile(subCertFile string) error {
-	return s.setString("subCertFile", subCertFile)
-}
-
-func (s *SettingService) GetSubCertFile() (string, error) {
-	return s.getString("subCertFile")
-}
-
-func (s *SettingService) SetSubKeyFile(subKeyFile string) error {
-	return s.setString("subKeyFile", subKeyFile)
-}
-
-func (s *SettingService) GetSubKeyFile() (string, error) {
-	return s.getString("subKeyFile")
 }
 
 func (s *SettingService) GetSubEncrypt() (bool, error) {
@@ -510,9 +395,6 @@ func (s *SettingService) GetDefaultSettings(host string) (any, error) {
 		"expireDiff":    func() (any, error) { return s.GetExpireDiff() },
 		"trafficDiff":   func() (any, error) { return s.GetTrafficDiff() },
 		"pageSize":      func() (any, error) { return s.GetPageSize() },
-		"defaultCert":   func() (any, error) { return s.GetCertFile() },
-		"defaultKey":    func() (any, error) { return s.GetKeyFile() },
-		"subEnable":     func() (any, error) { return s.GetSubEnable() },
 		"subURI":        func() (any, error) { return s.GetSubURI() },
 		"remarkModel":   func() (any, error) { return s.GetRemarkModel() },
 		"ipLimitEnable": func() (any, error) { return s.GetIpLimitEnable() },
@@ -526,37 +408,6 @@ func (s *SettingService) GetDefaultSettings(host string) (any, error) {
 			return "", err
 		}
 		result[key] = value
-	}
-
-	subEnable := result["subEnable"].(bool)
-
-	if (subEnable && result["subURI"].(string) == "") {
-		subURI := ""
-		subPort, _ := s.GetSubPort()
-		subPath, _ := s.GetSubPath()
-		subDomain, _ := s.GetSubDomain()
-		subKeyFile, _ := s.GetSubKeyFile()
-		subCertFile, _ := s.GetSubCertFile()
-		subTLS := false
-		if subKeyFile != "" && subCertFile != "" {
-			subTLS = true
-		}
-		if subDomain == "" {
-			subDomain = extractHostname(host)
-		}
-		if subTLS {
-			subURI = "https://"
-		} else {
-			subURI = "http://"
-		}
-		if (subPort == 443 && subTLS) || (subPort == 80 && !subTLS) {
-			subURI += subDomain
-		} else {
-			subURI += fmt.Sprintf("%s:%d", subDomain, subPort)
-		}
-		if subEnable && result["subURI"].(string) == "" {
-			result["subURI"] = subURI + subPath
-		}
 	}
 
 	return result, nil

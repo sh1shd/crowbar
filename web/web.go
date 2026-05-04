@@ -177,13 +177,8 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 
 	engine := gin.Default()
 
-	webDomain, err := s.settingService.GetWebDomain()
-	if err != nil {
-		return nil, err
-	}
-
-	if webDomain != "" {
-		engine.Use(middleware.DomainValidatorMiddleware(webDomain))
+	if config.GetPanelDomain() != "" {
+		engine.Use(middleware.DomainValidatorMiddleware(config.GetPanelDomain()))
 	}
 
 	secret, err := s.settingService.GetSecret()
@@ -191,23 +186,18 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 		return nil, err
 	}
 
-	basePath, err := s.settingService.GetBasePath()
-	if err != nil {
-		return nil, err
-	}
+	basePath := config.GetPanelPath()
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 	assetsBasePath := basePath + "assets/"
 
 	store := cookie.NewStore(secret)
-	// Configure default session cookie options, including expiration (MaxAge)
-	if sessionMaxAge, err := s.settingService.GetSessionMaxAge(); err == nil {
-		store.Options(sessions.Options{
-			Path:     "/",
-			MaxAge:   sessionMaxAge * 60, // minutes -> seconds
-			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode,
-		})
-	}
+	store.Options(sessions.Options{
+		Path:     "/",
+		MaxAge:   config.GetPanelSessionAge() * 60, // minutes -> seconds
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+
 	engine.Use(sessions.Sessions("crowbar", store))
 	engine.Use(func(c *gin.Context) {
 		c.Set("base_path", basePath)
@@ -340,23 +330,10 @@ func (s *Server) Start() (err error) {
 		return err
 	}
 
-	certFile, err := s.settingService.GetCertFile()
-	if err != nil {
-		return err
-	}
-	keyFile, err := s.settingService.GetKeyFile()
-	if err != nil {
-		return err
-	}
-	listen, err := s.settingService.GetListen()
-	if err != nil {
-		return err
-	}
-	port, err := s.settingService.GetPort()
-	if err != nil {
-		return err
-	}
-	listenAddr := net.JoinHostPort(listen, strconv.Itoa(port))
+	certFile := config.GetPanelCerificateFile()
+	keyFile := config.GetPanelCertificateKey()
+
+	listenAddr := net.JoinHostPort(config.GetPanelListenAddress(), strconv.Itoa(config.GetPanelListenPort()))
 	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		return err
@@ -369,13 +346,13 @@ func (s *Server) Start() (err error) {
 			}
 			listener = network.NewAutoHttpsListener(listener)
 			listener = tls.NewListener(listener, c)
-			logger.Info("Web server running HTTPS on", listener.Addr())
+			logger.Info("Panel server running HTTPS on", listener.Addr())
 		} else {
 			logger.Error("Error loading certificates:", err)
-			logger.Info("Web server running HTTP on", listener.Addr())
+			logger.Info("Panel server running HTTP on", listener.Addr())
 		}
 	} else {
-		logger.Info("Web server running HTTP on", listener.Addr())
+		logger.Info("Panel server running HTTP on", listener.Addr())
 	}
 	s.listener = listener
 

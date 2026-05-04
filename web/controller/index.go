@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"text/template"
 
+	"github.com/mhsanaei/3x-ui/v2/config"
 	"github.com/mhsanaei/3x-ui/v2/logger"
 	"github.com/mhsanaei/3x-ui/v2/web/service"
 	"github.com/mhsanaei/3x-ui/v2/web/session"
@@ -78,10 +79,7 @@ func (a *IndexController) login(c *gin.Context) {
 		return
 	}
 
-	sessionMaxAge, err := a.settingService.GetSessionMaxAge()
-	if err != nil {
-		logger.Warning("Unable to get session's max age from DB")
-	}
+	sessionMaxAge := config.GetPanelSessionAge()
 
 	session.SetMaxAge(c, sessionMaxAge*60)
 	session.SetLoginUser(c, user)

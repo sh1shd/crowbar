@@ -1,13 +1,6 @@
 class AllSetting {
 
     constructor(data) {
-        this.webListen = "";
-        this.webDomain = "";
-        this.webPort = 2053;
-        this.webCertFile = "";
-        this.webKeyFile = "";
-        this.webBasePath = "/";
-        this.sessionMaxAge = 360;
         this.pageSize = 25;
         this.expireDiff = 0;
         this.trafficDiff = 0;
@@ -15,18 +8,11 @@ class AllSetting {
         this.twoFactorEnable = false;
         this.twoFactorToken = "";
         this.xrayTemplateConfig = "";
-        this.subEnable = true;
         this.subCustomHeaders = "";
         this.subCustomHtml = "";
         this.subCustomErrorHtml = "";
         this.subEnableIndexPage = false;
         this.subIndexPageHtml = "";
-        this.subListen = "";
-        this.subPort = 2096;
-        this.subPath = "/sub/";
-        this.subDomain = "";
-        this.subCertFile = "";
-        this.subKeyFile = "";
         this.subEncrypt = true;
         this.subURI = "";
         this.subMessageClientDisabled = "Disabled";
