@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/mhsanaei/3x-ui/v2/config"
 	"github.com/mhsanaei/3x-ui/v2/database"
 	"github.com/mhsanaei/3x-ui/v2/database/model"
 	"github.com/mhsanaei/3x-ui/v2/logger"
@@ -395,6 +396,9 @@ func (s *SettingService) GetDefaultSettings(host string) (any, error) {
 		"expireDiff":    func() (any, error) { return s.GetExpireDiff() },
 		"trafficDiff":   func() (any, error) { return s.GetTrafficDiff() },
 		"pageSize":      func() (any, error) { return s.GetPageSize() },
+		"defaultCert":   func() (any, error) { return config.GetPanelCerificateFile(), nil },
+		"defaultKey":    func() (any, error) { return config.GetPanelCertificateKey(), nil },
+		"subEnable":     func() (any, error) { return true, nil },
 		"subURI":        func() (any, error) { return s.GetSubURI() },
 		"remarkModel":   func() (any, error) { return s.GetRemarkModel() },
 		"ipLimitEnable": func() (any, error) { return s.GetIpLimitEnable() },
