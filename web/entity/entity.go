@@ -2,10 +2,6 @@
 package entity
 
 import (
-	"crypto/tls"
-	"math"
-	"net"
-	"strings"
 	"time"
 
 	"github.com/mhsanaei/3x-ui/v2/util/common"
@@ -20,16 +16,7 @@ type Msg struct {
 
 // AllSetting contains all configuration settings for the 3x-ui panel including web server and subscription settings.
 type AllSetting struct {
-	// Web server settings
-	WebListen     string `json:"webListen" form:"webListen"`         // Web server listen IP address
-	WebDomain     string `json:"webDomain" form:"webDomain"`         // Web server domain for domain validation
-	WebPort       int    `json:"webPort" form:"webPort"`             // Web server port number
-	WebCertFile   string `json:"webCertFile" form:"webCertFile"`     // Path to SSL certificate file for web server
-	WebKeyFile    string `json:"webKeyFile" form:"webKeyFile"`       // Path to SSL private key file for web server
-	WebBasePath   string `json:"webBasePath" form:"webBasePath"`     // Base path for web panel URLs
-	SessionMaxAge int    `json:"sessionMaxAge" form:"sessionMaxAge"` // Session maximum age in minutes
-
-	// UI settings
+	// Panel UI settings
 	PageSize    int    `json:"pageSize" form:"pageSize"`       // Number of items per page in lists
 	ExpireDiff  int    `json:"expireDiff" form:"expireDiff"`   // Expiration warning threshold in days
 	TrafficDiff int    `json:"trafficDiff" form:"trafficDiff"` // Traffic warning threshold percentage
@@ -41,16 +28,9 @@ type AllSetting struct {
 	TwoFactorToken  string `json:"twoFactorToken" form:"twoFactorToken"`   // Two-factor authentication token
 
 	// Subscription server settings
-	SubEnable                   bool   `json:"subEnable" form:"subEnable"`                                     // Enable subscription server
 	SubCustomHeaders            string `json:"subCustomHeaders" form:"subCustomHeaders"`                       // Custom HTTP headers for subscription responses (JSON)
 	SubCustomHtml               string `json:"subCustomHtml" form:"subCustomHtml"`                             // Custom HTML content returned for subscription pages
 	SubCustomErrorHtml          string `json:"subCustomErrorHtml" form:"subCustomErrorHtml"`                   // Custom HTML content returned for error pages
-	SubListen                   string `json:"subListen" form:"subListen"`                                     // Subscription server listen IP
-	SubPort                     int    `json:"subPort" form:"subPort"`                                         // Subscription server port
-	SubPath                     string `json:"subPath" form:"subPath"`                                         // Base path for subscription URLs
-	SubDomain                   string `json:"subDomain" form:"subDomain"`                                     // Domain for subscription server validation
-	SubCertFile                 string `json:"subCertFile" form:"subCertFile"`                                 // SSL certificate file for subscription server
-	SubKeyFile                  string `json:"subKeyFile" form:"subKeyFile"`                                   // SSL private key file for subscription server
 	SubEncrypt                  bool   `json:"subEncrypt" form:"subEncrypt"`                                   // Encrypt subscription responses
 	SubURI                      string `json:"subURI" form:"subURI"`                                           // Subscription server URI
 	SubMessageClientDisabled    string `json:"subMessageClientDisabled" form:"subMessageClientDisabled"`       // Message shown to clients when subscription is disabled
@@ -63,59 +43,6 @@ type AllSetting struct {
 
 // CheckValid validates all settings in the AllSetting struct, checking IP addresses, ports, SSL certificates, and other configuration values.
 func (s *AllSetting) CheckValid() error {
-	if s.WebListen != "" {
-		ip := net.ParseIP(s.WebListen)
-		if ip == nil {
-			return common.NewError("web listen is not valid ip:", s.WebListen)
-		}
-	}
-
-	if s.SubListen != "" {
-		ip := net.ParseIP(s.SubListen)
-		if ip == nil {
-			return common.NewError("Sub listen is not valid ip:", s.SubListen)
-		}
-	}
-
-	if s.WebPort <= 0 || s.WebPort > math.MaxUint16 {
-		return common.NewError("web port is not a valid port:", s.WebPort)
-	}
-
-	if s.SubPort <= 0 || s.SubPort > math.MaxUint16 {
-		return common.NewError("Sub port is not a valid port:", s.SubPort)
-	}
-
-	if (s.SubPort == s.WebPort) && (s.WebListen == s.SubListen) {
-		return common.NewError("Sub and Web could not use same ip:port, ", s.SubListen, ":", s.SubPort, " & ", s.WebListen, ":", s.WebPort)
-	}
-
-	if s.WebCertFile != "" || s.WebKeyFile != "" {
-		_, err := tls.LoadX509KeyPair(s.WebCertFile, s.WebKeyFile)
-		if err != nil {
-			return common.NewErrorf("cert file <%v> or key file <%v> invalid: %v", s.WebCertFile, s.WebKeyFile, err)
-		}
-	}
-
-	if s.SubCertFile != "" || s.SubKeyFile != "" {
-		_, err := tls.LoadX509KeyPair(s.SubCertFile, s.SubKeyFile)
-		if err != nil {
-			return common.NewErrorf("cert file <%v> or key file <%v> invalid: %v", s.SubCertFile, s.SubKeyFile, err)
-		}
-	}
-
-	if !strings.HasPrefix(s.WebBasePath, "/") {
-		s.WebBasePath = "/" + s.WebBasePath
-	}
-	if !strings.HasSuffix(s.WebBasePath, "/") {
-		s.WebBasePath += "/"
-	}
-	if !strings.HasPrefix(s.SubPath, "/") {
-		s.SubPath = "/" + s.SubPath
-	}
-	if !strings.HasSuffix(s.SubPath, "/") {
-		s.SubPath += "/"
-	}
-
 	_, err := time.LoadLocation(s.TimeLocation)
 	if err != nil {
 		return common.NewError("time location not exist:", s.TimeLocation)

@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/mhsanaei/3x-ui/v2/config"
 	"github.com/mhsanaei/3x-ui/v2/logger"
 	"github.com/mhsanaei/3x-ui/v2/util/common"
 	"github.com/mhsanaei/3x-ui/v2/web/locale"
@@ -52,23 +53,13 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 
 	engine := gin.Default()
 
-	subDomain, err := s.settingService.GetSubDomain()
-	if err != nil {
-		return nil, err
+	if config.GetSubscriptionDomain() != "" {
+		engine.Use(middleware.DomainValidatorMiddleware(config.GetSubscriptionDomain()))
 	}
 
-	if subDomain != "" {
-		engine.Use(middleware.DomainValidatorMiddleware(subDomain))
-	}
-
-	LinksPath, err := s.settingService.GetSubPath()
-	if err != nil {
-		return nil, err
-	}
-
-	// Set base_path based on LinksPath for template rendering
-	// Ensure LinksPath ends with "/" for proper asset URL generation
-	basePath := LinksPath
+	// Set base_path based on environment variable for template rendering
+	// Ensure value ends with "/" for proper asset URL generation
+	basePath := config.GetSubscriptionPath()
 	if basePath != "/" && !strings.HasSuffix(basePath, "/") {
 		basePath += "/"
 	}
@@ -125,7 +116,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 
 	s.sub = NewSUBController(
 		g,
-		LinksPath,
+		config.GetSubscriptionPath(),
 		Encrypt,
 		RemarkModel,
 		SubCustomHeaders,
@@ -151,37 +142,15 @@ func (s *Server) Start() (err error) {
 		}
 	}()
 
-	subEnable, err := s.settingService.GetSubEnable()
-	if err != nil {
-		return err
-	}
-	if !subEnable {
-		return nil
-	}
-
 	engine, err := s.initRouter()
 	if err != nil {
 		return err
 	}
 
-	certFile, err := s.settingService.GetSubCertFile()
-	if err != nil {
-		return err
-	}
-	keyFile, err := s.settingService.GetSubKeyFile()
-	if err != nil {
-		return err
-	}
-	listen, err := s.settingService.GetSubListen()
-	if err != nil {
-		return err
-	}
-	port, err := s.settingService.GetSubPort()
-	if err != nil {
-		return err
-	}
+	certFile := config.GetSubscriptionCertificateFile()
+	keyFile := config.GetSubscriptionCertificateKey()
 
-	listenAddr := net.JoinHostPort(listen, strconv.Itoa(port))
+	listenAddr := net.JoinHostPort(config.GetSubscriptionListenAddress(), strconv.Itoa(config.GetSubscriptionListenPort()))
 	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		return err
@@ -195,13 +164,13 @@ func (s *Server) Start() (err error) {
 			}
 			listener = network.NewAutoHttpsListener(listener)
 			listener = tls.NewListener(listener, c)
-			logger.Info("Sub server running HTTPS on", listener.Addr())
+			logger.Info("Subscription server running HTTPS on", listener.Addr())
 		} else {
 			logger.Error("Error loading certificates:", err)
-			logger.Info("Sub server running HTTP on", listener.Addr())
+			logger.Info("Subscription server running HTTP on", listener.Addr())
 		}
 	} else {
-		logger.Info("Sub server running HTTP on", listener.Addr())
+		logger.Info("Subscription server running HTTP on", listener.Addr())
 	}
 	s.listener = listener
 

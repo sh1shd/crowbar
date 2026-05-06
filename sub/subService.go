@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
 
+	"github.com/mhsanaei/3x-ui/v2/config"
 	"github.com/mhsanaei/3x-ui/v2/database"
 	"github.com/mhsanaei/3x-ui/v2/database/model"
 	"github.com/mhsanaei/3x-ui/v2/logger"
@@ -1068,15 +1069,15 @@ func (s *SubService) BuildURLs(scheme, hostWithPort, subPath, subId string) (sub
 
 // getBaseSchemeAndHost determines the base scheme and host from settings or falls back to request values
 func (s *SubService) getBaseSchemeAndHost(requestScheme, requestHostWithPort string) (string, string) {
-	subDomain, err := s.settingService.GetSubDomain()
-	if err != nil || subDomain == "" {
+	subDomain := config.GetSubscriptionDomain()
+	if subDomain == "" {
 		return requestScheme, requestHostWithPort
 	}
 
 	// Get port and TLS settings
-	subPort, _ := s.settingService.GetSubPort()
-	subKeyFile, _ := s.settingService.GetSubKeyFile()
-	subCertFile, _ := s.settingService.GetSubCertFile()
+	subPort := config.GetSubscriptionListenPort()
+	subKeyFile := config.GetSubscriptionCertificateKey()
+	subCertFile := config.GetSubscriptionCertificateFile()
 
 	// Determine scheme from TLS configuration
 	scheme := "http"

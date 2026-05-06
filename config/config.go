@@ -65,6 +65,130 @@ func GetBinFolderPath() string {
 	return binFolderPath
 }
 
+// GetPanelListenAddress returns the listen address for the panel server, defaulting to an empty string if not set via XUI_PANEL_LISTEN_ADDR.
+func GetPanelListenAddress() string {
+	addr := os.Getenv("XUI_PANEL_LISTEN_ADDR")
+	if addr == "" {
+		addr = ""
+	}
+	return addr
+}
+
+// GetPanelDomain returns the domain for the panel server, defaulting to an empty string if not set via XUI_PANEL_DOMAIN.
+func GetPanelDomain() string {
+	domain := os.Getenv("XUI_PANEL_DOMAIN")
+	if domain == "" {
+		domain = ""
+	}
+	return domain
+}
+
+// GetPanelListenPort returns the listen port for the panel server, defaulting to 2053 if not set via XUI_PANEL_LISTEN_PORT.
+func GetPanelListenPort() int {
+	portStr := os.Getenv("XUI_PANEL_LISTEN_PORT")
+	if portStr == "" {
+		return 2053
+	}
+	var port int
+	fmt.Sscanf(portStr, "%d", &port)
+	return port
+}
+
+// GetPanelPath returns the base path for the panel server, defaulting to "/" if not set via XUI_PANEL_PATH.
+func GetPanelPath() string {
+	path := os.Getenv("XUI_PANEL_PATH")
+	if path == "" {
+		path = "/"
+	}
+	return path
+}
+
+// GetPanelCerificateFile returns the path to the SSL certificate file for the panel server, defaulting to an empty string if not set via XUI_PANEL_CERT_FILE.
+func GetPanelCerificateFile() string {
+	certFile := os.Getenv("XUI_PANEL_CERT_FILE")
+	if certFile == "" {
+		certFile = ""
+	}
+	return certFile
+}
+
+// GetPanelCertificateKey returns the path to the SSL private key file for the panel server, defaulting to an empty string if not set via XUI_PANEL_CERT_KEY.
+func GetPanelCertificateKey() string {
+	keyFile := os.Getenv("XUI_PANEL_CERT_KEY")
+	if keyFile == "" {
+		keyFile = ""
+	}
+	return keyFile
+}
+
+// GetPanelSessionAge returns the session maximum age in minutes for the panel server, defaulting to 360 (6 hours) if not set via XUI_PANEL_SESSION_AGE.
+func GetPanelSessionAge() int {
+	sessionAgeStr := os.Getenv("XUI_PANEL_SESSION_AGE")
+	if sessionAgeStr == "" {
+		return 360 // default to 24 hours
+	}
+	var sessionAge int
+	fmt.Sscanf(sessionAgeStr, "%d", &sessionAge)
+	return sessionAge
+}
+
+// GetSubscriptionListenAddress returns the listen address for subscription server, defaulting to an empty string if not set via XUI_SUB_LISTEN_ADDR.
+func GetSubscriptionListenAddress() string {
+	addr := os.Getenv("XUI_SUB_LISTEN_ADDR")
+	if addr == "" {
+		addr = ""
+	}
+	return addr
+}
+
+// GetSubscriptionDomain returns the domain for the subscription server, defaulting to an empty string if not set via XUI_SUB_DOMAIN.
+func GetSubscriptionDomain() string {
+	domain := os.Getenv("XUI_SUB_DOMAIN")
+	if domain == "" {
+		domain = ""
+	}
+	return domain
+}
+
+// GetSubscriptionListenPort returns the listen port for the subscription server, defaulting to 2096 if not set via XUI_SUB_LISTEN_PORT.
+func GetSubscriptionListenPort() int {
+	portStr := os.Getenv("XUI_SUB_LISTEN_PORT")
+	if portStr == "" {
+		return 2096
+	}
+	var port int
+	fmt.Sscanf(portStr, "%d", &port)
+	return port
+}
+
+// GetSubscriptionPath returns the base path for subscription URLs, defaulting to "/sub/" if not set via XUI_SUB_PATH.
+func GetSubscriptionPath() string {
+	path := os.Getenv("XUI_SUB_PATH")
+	if path == "" {
+		path = "/sub/"
+	}
+	return path
+}
+
+// GetSubscriptionCertificateFile returns the path to the SSL certificate file for the subscription server, defaulting to an empty string if not set via XUI_SUB_CERT_FILE.
+func GetSubscriptionCertificateFile() string {
+	certFile := os.Getenv("XUI_SUB_CERT_FILE")
+	if certFile == "" {
+		certFile = ""
+	}
+	return certFile
+}
+
+// GetSubscriptionCertificateKey returns the path to the SSL private key file for the subscription server, defaulting to an empty string if not set via XUI_SUB_KEY_FILE.
+func GetSubscriptionCertificateKey() string {
+	keyFile := os.Getenv("XUI_SUB_KEY_FILE")
+	if keyFile == "" {
+		keyFile = ""
+	}
+	return keyFile
+}
+
+// getBaseDir returns the base directory for the application.
 func getBaseDir() string {
 	exePath, err := os.Executable()
 	if err != nil {
