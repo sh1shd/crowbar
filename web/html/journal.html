@@ -12,7 +12,7 @@
             <a-tab-pane key="panel_logs">
               <template #tab>
                 <a-icon type="file-ppt"></a-icon>
-                <span>Panel</span>
+                <span>{{ i18n "pages.journal.tabs.panel" }}</span>
               </template>
               <template v-if="!loadingStates.panel.fetched">
                 <div class="ant-crowbar-logs-loading">
@@ -60,7 +60,7 @@
             <a-tab-pane :disabled="!ipLimitEnable" key="xray_logs">
               <template #tab>
                 <a-icon type="file-excel"></a-icon>
-                <span>Xray</span>
+                <span>{{ i18n "pages.journal.tabs.xray" }}</span>
               </template>
               <template v-if="!loadingStates.xray.fetched">
                 <div class="ant-crowbar-logs-loading">

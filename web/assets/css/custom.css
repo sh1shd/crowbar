@@ -2585,3 +2585,12 @@ li.ant-calendar-time-picker-select-option-selected {
     width: var(--size);
     height: var(--size);
 }
+
+.ant-crowbar-theme-switcher.ant-switch-checked {
+    background-color: var(--dark-color-surface-400) !important;
+}
+
+#change-theme .ant-click-animating-node, 
+#change-theme [ant-click-animating-without-extra-node=true]:after {
+    box-shadow: 0 0 0 0 var(--dark-color-surface-600) !important;
+}

@@ -15,15 +15,9 @@
                 <div class="ant-crowbar-header-tab" v-for="tab in rightTabs" :key="tab.icon" @click="openLink(tab.key)" v-if="tab.type === 'link'">
                     <a-icon class="ant-crowbar-header-tab-icon" :type="tab.icon"></a-icon>
                 </div>
-                <a-popover :overlay-class-name="themeSwitcher.currentTheme" title='{{ i18n "menu.settings" }}'
-                  placement="bottomRight" trigger="click" v-else-if="tab.type === 'theme'">
-                    <template #content>
-                        <a-theme-switch></a-theme-switch>
-                    </template>
-                    <div class="ant-crowbar-header-tab">
-                        <a-icon class="ant-crowbar-header-tab-icon" type="bg-colors"></a-icon>
-                    </div>
-                </a-popover>
+                <div class="ant-crowbar-header-tab" v-else-if="tab.type === 'theme'">
+                    <a-theme-switch></a-theme-switch>
+                </div>
                 <a-popover :overlay-class-name="themeSwitcher.currentTheme" title='{{ i18n "secAlertTitle" }}' 
                     placement="bottomRight" trigger="click" v-else-if="tab.type === 'securityAlert' && unsecuredConnection">
                     <template #content>
