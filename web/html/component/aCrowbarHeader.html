@@ -6,7 +6,7 @@
                 <span>Crowbar</span>
             </div>
             <div class="ant-crowbar-header-leftTabs">
-                <div class="ant-crowbar-header-tab" v-for="tab in leftTabs" :key="tab.icon" :data-active="activeLeftTab === tab.key" @click="openLink(tab.key)">
+                <div class="ant-crowbar-header-tab" v-for="tab in leftTabs" :key="tab.icon" :data-active="activeLeftTab === tab.key" @click="activeLeftTab === tab.key ? null : openLink(tab.key)">
                     <a-icon class="ant-crowbar-header-tab-icon" :type="tab.icon"></a-icon>
                     <span class="ant-crowbar-header-tab-title" v-text="tab.title"></span>
                 </div>

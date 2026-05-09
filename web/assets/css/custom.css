@@ -2322,6 +2322,7 @@ li.ant-calendar-time-picker-select-option-selected {
 
 .ant-crowbar-header-tab[data-active="true"] {
     color: var(--color-primary);
+    cursor: default;
 }
 
 .ant-crowbar-header-tab-icon {
