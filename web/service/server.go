@@ -112,9 +112,9 @@ type CPUSample struct {
 }
 
 type LogEntry struct {
-	DateTime    time.Time
-	FromAddress string
-	ToAddress   string
+	Datetime    time.Time
+	From string
+	To   string
 	Inbound     string
 	Outbound    string
 	Email       string
@@ -535,23 +535,8 @@ func (s *ServerService) GetLogs(count string, level string) []string {
 	return lines
 }
 
-func (s *ServerService) GetXrayLogs(
-	count string,
-	filter string,
-	showDirect string,
-	showBlocked string,
-	showProxy string,
-	freedoms []string,
-	blackholes []string) []LogEntry {
-
-	const (
-		Direct = iota
-		Blocked
-		Proxied
-	)
-
+func (s *ServerService) GetXrayLogs(count string, filter string) []string {
 	countInt, _ := strconv.Atoi(count)
-	var entries []LogEntry
 
 	pathToAccessLog, err := xray.GetAccessLogPath()
 	if err != nil {
@@ -566,79 +551,31 @@ func (s *ServerService) GetXrayLogs(
 
 	scanner := bufio.NewScanner(file)
 
+	var lines []string
+
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 
 		if line == "" || strings.Contains(line, "api -> api") {
-			//skipping empty lines and api calls
+			// skipping:
+			// - empty lines
+			// - internal API calls
 			continue
 		}
 
 		if filter != "" && !strings.Contains(line, filter) {
-			//applying filter if it's not empty
+			// applying filter if it's not empty
 			continue
 		}
 
-		var entry LogEntry
-		parts := strings.Fields(line)
-
-		for i, part := range parts {
-
-			if i == 0 {
-				dateTime, err := time.ParseInLocation("2006/01/02 15:04:05.999999", parts[0]+" "+parts[1], time.Local)
-				if err != nil {
-					continue
-				}
-				entry.DateTime = dateTime.UTC()
-			}
-
-			if part == "from" {
-				entry.FromAddress = strings.TrimLeft(parts[i+1], "/")
-			} else if part == "accepted" {
-				entry.ToAddress = strings.TrimLeft(parts[i+1], "/")
-			} else if strings.HasPrefix(part, "[") {
-				entry.Inbound = part[1:]
-			} else if strings.HasSuffix(part, "]") {
-				entry.Outbound = part[:len(part)-1]
-			} else if part == "email:" {
-				entry.Email = parts[i+1]
-			}
-		}
-
-		if logEntryContains(line, freedoms) {
-			if showDirect == "false" {
-				continue
-			}
-			entry.Event = Direct
-		} else if logEntryContains(line, blackholes) {
-			if showBlocked == "false" {
-				continue
-			}
-			entry.Event = Blocked
-		} else {
-			if showProxy == "false" {
-				continue
-			}
-			entry.Event = Proxied
-		}
-
-		entries = append(entries, entry)
+		lines = append(lines, line)		
 	}
 
-	if len(entries) > countInt {
-		entries = entries[len(entries)-countInt:]
+	if len(lines) > countInt {
+		lines = lines[len(lines)-countInt:]
 	}
 
-	return entries
-}
-
-func logEntryContains(line string, suffixes []string) bool {
-	for _, sfx := range suffixes {
-		if strings.Contains(line, sfx+"]") {
-			return true
-		}
-	}
-	return false
+	return lines
 }
 
 func (s *ServerService) GetConfigJson() (any, error) {

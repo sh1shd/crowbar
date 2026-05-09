@@ -1,0 +1,96 @@
+{{define "component/crowbarStat"}}
+<template>
+    <a-card class="ant-crowbar-card">
+        <div class="ant-crowbar-card-row">
+            <div class="ant-crowbar-card-icon">
+                <div class="ant-crowbar-card-square">
+                    <a-icon :type="icon" />
+                </div>
+            </div>
+            <div class="ant-crowbar-card-meta">
+                <p>
+                    <slot name="statisticsName"></slot>
+                </p>
+                <p>
+                    <slot name="statisticsValue"></slot>
+                </p>
+            </div>
+        </div>
+        <a-progress :percent="percent" :show-info="false" />
+    </a-card>
+</template>
+{{end}}
+
+{{define "component/aCrowbarStat"}}
+<style>
+    .ant-crowbar-card-row {
+        display: flex;
+        align-items: start;
+        flex-direction: row;
+
+        gap: 12px;
+    }
+
+    .ant-crowbar-card-meta {
+        display: flex;
+        flex: 1;
+        gap: 3px;
+        flex-direction: column;
+        margin-bottom: 0.8em;
+    }
+
+    .ant-crowbar-card-meta p {
+        text-align: left;
+        margin: 0;
+    }
+
+    .ant-crowbar-card-meta p:nth-child(1) {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .ant-crowbar-card-meta p:nth-child(2) {
+        opacity: 0.75;
+    }
+
+    .ant-crowbar-card-square {
+        min-width: 42px;
+        min-height: 42px;
+        padding: 8px;
+
+        border: 1px solid #e8e8e8;
+        border-radius: var(--border-radius);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dark .ant-crowbar-card-square {
+        border: 1px solid var(--dark-color-surface-400);
+    }
+
+    .ant-crowbar-card-square * {
+        padding: 0;
+        margin: 0;
+
+        font-size: 18px;
+    }
+</style>
+
+<script>
+    Vue.component('a-crowbar-stat', {
+        props: {
+            'icon': {
+                type: String,
+                required: false,
+            },
+            'percent': {
+                type: Number,
+                required: false
+            }
+        },
+        template: `{{template "component/crowbarStat"}}`,
+    });
+</script>
+{{end}}

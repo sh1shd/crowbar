@@ -39,6 +39,7 @@
     "home": "Home",
     "inbounds": "Inbounds",
     "link": "Manage",
+    "journal": "Journal",
     "logout": "Log Out",
     "settings": "Settings",
     "theme": "Theme"
@@ -50,6 +51,32 @@
   "offline": "Offline",
   "online": "Online",
   "pages": {
+    "journal": {
+      "title": "Journal",
+      "tabs": {
+        "xray": "Xray",
+        "panel": "Panel"
+      },
+      "filters": {
+        "placeholder": "Search records...",
+        "direct": "Direct",
+        "blocked": "Blocked",
+        "proxy": "Proxied",
+        "debug": "Debug",
+        "info": "Information",
+        "warning": "Warning",
+        "error": "Error",
+        "notice": "Notice"
+      },
+      "xray": {
+        "datetime": "Date",
+        "from": "From",
+        "inbound": "Inbound",
+        "outbound": "Outbound",
+        "to": "To",
+        "email": "Email"
+      }
+    },
     "client": {
       "add": "Add Client",
       "clientCount": "Number of Clients",
