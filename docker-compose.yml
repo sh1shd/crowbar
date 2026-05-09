@@ -1,13 +1,33 @@
 services:
   crowbar:
-    image: ghcr.io/sh1shd/crowbar:latest
+    image: ghcr.io/sh1shd/crowbar:main
     container_name: crowbar_app
     volumes:
-      - $PWD/db/:/etc/x-ui/
-      - $PWD/cert/:/root/cert/
+      - ./crowbar/db/:/etc/x-ui/
+      - ./crowbar/cert/:/root/cert/
     environment:
+      # xray-core settings
       XRAY_VMESS_AEAD_FORCED: "false"
+      # Panel settings
       XUI_ENABLE_FAIL2BAN: "true"
+      # XUI_BIN_FOLDER: "/usr/bin/"
+      # XUI_PANEL_LISTEN_ADDR: ""
+      # XUI_PANEL_LISTEN_PORT: "2053"
+      # XUI_PANEL_DOMAIN: ""
+      # XUI_PANEL_PATH: "/"
+      # XUI_PANEL_CERT_FILE: ""
+      # XUI_PANEL_CERT_KEY: ""
+      # XUI_PANEL_SESSION_AGE: "360"
+      # XUI_SUB_LISTEN_ADDR: ""
+      # XUI_SUB_LISTEN_PORT: "2096"
+      # XUI_SUB_DOMAIN: ""
+      # XUI_SUB_PATH: "/sub/"
+      # XUI_SUB_CERT_FILE: ""
+      # XUI_SUB_CERT_KEY: ""
     tty: true
+    # It is recommended that you open only the ports 
+    # that are actually in use (these may include the 
+    # control panel server port, the subscription server port, 
+    # and inbound ports).
     network_mode: host
     restart: unless-stopped

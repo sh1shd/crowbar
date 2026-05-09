@@ -179,9 +179,9 @@ func GetSubscriptionCertificateFile() string {
 	return certFile
 }
 
-// GetSubscriptionCertificateKey returns the path to the SSL private key file for the subscription server, defaulting to an empty string if not set via XUI_SUB_KEY_FILE.
+// GetSubscriptionCertificateKey returns the path to the SSL private key file for the subscription server, defaulting to an empty string if not set via XUI_SUB_CERT_KEY.
 func GetSubscriptionCertificateKey() string {
-	keyFile := os.Getenv("XUI_SUB_KEY_FILE")
+	keyFile := os.Getenv("XUI_SUB_CERT_KEY")
 	if keyFile == "" {
 		keyFile = ""
 	}
