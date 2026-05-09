@@ -44,7 +44,7 @@
                   <a-form-item :style="{ float: 'right', marginRight: 0 }">
                     <a-button-group>
                       <a-button icon="download"
-                        @click="FileManager.downloadTextFile(logs.panel?.join('\n'), 'crowbar.log')"></a-button>
+                        @click="FileManager.downloadTextFile(logs.panel?.join('\n'), 'crowbar-panel.log')"></a-button>
                       <a-button :icon="loadingStates.panel.reloaded ? 'loading' : 'sync'"
                         :disabled="loadingStates.panel.reloaded" @click="loadPanelLogs(true)"></a-button>
                     </a-button-group>
@@ -86,7 +86,7 @@
                   </a-form-item>
                   <a-form-item :style="{ float: 'right', marginRight: 0 }">
                     <a-button-group>
-                      <a-button icon="download" @click="downloadXrayLogs"></a-button>
+                      <a-button icon="download" @click="FileManager.downloadTextFile(logs.xray?.join('\n'), 'crowbar-xray.log')"></a-button>
                       <a-button :icon="loadingStates.xray.reloaded ? 'loading' : 'sync'"
                         :disabled="loadingStates.xray.reloaded" @click="loadXrayLogs(true)"></a-button>
                     </a-button-group>
@@ -178,26 +178,7 @@
         if (key.includes("xray_logs") && !this.loadingStates.xray.fetched) {
           this.loadXrayLogs();
         }
-      },
-      downloadXrayLogs() {
-        if (!Array.isArray(this.logs.xray) || this.logs.xray.length === 0) {
-          FileManager.downloadTextFile('', 'crowbar.log');
-          return;
-        }
-        const lines = this.logs.xray.map(l => {
-          try {
-            const dt = l.DateTime ? new Date(l.DateTime) : null;
-            const dateStr = dt && !isNaN(dt.getTime()) ? dt.toISOString() : '';
-            const eventMap = { 0: 'DIRECT', 1: 'BLOCKED', 2: 'PROXY' };
-            const eventText = eventMap[l.Event] || String(l.Event ?? '');
-            const emailPart = l.Email ? ` Email=${l.Email}` : '';
-            return `${dateStr} FROM=${l.From || ''} TO=${l.To || ''} INBOUND=${l.Inbound || ''} OUTBOUND=${l.Outbound || ''}${emailPart} EVENT=${eventText}`.trim();
-          } catch (e) {
-            return JSON.stringify(l);
-          }
-        }).join('\n');
-        FileManager.downloadTextFile(lines, 'crowbar.log');
-      },
+      }
     },
     async mounted() {
       // Getting ip limit enable setting for xray-core logs
