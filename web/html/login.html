@@ -18,24 +18,7 @@
                 <span>Crowbar</span>
               </template>
               <template #extra>
-                <a-popover :overlay-class-name="themeSwitcher.currentTheme" title='{{ i18n "menu.settings" }}'
-                  placement="bottomRight" trigger="click">
-                  <template slot="content">
-                    <a-space direction="vertical" :size="10">
-                      <a-theme-switch></a-theme-switch>
-                      <span>{{ i18n "pages.settings.language" }}</span>
-                      <a-select ref="selectLang" class="w-100" v-model="lang"
-                        @change="LanguageManager.setLanguage(lang)" :dropdown-class-name="themeSwitcher.currentTheme">
-                        <a-select-option :value="l.value" label="English"
-                          v-for="l in LanguageManager.supportedLanguages">
-                          <span role="img" aria-label="l.name" v-text="l.icon"></span>
-                          &nbsp;&nbsp;<span v-text="l.name"></span>
-                        </a-select-option>
-                      </a-select>
-                    </a-space>
-                  </template>
-                  <a-button shape="circle" icon="setting"></a-button>
-                </a-popover>
+                <a-theme-switch></a-theme-switch>
               </template>
               <a-form @submit.prevent="login">
                 <a-form-item :style="{ marginBottom: '12px' }" v-if="unsecuredConnection">
@@ -85,11 +68,9 @@
       user: { username: "", password: "", twoFactorCode: "" },
       unsecuredConnection: !Utils.hasSecuredConnection(),
       animationStarted: false,
-      twoFactorEnable: false,
-      lang: "",
+      twoFactorEnable: false
     },
     async mounted() {
-      this.lang = LanguageManager.getLanguage();
       this.twoFactorEnable = await this.getTwoFactorEnable();
     },
     methods: {

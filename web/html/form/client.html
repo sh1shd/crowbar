@@ -1,5 +1,5 @@
 {{define "form/client"}}
-<a-tabs v-if="client" default-active-key="1" size="small">
+<a-tabs v-if="client" default-active-key="1">
     <a-tab-pane key="1" tab='{{ i18n "pages.xray.basicTemplate" }}'>
         <a-form layout="horizontal" :colon="false" :label-col="{ md: {span:8} }" :wrapper-col="{ md: {span:14} }">
             <a-form-item label='{{ i18n "pages.inbounds.enable" }}'>

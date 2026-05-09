@@ -1,0 +1,194 @@
+{{ template "page/head_start" .}}
+{{ template "page/head_end" .}}
+
+{{ template "page/body_start" .}}
+<a-layout id="app" v-cloak :class="themeSwitcher.currentTheme + ' index-page'">
+  <a-crowbar-header></a-crowbar-header>
+  <a-layout id="content-layout">
+    <a-layout-content>
+      <transition name="list" appear>
+        <a-card>
+          <a-tabs default-active-key="panel_logs" @change="(key) => changeJournalTabs(key)">
+            <a-tab-pane key="panel_logs">
+              <template #tab>
+                <a-icon type="file-ppt"></a-icon>
+                <span>{{ i18n "pages.journal.tabs.panel" }}</span>
+              </template>
+              <template v-if="!loadingStates.panel.fetched">
+                <div class="ant-crowbar-logs-loading">
+                  <a-icon type="loading" :style="{ fontSize: 36, width: 36, height: 36 }"></a-icon>
+                </div>
+              </template>
+              <template v-else>
+                <a-form layout="inline">
+                  <a-form-item class="mr-05">
+                    <a-input-group compact>
+                      <a-select v-model="logsParameters.panel.limit" :style="{ width: '70px' }"
+                        @change="loadPanelLogs(true)" :dropdown-class-name="themeSwitcher.currentTheme">
+                        <a-select-option value="10">10</a-select-option>
+                        <a-select-option value="20">20</a-select-option>
+                        <a-select-option value="50">50</a-select-option>
+                        <a-select-option value="100">100</a-select-option>
+                        <a-select-option value="500">500</a-select-option>
+                      </a-select>
+                      <a-select v-model="logsParameters.panel.level" :style="{ width: '120px' }"
+                        @change="loadPanelLogs(true)" :dropdown-class-name="themeSwitcher.currentTheme">
+                        <a-select-option value="debug">{{ i18n "pages.journal.filters.debug" }}</a-select-option>
+                        <a-select-option value="info">{{ i18n "pages.journal.filters.info" }}</a-select-option>
+                        <a-select-option value="notice">{{ i18n "pages.journal.filters.notice" }}</a-select-option>
+                        <a-select-option value="warning">{{ i18n "pages.journal.filters.warning" }}</a-select-option>
+                        <a-select-option value="err">{{ i18n "pages.journal.filters.error" }}</a-select-option>
+                      </a-select>
+                    </a-input-group>
+                  </a-form-item>
+                  <a-form-item :style="{ float: 'right', marginRight: 0 }">
+                    <a-button-group>
+                      <a-button icon="download"
+                        @click="FileManager.downloadTextFile(logs.panel?.join('\n'), 'crowbar-panel.log')"></a-button>
+                      <a-button :icon="loadingStates.panel.reloaded ? 'loading' : 'sync'"
+                        :disabled="loadingStates.panel.reloaded" @click="loadPanelLogs(true)"></a-button>
+                    </a-button-group>
+                  </a-form-item>
+                </a-form>
+                <div class="ant-crowbar-logs">
+                  <div class="ant-crowbar-logs-item" v-for="log in logs.panel">
+                    [[ log ]]
+                  </div>
+                </div>
+              </template>
+            </a-tab-pane>
+            <a-tab-pane :disabled="!ipLimitEnable" key="xray_logs">
+              <template #tab>
+                <a-icon type="file-excel"></a-icon>
+                <span>{{ i18n "pages.journal.tabs.xray" }}</span>
+              </template>
+              <template v-if="!loadingStates.xray.fetched">
+                <div class="ant-crowbar-logs-loading">
+                  <a-icon type="loading" :style="{ fontSize: 36, width: 36, height: 36 }"></a-icon>
+                </div>
+              </template>
+              <template v-else>
+                <a-form layout="inline">
+                  <a-form-item class="mr-05">
+                    <a-input-group compact>
+                      <a-select v-model="logsParameters.xray.limit" :style="{ width: '70px' }"
+                        @change="loadXrayLogs(true)" :dropdown-class-name="themeSwitcher.currentTheme">
+                        <a-select-option value="10">10</a-select-option>
+                        <a-select-option value="20">20</a-select-option>
+                        <a-select-option value="50">50</a-select-option>
+                        <a-select-option value="100">100</a-select-option>
+                        <a-select-option value="500">500</a-select-option>
+                      </a-select>
+                      <a-input v-model="logsParameters.xray.filter"
+                        placeholder='{{ i18n "pages.journal.filters.placeholder" }}' :style="{ width: '120px' }"
+                        @keyup.enter="loadXrayLogs(true)"></a-input>
+                    </a-input-group>
+                  </a-form-item>
+                  <a-form-item :style="{ float: 'right', marginRight: 0 }">
+                    <a-button-group>
+                      <a-button icon="download" @click="FileManager.downloadTextFile(logs.xray?.join('\n'), 'crowbar-xray.log')"></a-button>
+                      <a-button :icon="loadingStates.xray.reloaded ? 'loading' : 'sync'"
+                        :disabled="loadingStates.xray.reloaded" @click="loadXrayLogs(true)"></a-button>
+                    </a-button-group>
+                  </a-form-item>
+                </a-form>
+                <div class="ant-crowbar-logs">
+                  <div class="ant-crowbar-logs-item" v-for="log in logs.xray">
+                    [[ log ]]
+                  </div>
+                </div>
+              </template>
+            </a-tab-pane>
+          </a-tabs>
+        </a-card>
+      </transition>
+    </a-layout-content>
+  </a-layout>
+</a-layout>
+{{template "page/body_scripts" .}}
+{{template "component/aCrowbarHeader" .}}
+{{template "component/aThemeSwitch" .}}
+<script>
+  const app = new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#app',
+    mixins: [MediaQueryMixin],
+    data: {
+      themeSwitcher,
+      loadingStates: {
+        panel: {
+          fetched: false,
+          reloaded: false,
+        },
+        xray: {
+          fetched: false,
+          reloaded: false
+        }
+      },
+      logsParameters: {
+        panel: {
+          level: 'debug',
+          limit: 20,
+        },
+        xray: {
+          filter: '',
+          limit: 20,
+        },
+      },
+      logs: {
+        panel: [],
+        xray: [],
+      },
+      ipLimitEnable: false,
+    },
+    methods: {
+      async loadPanelLogs(isReloading = false) {
+        if (isReloading) {
+          this.loadingStates.panel.reloaded = true;
+        }
+
+        const msg = await HttpUtil.post(`/panel/api/server/logs/${this.logsParameters.panel.limit}`, { level: this.logsParameters.panel.level });
+
+        if (!msg.success) {
+          return;
+        }
+
+        this.loadingStates.panel.reloaded = false;
+        this.loadingStates.panel.fetched = true;
+
+        this.logs.panel = msg.obj;
+      },
+      async loadXrayLogs(isReloading = false) {
+        if (isReloading) {
+          this.loadingStates.xray.reloaded = true;
+        }
+
+        const msg = await HttpUtil.post('/panel/api/server/xraylogs/' + this.logsParameters.xray.limit, { filter: this.logsParameters.xray.filter });
+
+        if (!msg.success) {
+          return;
+        }
+
+        this.loadingStates.xray.reloaded = false;
+        this.loadingStates.xray.fetched = true;
+
+        this.logs.xray = msg.obj.reverse();
+      },
+      async changeJournalTabs(key = []) {
+        if (key.includes("xray_logs") && !this.loadingStates.xray.fetched) {
+          this.loadXrayLogs();
+        }
+      }
+    },
+    async mounted() {
+      // Getting ip limit enable setting for xray-core logs
+      const msg = await HttpUtil.post('/panel/setting/defaultSettings');
+      if (msg.success) {
+        this.ipLimitEnable = msg.obj.ipLimitEnable;
+      }
+
+      await this.loadPanelLogs();
+    },
+  });
+</script>
+{{ template "page/body_end" .}}

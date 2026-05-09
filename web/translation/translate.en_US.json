@@ -39,6 +39,7 @@
     "home": "Home",
     "inbounds": "Inbounds",
     "link": "Manage",
+    "journal": "Journal",
     "logout": "Log Out",
     "settings": "Settings",
     "theme": "Theme"
@@ -50,6 +51,21 @@
   "offline": "Offline",
   "online": "Online",
   "pages": {
+    "journal": {
+      "title": "Journal",
+      "tabs": {
+        "xray": "Xray",
+        "panel": "Panel"
+      },
+      "filters": {
+        "placeholder": "Search records...",
+        "debug": "Debug",
+        "info": "Information",
+        "warning": "Warning",
+        "error": "Error",
+        "notice": "Notice"
+      }
+    },
     "client": {
       "add": "Add Client",
       "clientCount": "Number of Clients",

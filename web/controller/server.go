@@ -129,44 +129,7 @@ func (a *ServerController) getLogs(c *gin.Context) {
 func (a *ServerController) getXrayLogs(c *gin.Context) {
 	count := c.Param("count")
 	filter := c.PostForm("filter")
-	showDirect := c.PostForm("showDirect")
-	showBlocked := c.PostForm("showBlocked")
-	showProxy := c.PostForm("showProxy")
-
-	var freedoms []string
-	var blackholes []string
-
-	//getting tags for freedom and blackhole outbounds
-	config, err := a.settingService.GetDefaultXrayConfig()
-	if err == nil && config != nil {
-		if cfgMap, ok := config.(map[string]any); ok {
-			if outbounds, ok := cfgMap["outbounds"].([]any); ok {
-				for _, outbound := range outbounds {
-					if obMap, ok := outbound.(map[string]any); ok {
-						switch obMap["protocol"] {
-						case "freedom":
-							if tag, ok := obMap["tag"].(string); ok {
-								freedoms = append(freedoms, tag)
-							}
-						case "blackhole":
-							if tag, ok := obMap["tag"].(string); ok {
-								blackholes = append(blackholes, tag)
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	if len(freedoms) == 0 {
-		freedoms = []string{"direct"}
-	}
-	if len(blackholes) == 0 {
-		blackholes = []string{"blocked"}
-	}
-
-	logs := a.serverService.GetXrayLogs(count, filter, showDirect, showBlocked, showProxy, freedoms, blackholes)
+	logs := a.serverService.GetXrayLogs(count, filter)
 	jsonObj(c, logs, nil)
 }
 

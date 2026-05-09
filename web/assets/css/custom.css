@@ -2322,6 +2322,7 @@ li.ant-calendar-time-picker-select-option-selected {
 
 .ant-crowbar-header-tab[data-active="true"] {
     color: var(--color-primary);
+    cursor: default;
 }
 
 .ant-crowbar-header-tab-icon {
@@ -2499,3 +2500,103 @@ li.ant-calendar-time-picker-select-option-selected {
     margin-top: 3rem;
     margin-bottom: 3rem
 }
+
+.ant-tabs-bottom .ant-tabs-ink-bar-animated, .ant-tabs-top .ant-tabs-ink-bar-animated {
+    display: none !important;
+}
+
+.ant-tabs-bar {
+    border-bottom: none !important;
+}
+
+.ant-tabs-nav .ant-tabs-tab-active {
+    background: #1890ff15;
+    text-shadow: none !important;
+}
+
+.ant-tabs-nav .ant-tabs-tab {
+    margin: 0 8px 0 0;
+    padding: 6px 8px;
+
+    border-radius: var(--border-radius-large) !important;
+}
+
+.ant-tabs-nav .ant-tabs-tab:before {
+    border-radius: var(--border-radius-large) !important;
+}
+
+.ant-tabs-nav-wrap {
+    margin-bottom: 0 !important;
+}
+
+.dark .ant-tabs-nav .ant-tabs-tab-disabled, 
+.dark .ant-tabs-nav .ant-tabs-tab-disabled:hover {
+    color: rgba(255,255,255,.25) !important;
+}
+
+.ant-crowbar-logs {
+    border-radius: var(--border-radius);
+    border: 1px solid #e8e8e8;
+
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+
+    min-height: 500px;
+    overflow-y: auto;
+    max-height: 600px;
+
+    padding-top: 4px;
+    margin-top: 10px;
+}
+
+.ant-crowbar-xray-logs {
+    margin-top: 10px;
+    border: 1px solid #e8e8e8;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+
+    border-bottom: none;
+}
+
+.dark .ant-crowbar-xray-logs {
+    border-color: var(--dark-color-surface-400);
+}
+
+.dark .ant-crowbar-logs {
+    background: var(--dark-color-surface-200);
+    border-color: var(--dark-color-surface-400);
+}
+
+.ant-crowbar-logs-item {
+    font-size: 13px;
+    font-family: monospace;
+    white-space: nowrap;
+
+    padding: 0 6px;
+    line-height: 24px;
+}
+
+.ant-crowbar-logs-loading {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.ant-crowbar-logs-loading > * {
+    --size: 36px;
+
+    font-size: var(--size);
+
+    width: var(--size);
+    height: var(--size);
+}
+
+.ant-crowbar-theme-switcher.ant-switch-checked {
+    background-color: var(--dark-color-surface-400) !important;
+}
+
+#change-theme .ant-click-animating-node, 
+#change-theme [ant-click-animating-without-extra-node=true]:after {
+    box-shadow: 0 0 0 0 var(--dark-color-surface-600) !important;
+}
+
