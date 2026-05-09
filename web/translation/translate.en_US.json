@@ -59,22 +59,11 @@
       },
       "filters": {
         "placeholder": "Search records...",
-        "direct": "Direct",
-        "blocked": "Blocked",
-        "proxy": "Proxied",
         "debug": "Debug",
         "info": "Information",
         "warning": "Warning",
         "error": "Error",
         "notice": "Notice"
-      },
-      "xray": {
-        "datetime": "Date",
-        "from": "From",
-        "inbound": "Inbound",
-        "outbound": "Outbound",
-        "to": "To",
-        "email": "Email"
       }
     },
     "client": {

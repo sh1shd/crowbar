@@ -2529,6 +2529,11 @@ li.ant-calendar-time-picker-select-option-selected {
     margin-bottom: 0 !important;
 }
 
+.dark .ant-tabs-nav .ant-tabs-tab-disabled, 
+.dark .ant-tabs-nav .ant-tabs-tab-disabled:hover {
+    color: rgba(255,255,255,.25) !important;
+}
+
 .ant-crowbar-logs {
     border-radius: var(--border-radius);
     border: 1px solid #e8e8e8;
@@ -2594,3 +2599,4 @@ li.ant-calendar-time-picker-select-option-selected {
 #change-theme [ant-click-animating-without-extra-node=true]:after {
     box-shadow: 0 0 0 0 var(--dark-color-surface-600) !important;
 }
+

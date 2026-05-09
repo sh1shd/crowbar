@@ -48,8 +48,8 @@
   "monitor": "Мониторинг IP",
   "noData": "Нет данных.",
   "none": "Пусто",
-  "offline": "Офлайн",
-  "online": "Онлайн",
+  "offline": "Не в сети",
+  "online": "В сети",
   "pages": {
     "journal": {
       "title": "Журнал событий",
@@ -59,22 +59,11 @@
       },
       "filters": {
         "placeholder": "Поиск записей...",
-        "direct": "Прямой",
-        "blocked": "Блок",
-        "proxy": "Прокси",
         "debug": "Отладка",
         "info": "Информация",
         "warning": "Предупреждение",
         "error": "Ошибка",
         "notice": "Уведомление"
-      },
-      "xray": {
-        "datetime": "Дата",
-        "from": "Откуда",
-        "inbound": "Инбаунд",
-        "outbound": "Аутбаунд",
-        "to": "Куда",
-        "email": "Клиент"
       }
     },
     "client": {
