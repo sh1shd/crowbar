@@ -3,6 +3,7 @@ module github.com/mhsanaei/3x-ui/v2
 go 1.26.1
 
 require (
+	github.com/evanw/esbuild v0.28.0
 	github.com/gin-contrib/gzip v1.2.5
 	github.com/gin-contrib/sessions v1.0.4
 	github.com/gin-gonic/gin v1.12.0

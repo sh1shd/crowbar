@@ -23,6 +23,7 @@ import (
 	"github.com/mhsanaei/3x-ui/v2/web/job"
 	"github.com/mhsanaei/3x-ui/v2/web/locale"
 	"github.com/mhsanaei/3x-ui/v2/web/middleware"
+	"github.com/mhsanaei/3x-ui/v2/web/minifier"
 	"github.com/mhsanaei/3x-ui/v2/web/network"
 	"github.com/mhsanaei/3x-ui/v2/web/service"
 
@@ -43,52 +44,6 @@ var htmlFS embed.FS
 var i18nFS embed.FS
 
 var startTime = time.Now()
-
-type wrapAssetsFS struct {
-	embed.FS
-}
-
-func (f *wrapAssetsFS) Open(name string) (fs.File, error) {
-	file, err := f.FS.Open("assets/" + name)
-	if err != nil {
-		return nil, err
-	}
-	return &wrapAssetsFile{
-		File: file,
-	}, nil
-}
-
-type wrapAssetsFile struct {
-	fs.File
-}
-
-func (f *wrapAssetsFile) Stat() (fs.FileInfo, error) {
-	info, err := f.File.Stat()
-	if err != nil {
-		return nil, err
-	}
-	return &wrapAssetsFileInfo{
-		FileInfo: info,
-	}, nil
-}
-
-type wrapAssetsFileInfo struct {
-	fs.FileInfo
-}
-
-func (f *wrapAssetsFileInfo) ModTime() time.Time {
-	return startTime
-}
-
-// EmbeddedHTML returns the embedded HTML templates filesystem for reuse by other servers.
-func EmbeddedHTML() embed.FS {
-	return htmlFS
-}
-
-// EmbeddedAssets returns the embedded assets filesystem for reuse by other servers.
-func EmbeddedAssets() embed.FS {
-	return assetsFS
-}
 
 // Server represents the main web server for the 3x-ui panel with controllers, services, and scheduled jobs.
 type Server struct {
@@ -243,7 +198,8 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 			return nil, err
 		}
 		engine.SetHTMLTemplate(template)
-		engine.StaticFS(basePath+"assets", http.FS(&wrapAssetsFS{FS: assetsFS}))
+		engine.StaticFS(basePath+"assets", http.FS(minifier.NewMinifiedAssetsFS(assetsFS)))
+		engine.Use(minifier.HTMLMinifyMiddleware())
 	}
 
 	// Apply the redirect middleware (`/xui` to `/panel`)
