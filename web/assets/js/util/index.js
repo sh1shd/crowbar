@@ -964,10 +964,9 @@ class FileManager {
 }
 
 class IntlUtil {
-    static formatDate(date) {
-        const language = LanguageManager.getLanguage()
-
-        let intlOptions = {
+    static formatDate(
+        date, 
+        intlOptions = {
             year: "numeric",
             month: "numeric",
             day: "numeric",
@@ -975,6 +974,8 @@ class IntlUtil {
             minute: "numeric",
             second: "numeric"
         }
+    ) {
+        const language = LanguageManager.getLanguage()
 
         const intl = new Intl.DateTimeFormat(
             language,

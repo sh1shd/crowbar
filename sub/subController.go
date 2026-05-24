@@ -205,7 +205,7 @@ func (a *SUBController) subscriptionPage(c *gin.Context) {
 						<h1>Client information</h1>
 						{{if .SubUrl}}
 						<img 
-							src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{.SubUrl}}"
+							src="https://api.qrserver.com/v1/create-qr-code/?data={{.SubUrl}}"
 							alt="QR code for subscription URL"
 						/>
 						{{end}}

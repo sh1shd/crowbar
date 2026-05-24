@@ -16,7 +16,7 @@
           </a-row>
           <a-row :gutter="[isMobile ? 12 : 16, isMobile ? 12 : 16]" v-else>
             <a-col>
-              <a-card size="small" :style="{ padding: '16px' }" hoverable>
+              <a-card size="small" :style="{ padding: '16px' }">
                 <a-row>
                   <a-col :sm="12" :md="5">
                     <a-custom-statistic title='{{ i18n "pages.inbounds.totalDownUp" }}'
@@ -95,7 +95,7 @@
               </a-card>
             </a-col>
             <a-col>
-              <a-card hoverable>
+              <a-card>
                 <template #title>
                   <a-space direction="horizontal">
                     <a-button type="primary" icon="plus" @click="openAddInbound">
@@ -550,6 +550,7 @@
 {{template "component/aCrowbarHeader" .}}
 {{template "component/aThemeSwitch" .}}
 {{template "component/aCustomStatistic" .}}
+{{template "component/aCrowbarCodemirror" .}}
 {{template "modals/inboundModal"}}
 {{template "modals/promptModal"}}
 {{template "modals/textModal"}}
@@ -1373,7 +1374,7 @@
         if (!ts) return '-'
         // Check if IntlUtil is available (may not be loaded yet)
         if (typeof IntlUtil !== 'undefined' && IntlUtil.formatDate) {
-          return IntlUtil.formatDate(ts)
+          return IntlUtil.formatDate(ts, { dateStyle: 'full', timeStyle: 'long' })
         }
         // Fallback to simple date formatting if IntlUtil is not available
         return new Date(ts).toLocaleString()

@@ -10,58 +10,53 @@
     <a-layout-content>
       <a-spin :spinning="loadingStates.spinning" :delay="500" tip='{{ i18n "loading"}}'>
         <transition name="list" appear>
-          <template>
-            <a-row v-if="!loadingStates.fetched">
-              <a-card
-                :style="{ textAlign: 'center', padding: '30px 0', marginTop: '10px', background: 'transparent', border: 'none' }">
-                <a-spin tip='{{ i18n "loading" }}'></a-spin>
-              </a-card>
-            </a-row>
-            <a-row :gutter="[isMobile ? 12 : 16, isMobile ? 12 : 16]" v-else>
-              <a-col>
-                <a-card>
-                  <template #title>
-                    <a-space direction="horizontal">
-                      <a-button type="primary" icon="save" :disabled="saveBtnDisable" @click="updateAllSetting">{{ i18n
-                        "pages.settings.save" }}</a-button>
-                      <a-button type="danger" icon="reload" :disabled="!saveBtnDisable" @click="restartPanel">{{ i18n
-                        "pages.settings.restartPanel" }}</a-button>
-                    </a-space>
+          <a-card>
+            <template v-if="loadingStates.fetched" #title>
+              <a-space direction="horizontal">
+                <a-button type="primary" icon="save" :disabled="saveBtnDisable" @click="updateAllSetting">{{ i18n
+                  "pages.settings.save" }}</a-button>
+                <a-button type="danger" icon="reload" :disabled="!saveBtnDisable" @click="restartPanel">{{ i18n
+                  "pages.settings.restartPanel" }}</a-button>
+              </a-space>
+            </template>
+            <template v-if="!loadingStates.fetched">
+              <div class="ant-crowbar-logs-loading">
+                <a-icon type="loading" :style="{ fontSize: 36, width: 36, height: 36 }"></a-icon>
+              </div>
+            </template>
+            <template v-else>
+              <a-tabs default-active-key="panel">
+                <a-tab-pane key="panel" :style="{ paddingTop: '20px' }">
+                  <template #tab>
+                    <a-icon type="setting"></a-icon>
+                    <span>{{ i18n "pages.settings.panelSettings" }}</span>
                   </template>
-                  <a-tabs default-active-key="panel">
-                    <a-tab-pane key="panel" :style="{ paddingTop: '20px' }">
-                      <template #tab>
-                        <a-icon type="setting"></a-icon>
-                        <span>{{ i18n "pages.settings.panelSettings" }}</span>
-                      </template>
-                      {{ template "settings/panel/general" . }}
-                    </a-tab-pane>
-                    <a-tab-pane key="xray" :style="{ paddingTop: '20px' }">
-                      <template #tab>
-                        <a-icon type="code"></a-icon>
-                        <span>Xray</span>
-                      </template>
-                      {{ template "settings/panel/xray" . }}
-                    </a-tab-pane>
-                    <a-tab-pane key="security" :style="{ paddingTop: '20px' }">
-                      <template #tab>
-                        <a-icon type="safety"></a-icon>
-                        <span>{{ i18n "pages.settings.securitySettings" }}</span>
-                      </template>
-                      {{ template "settings/panel/security" . }}
-                    </a-tab-pane>
-                    <a-tab-pane key="subscription" :style="{ paddingTop: '20px' }">
-                      <template #tab>
-                        <a-icon type="cloud-server"></a-icon>
-                        <span>{{ i18n "pages.settings.subSettings" }}</span>
-                      </template>
-                      {{ template "settings/panel/subscription" . }}
-                    </a-tab-pane>
-                  </a-tabs>
-                </a-card>
-              </a-col>
-            </a-row>
-          </template>
+                  {{ template "settings/panel/general" . }}
+                </a-tab-pane>
+                <a-tab-pane key="xray" :style="{ paddingTop: '20px' }">
+                  <template #tab>
+                    <a-icon type="code"></a-icon>
+                    <span>Xray</span>
+                  </template>
+                  {{ template "settings/panel/xray" . }}
+                </a-tab-pane>
+                <a-tab-pane key="security" :style="{ paddingTop: '20px' }">
+                  <template #tab>
+                    <a-icon type="safety"></a-icon>
+                    <span>{{ i18n "pages.settings.securitySettings" }}</span>
+                  </template>
+                  {{ template "settings/panel/security" . }}
+                </a-tab-pane>
+                <a-tab-pane key="subscription" :style="{ paddingTop: '20px' }">
+                  <template #tab>
+                    <a-icon type="cloud-server"></a-icon>
+                    <span>{{ i18n "pages.settings.subSettings" }}</span>
+                  </template>
+                  {{ template "settings/panel/subscription" . }}
+                </a-tab-pane>
+              </a-tabs>
+            </template>
+          </a-card>
         </transition>
       </a-spin>
     </a-layout-content>

@@ -647,19 +647,10 @@ style attribute {
     justify-content: space-evenly
 }
 
-#inbound-info-modal .ant-tag {
-    margin-block: 2px
-}
-
 .tr-info-table {
     display: inline-table;
     margin-block: 10px;
     width: 100%
-}
-
-#inbound-info-modal .tr-info-table .ant-tag {
-    margin-block: 0;
-    margin-inline: 0
 }
 
 .tr-info-row {
@@ -2600,3 +2591,83 @@ li.ant-calendar-time-picker-select-option-selected {
     box-shadow: 0 0 0 0 var(--dark-color-surface-600) !important;
 }
 
+.dark #inbound-info-modal .ant-tabs {
+    background-color: transparent;
+    border-radius: 0;
+}
+
+.dark .ant-descriptions-bordered .ant-descriptions-item-content, 
+.dark .ant-descriptions-bordered .ant-descriptions-item-label {
+    border-right-color: var(--dark-color-surface-400) !important; 
+}
+
+#inbound-info-modal .ant-crowbar-client-header,
+.ant-crowbar-client-header .ant-crowbar-client-meta {
+    display: flex;
+
+    gap: 12px;
+}
+
+.ant-crowbar-client-header {
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.ant-crowbar-client-header .ant-crowbar-client-avatar {
+    border: 1px solid #e8e8e8;
+    border-radius: 9999px;
+
+    padding: 16px;
+    line-height: 0;
+}
+
+.dark .ant-crowbar-client-header .ant-crowbar-client-avatar {
+    border-color: var(--dark-color-surface-400);
+}
+
+.ant-crowbar-client-avatar > * {
+    font-size: 32px;
+}
+
+.ant-crowbar-client-header .ant-crowbar-client-meta {
+    flex-direction: column;
+    flex: 1;
+    
+    gap: 4px;
+}
+
+.ant-crowbar-client-meta .ant-crowbar-client-meta-header {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.ant-crowbar-client-meta .ant-crowbar-client-meta-subheader {
+    font-size: 14px;
+    font-weight: 400;
+
+    opacity: 0.75;
+}
+
+.ant-crowbar-client-sublinks {
+    margin-top: 16px;
+}
+
+.ant-crowbar-client-sublinks .ant-crowbar-client-sublink {
+    gap: 12px;
+}
+
+.dark .ant-crowbar-client-sublink {
+    color: var(--dark-color-text-primary);
+}
+
+.ant-crowbar-client-sublink span {
+    display: -webkit-box;
+    flex: 1;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}

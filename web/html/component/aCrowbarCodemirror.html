@@ -1,0 +1,132 @@
+{{define "component/crowbarCodemirrorTemplate"}}
+<div :style="{ position: 'relative' }">
+    <textarea :id="textAreaId" :style="{ position: 'absolute', left: '-9999px' }"></textarea>
+</div>
+{{end}}
+
+{{define "component/aCrowbarCodemirror"}}
+<style>
+    @import url('https://cdn.jsdelivr.net/npm/codemirror@5.51.0/lib/codemirror.min.css');
+    @import url('https://cdn.jsdelivr.net/npm/codemirror@5.51.0/theme/monokai.css');
+</style>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.51.0/mode/javascript/javascript.js"></script>
+<script>
+    Vue.component('a-crowbar-codemirror', {
+        template: `{{ template "component/crowbarCodemirrorTemplate" }}`,
+        props: {
+            value: {
+                type: String,
+                required: false,
+                default: ''
+            },
+            options: {
+                type: Object,
+                required: false,
+                default: () => ({})
+            }
+        },
+        data() {
+            return {
+                editor: null,
+                editorValues: {
+                    old: this.value || '',
+                    current: this.value || ''
+                }
+            }
+        },
+        computed: {
+            textAreaId() {
+                return `codemirror-textarea-${this._uid}`;
+            },
+            editorOptions() {
+                return {
+                    lineNumbers: true,
+                    mode: "application/json",
+                    theme: 'monokai',
+                    matchBrackets: true,
+                    autoCloseTags: true,
+                    lineWrapping: true,
+                    ...this.options
+                };
+            }
+        },
+        watch: {
+            value(newVal) {
+                if (newVal !== this.editorValues.current) {
+                    this.editorValues.old = newVal;
+                    this.editorValues.current = newVal;
+                    this.syncEditor();
+                }
+            }
+        },
+        mounted() {
+            this.$nextTick(() => {
+                this.initCodeMirror();
+            });
+        },
+        beforeDestroy() {
+            if (this.editor) {
+                this.editor.toTextArea();
+                this.editor = null;
+            }
+        },
+        methods: {
+            initCodeMirror() {
+                if (this.editor != null) {
+                    this.editor.toTextArea();
+                    this.editor = null;
+                }
+
+                const textAreaObj = document.getElementById(this.textAreaId);
+                if (!textAreaObj) {
+                    console.error('CodeMirror textarea element not found');
+                    return;
+                }
+
+                textAreaObj.value = this.editorValues.current;
+
+                this.editor = CodeMirror.fromTextArea(textAreaObj, this.editorOptions);
+                this.editor.setSize("100%");
+
+                this.editor.on('change', (editor) => {
+                    const value = editor.getValue();
+                    this.editorValues.current = value;
+                    this.$emit('input', value);
+                });
+            },
+            syncEditor() {
+                if (!this.editor) return;
+
+                const editorValue = this.editor.getValue();
+
+                if (editorValue !== this.editorValues.current) {
+                    const cursor = this.editor.getCursor();
+                    this.editor.setValue(this.editorValues.current);
+                    this.editor.setCursor(cursor);
+                }
+            },
+            getValue() {
+                if (this.editor) {
+                    return this.editor.getValue();
+                }
+                return this.editorValues.current;
+            },
+            setValue(value) {
+                this.editorValues.current = value;
+                this.syncEditor();
+            },
+            focus() {
+                if (this.editor) {
+                    this.editor.focus();
+                }
+            },
+            refresh() {
+                if (this.editor) {
+                    this.editor.refresh();
+                }
+            }
+        }
+    })
+</script>
+{{end}}

@@ -34,7 +34,7 @@ class DBInbound {
     set totalGB(gb) {
         this.total = NumberFormatter.toFixed(gb * SizeFormatter.ONE_GB, 0);
     }
-
+    
     get isVMess() {
         return this.protocol === Protocols.VMESS;
     }

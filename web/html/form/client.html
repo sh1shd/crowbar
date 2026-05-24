@@ -69,7 +69,7 @@
                             <span>{{ i18n "pages.inbounds.subscriptionDesc" }}</span>
                         </template>
                         Subscription
-                        <a-icon @click="client.subId = RandomUtil.randomLowerAndNum(16)" type="sync"></a-icon>
+                        <a-icon @click="client.subId = RandomUtil.randomUUID()" type="sync"></a-icon>
                     </a-tooltip>
                 </template>
                 <a-input v-model.trim="client.subId"></a-input>
