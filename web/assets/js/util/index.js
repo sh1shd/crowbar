@@ -966,7 +966,7 @@ class FileManager {
 class IntlUtil {
     static formatDate(
         date, 
-        intlOptions {
+        intlOptions = {
             year: "numeric",
             month: "numeric",
             day: "numeric",
