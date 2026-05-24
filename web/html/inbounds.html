@@ -108,13 +108,9 @@
                           <a-icon type="import"></a-icon>
                           {{ i18n "pages.inbounds.importInbound" }}
                         </a-menu-item>
-                        <a-menu-item key="export">
-                          <a-icon type="export"></a-icon>
-                          {{ i18n "pages.inbounds.export" }}
-                        </a-menu-item>
                         <a-menu-item key="subs" v-if="subSettings.enable">
                           <a-icon type="export"></a-icon>
-                          {{ i18n "pages.inbounds.export" }} - {{ i18n "pages.settings.subSettings" }}
+                          {{ i18n "pages.inbounds.export" }}
                         </a-menu-item>
                         <a-menu-item key="resetInbounds">
                           <a-icon type="reload"></a-icon>
@@ -200,13 +196,9 @@
                               <a-icon type="file-done"></a-icon>
                               {{ i18n "pages.inbounds.resetInboundClientTraffics"}}
                             </a-menu-item>
-                            <a-menu-item key="export">
-                              <a-icon type="export"></a-icon>
-                              {{ i18n "pages.inbounds.export"}}
-                            </a-menu-item>
                             <a-menu-item key="subs" v-if="subSettings.enable">
                               <a-icon type="export"></a-icon>
-                              {{ i18n "pages.inbounds.export"}} - {{ i18n "pages.settings.subSettings" }}
+                              {{ i18n "pages.inbounds.export"}}
                             </a-menu-item>
                             <a-menu-item key="delDepletedClients" :style="{ color: '#FF4D4F' }">
                               <a-icon type="rest"></a-icon>
@@ -868,9 +860,6 @@
           case "import":
             this.importInbound();
             break;
-          case "export":
-            this.exportAllLinks();
-            break;
           case "subs":
             this.exportAllSubs();
             break;
@@ -895,9 +884,6 @@
             break;
           case "addClient":
             this.openAddClient(dbInbound.id)
-            break;
-          case "export":
-            this.inboundLinks(dbInbound.id);
             break;
           case "subs":
             this.exportSubs(dbInbound.id);
@@ -1382,11 +1368,6 @@
       isRemovable(dbInboundId) {
         return this.getInboundClients(this.dbInbounds.find(row => row.id === dbInboundId)).length > 1;
       },
-      inboundLinks(dbInboundId) {
-        dbInbound = this.dbInbounds.find(row => row.id === dbInboundId);
-        newDbInbound = this.checkFallback(dbInbound);
-        txtModal.show('{{ i18n "pages.inbounds.export"}}', newDbInbound.genInboundLinks(this.remarkModel), newDbInbound.remark);
-      },
       exportSubs(dbInboundId) {
         const dbInbound = this.dbInbounds.find(row => row.id === dbInboundId);
         const clients = this.getInboundClients(dbInbound);
@@ -1399,7 +1380,7 @@
           })
         }
         txtModal.show(
-          '{{ i18n "pages.inbounds.export"}} - {{ i18n "pages.settings.subSettings" }}',
+          '{{ i18n "pages.inbounds.export"}}',
           [...new Set(subLinks)].join('\n'),
           dbInbound.remark + "-Subs");
       },
@@ -1427,16 +1408,9 @@
           }
         }
         txtModal.show(
-          '{{ i18n "pages.inbounds.export"}} - {{ i18n "pages.settings.subSettings" }}',
+          '{{ i18n "pages.inbounds.export"}}',
           [...new Set(subLinks)].join('\r\n'),
           'All-Inbounds-Subs');
-      },
-      exportAllLinks() {
-        let copyText = [];
-        for (const dbInbound of this.dbInbounds) {
-          copyText.push(dbInbound.genInboundLinks(this.remarkModel));
-        }
-        txtModal.show('{{ i18n "pages.inbounds.export"}}', copyText.join('\r\n'), 'All-Inbounds');
       },
       copy(dbInboundId) {
         dbInbound = this.dbInbounds.find(row => row.id === dbInboundId);
